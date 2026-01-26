@@ -18,3 +18,11 @@ This project is developed by the CMPM170/CMPM171 course team.
 ## Project Structure
 
 - `CMPM171-game/` - Main Unity project directory
+
+## Branch Strategy
+
+This is a team project with the following branches:
+
+- **main** - Main production branch
+- **test-main** - Testing branch for all game features that need to be deployed
+- **Kun-game** - Development branch for game feature additions
