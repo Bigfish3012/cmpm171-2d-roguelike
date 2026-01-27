@@ -1,7 +1,8 @@
 # CMPM170 2D Roguelike
 
 A 2D Roguelike game project developed with Unity.
-
+- **Engine**: Unity 6000.2.7f2
+- **Genre**: 2D Roguelike
 ## Collaboration Workflow
 
 ### 1. Clone Repository
@@ -34,8 +35,13 @@ After completing your work, push your branch to the remote repository and create
 # Push your branch to the remote repository
 git push origin your-branch-name
 
+# If you see an error about no upstream branch, set the upstream:
+git push --set-upstream origin your-branch-name
+
 # Create a Pull Request on GitHub/GitLab, targeting the test-main branch
 ```
+
+**Note**: If you encounter the error "The current branch has no upstream branch", use `git push --set-upstream origin your-branch-name` to set the remote tracking branch.
 
 ### 5. Merge to main Branch
 - Test and verify all features on the `test-main` branch
@@ -49,25 +55,12 @@ git push origin your-branch-name
 - Regularly sync updates from the main branches to your branch:
 ```bash
 git checkout your-branch-name
-git merge test-main  # or git merge main
+git merge test-main
 ```
 
 ## Project Overview
 
 This project is a 2D Roguelike game featuring procedurally generated maps and random elements, providing players with a unique experience each time they play.
-
-## Tech Stack
-
-- **Engine**: Unity 6000.2.7f2
-- **Genre**: 2D Roguelike
-
-## Development Team
-
-This project is developed by the CMPM170/CMPM171 course team.
-
-## Project Structure
-
-- `CMPM171-game/` - Main Unity project directory
 
 ## Branch Strategy
 
@@ -75,4 +68,3 @@ This is a team project with the following branches:
 
 - **main** - Main production branch
 - **test-main** - Testing branch for all game features that need to be deployed
-- **Kun-game** - Development branch for game feature additions
