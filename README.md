@@ -1,4 +1,4 @@
-# CMPM170 2D Roguelike
+# CMPM171 2D Roguelike
 
 A 2D Roguelike game project developed with Unity.
 - **Engine**: Unity 6000.2.7f2
@@ -8,17 +8,15 @@ A 2D Roguelike game project developed with Unity.
 ### 1. Clone Repository
 ```bash
 git clone git@github.com:Bigfish3012/cmpm171-2d-roguelike.git
-cd cmpm170-2d-roguelike
 ```
 
 ### 2. Create Your Own Branch
 ```bash
 # Create and switch to a new branch from main
-git checkout -b your-branch-name
-
-# Or create from test-main branch
-git checkout test-main
-git checkout -b your-branch-name
+# Change "your-branch-name" to a name that you like to call
+# Make sure that you are working on your own branch
+# don't merge any change to the main branch before testing
+git checkout -b your-branch-name 
 ```
 
 ### 3. Work on Your Branch
@@ -26,10 +24,11 @@ git checkout -b your-branch-name
 - Commit changes regularly:
 ```bash
 git add .
+// // or you can use "git add <file name>", "git add <file name> <file name>"
 git commit -m "Describe your changes"
 ```
 
-### 4. Push to test-main Branch
+### 4. Push to **test-main** Branch
 After completing your work, push your branch to the remote repository and create a Pull Request to merge into the `test-main` branch:
 ```bash
 # Push your branch to the remote repository

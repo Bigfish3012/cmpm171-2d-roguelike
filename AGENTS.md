@@ -12,7 +12,7 @@ Git history, or team workflow.
 - Do **not refactor** unless explicitly asked
 - Preserve existing gameplay behavior
 - Ask before making architectural changes
-- Explain what change did you make and what will they do
+- Clearly explain what was changed and the effect of the change
 ---
 
 ## 2. Unity-Specific Rules (Very Important)
@@ -61,6 +61,8 @@ Respect existing folder organization.
 - Avoid large diffs
 - Respect branch boundaries
 - Assume multiple teammates are working in parallel
+    - Unity version: 6000.2.7f2 (do not upgrade or downgrade)
+
 
 ---
 
@@ -79,5 +81,6 @@ This is a **course project**, not a production game.
 Favor clarity, stability, and correctness over optimization or polish.
 
 ## 9. Branches
-- Make sure NOT working on the main branch
-- ONLY merge the change to the "test-main" branch if any teammate want to merge their change to the main branch.
+- Do NOT work directly on the main branch
+- Feature branches should merge into test-main first
+- main should only receive changes that are tested and approved
