@@ -61,6 +61,42 @@ git merge test-main
 
 This project is a 2D Roguelike game featuring procedurally generated maps and random elements, providing players with a unique experience each time they play.
 
+## Project Structure
+
+项目文件组织结构如下，请按照以下规则放置文件：
+
+```
+CMPM171-game/
+├── Assets/
+│   ├── Scripts/              # 游戏逻辑脚本 / Game logic scripts
+│   │   └── Gameplay/         # 核心游戏玩法脚本 / Core gameplay scripts
+│   │       ├── PlayerController.cs    # 玩家控制器 / Player controller
+│   │       ├── CameraFollow.cs        # 相机跟随逻辑 / Camera follow logic
+│   │       ├── GunAim.cs              # 武器瞄准系统 / Weapon aiming system
+│   │       ├── RangedShooter.cs       # 远程射击系统 / Ranged shooting system
+│   │       └── Projectile.cs          # 投射物逻辑 / Projectile logic
+│   │
+│   ├── Prefabs/              # Unity 预制体 / Unity prefabs
+│   │   └── GamePlay/        # 游戏玩法相关预制体 / Gameplay-related prefabs
+│   │       └── Bullet.prefab # 子弹预制体 / Bullet prefab
+│   │
+│   ├── Scenes/               # Unity 场景文件 / Unity scene files
+│   │   ├── MainMenu.unity    # 主菜单场景 / Main menu scene
+│   │   └── SC_Prototype.unity # 游戏原型场景 / Game prototype scene
+│   │
+│   ├── Art/                  # 美术资源（图片、精灵等） / Art assets (images, sprites, etc.)
+│   │   └── ground.png        # 地面贴图 / Ground texture
+│   │
+│   ├── Audio/                # 音频资源（音乐、音效） / Audio assets (music, sound effects)
+│   │
+│   │
+│   ├── UI/                   # UI 相关资源（Canvas、UI 元素等） / UI-related assets (Canvas, UI elements, etc.)
+│   │
+│   ├── Tiles/                # 瓦片地图资源 / Tile map assets
+│   │
+│   └── Shaders/              # 着色器文件 / Shader files
+```
+
 ## Branch Strategy
 
 This is a team project with the following branches:
