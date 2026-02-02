@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1142188071123149782}
   - component: {fileID: 7709966562946670271}
   - component: {fileID: 2285456849543197278}
+  - component: {fileID: 448937869760200662}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -142,3 +143,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &448937869760200662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5133508936662839189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea970541f3ae2064193de75035a25381, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMoveTowardPlayer
+  speed: 2
