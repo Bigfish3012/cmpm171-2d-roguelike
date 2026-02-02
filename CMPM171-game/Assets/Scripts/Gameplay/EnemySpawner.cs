@@ -1,6 +1,7 @@
 using UnityEngine;
 
-// Spawns enemies at random positions around the player. Assign prefabs in Inspector.
+// Spawns enemies around the player. Spawn interval shortens every N seconds (e.g. every 5 min).
+// Exposes elapsed time for UI via GetTimeString().
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Target")]
@@ -17,9 +18,27 @@ public class EnemySpawner : MonoBehaviour
     [Header("Timing")]
     [SerializeField] private float spawnInterval = 4f;
     [SerializeField] private float firstSpawnDelay = 2f;
+    [SerializeField] private float secondsPerStep = 300f;
 
     [Header("Limit (0 = no limit)")]
     [SerializeField] private int maxEnemies = 15;
+
+    private float elapsedSeconds;
+    private int lastStep = -1;
+
+    public float ElapsedSeconds => elapsedSeconds;
+
+    int FiveMinuteStep => secondsPerStep > 0 ? Mathf.FloorToInt(elapsedSeconds / secondsPerStep) : 0;
+
+    float SpawnIntervalMultiplier
+    {
+        get
+        {
+            int step = FiveMinuteStep;
+            if (step <= 0) return 1f;
+            return 1f / (1f + step * 0.25f);
+        }
+    }
 
     void Start()
     {
@@ -28,7 +47,26 @@ public class EnemySpawner : MonoBehaviour
             var go = GameObject.FindGameObjectWithTag("Player");
             if (go != null) player = go.transform;
         }
-        InvokeRepeating(nameof(SpawnOne), firstSpawnDelay, spawnInterval);
+        ApplySpawnInterval(0);
+    }
+
+    void Update()
+    {
+        elapsedSeconds += Time.deltaTime;
+        int step = FiveMinuteStep;
+        if (step != lastStep)
+        {
+            lastStep = step;
+            ApplySpawnInterval(step);
+        }
+    }
+
+    void ApplySpawnInterval(int fiveMinuteStep)
+    {
+        CancelInvoke(nameof(SpawnOne));
+        float interval = Mathf.Max(0.5f, spawnInterval * SpawnIntervalMultiplier);
+        float delay = fiveMinuteStep > 0 ? interval : firstSpawnDelay;
+        InvokeRepeating(nameof(SpawnOne), delay, interval);
     }
 
     void SpawnOne()
@@ -50,5 +88,17 @@ public class EnemySpawner : MonoBehaviour
     int CountEnemies()
     {
         return FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None).Length;
+    }
+
+    // For UI: MM:SS or HH:MM:SS
+    public string GetTimeString()
+    {
+        int totalSeconds = Mathf.FloorToInt(elapsedSeconds);
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+        if (hours > 0)
+            return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+        return $"{minutes:D2}:{seconds:D2}";
     }
 }
