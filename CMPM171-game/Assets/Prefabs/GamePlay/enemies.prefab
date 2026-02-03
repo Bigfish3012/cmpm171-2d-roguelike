@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: -5617666363345914563}
   - component: {fileID: 5723907618378982668}
   - component: {fileID: 5209584696149753660}
+  - component: {fileID: 2154635445280985832}
   m_Layer: 7
   m_Name: enemies
   m_TagString: Enemies
@@ -239,3 +240,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyChase
   speed: 3
   chaseRange: 30
+--- !u!114 &2154635445280985832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833789152688208827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 936a4ce044cbd3b4bb2842459bf91e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 2

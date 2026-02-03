@@ -42,13 +42,17 @@ public class Projectile : MonoBehaviour
 
         if (other.CompareTag("Player")) return;
 
-        // Hit enemy: destroy
+        // Hit enemy: deal damage
         if (other.CompareTag(enemyTag))
         {
             dead = true;
 
-            // TODO: Damage (future)
-            // other.GetComponentInParent<EnemyHealth>()?.TakeDamage(damage);
+            // Deal damage to enemy
+            EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(1);
+            }
 
             Destroy(gameObject);
             return;

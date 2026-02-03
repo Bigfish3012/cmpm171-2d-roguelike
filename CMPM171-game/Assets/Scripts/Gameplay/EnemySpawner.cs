@@ -7,8 +7,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Spawn Settings")]
     public Transform[] spawnPoints;
-    public int spawnCount = 5;
-    public float spawnInterval = 0.7f;
+    public float spawnInterval = 1f;
 
     void Start()
     {
@@ -20,7 +19,8 @@ public class EnemySpawner : MonoBehaviour
         if (spawnPoints == null || spawnPoints.Length == 0) yield break;
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) yield break;
 
-        for (int i = 0; i < spawnCount; i++)
+        // Infinite loop: spawn enemies continuously
+        while (true)
         {
             var sp = spawnPoints[Random.Range(0, spawnPoints.Length)];
             var prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
