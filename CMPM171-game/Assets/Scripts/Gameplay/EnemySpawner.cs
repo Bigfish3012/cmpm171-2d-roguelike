@@ -1,104 +1,88 @@
 using UnityEngine;
 
-// Spawns enemies around the player. Spawn interval shortens every N seconds (e.g. every 5 min).
-// Exposes elapsed time for UI via GetTimeString().
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Target")]
-    [SerializeField] private Transform player;
-
     [Header("Prefabs")]
-    [SerializeField] private GameObject enemy1Prefab;
-    [SerializeField] private GameObject enemy2Prefab;
+    public GameObject[] enemyPrefabs;
 
-    [Header("Spawn area (around player)")]
-    [SerializeField] private float minDistance = 5f;
-    [SerializeField] private float maxDistance = 12f;
-
-    [Header("Timing")]
-    [SerializeField] private float spawnInterval = 4f;
-    [SerializeField] private float firstSpawnDelay = 2f;
-    [SerializeField] private float secondsPerStep = 300f;
-
-    [Header("Limit (0 = no limit)")]
-    [SerializeField] private int maxEnemies = 15;
-
-    private float elapsedSeconds;
-    private int lastStep = -1;
-
-    public float ElapsedSeconds => elapsedSeconds;
-
-    int FiveMinuteStep => secondsPerStep > 0 ? Mathf.FloorToInt(elapsedSeconds / secondsPerStep) : 0;
-
-    float SpawnIntervalMultiplier
-    {
-        get
-        {
-            int step = FiveMinuteStep;
-            if (step <= 0) return 1f;
-            return 1f / (1f + step * 0.25f);
-        }
-    }
+    [Header("Spawn Settings")]
+    public float spawnInterval = 1f;
+    public float spawnDistanceFromCamera = 8f; // Distance from camera edge to spawn enemies
+    public Camera mainCamera;
 
     void Start()
     {
-        if (player == null)
+        if (mainCamera == null)
         {
-            var go = GameObject.FindGameObjectWithTag("Player");
-            if (go != null) player = go.transform;
+            mainCamera = Camera.main;
         }
-        ApplySpawnInterval(0);
+        StartCoroutine(SpawnEnemies());
     }
 
-    void Update()
+    System.Collections.IEnumerator SpawnEnemies()
     {
-        elapsedSeconds += Time.deltaTime;
-        int step = FiveMinuteStep;
-        if (step != lastStep)
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0) yield break;
+        if (mainCamera == null) yield break;
+
+        // Infinite loop: spawn enemies continuously at random positions
+        while (true)
         {
-            lastStep = step;
-            ApplySpawnInterval(step);
+            Vector3 randomSpawnPosition = GetRandomSpawnPosition();
+            var prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            Instantiate(prefab, randomSpawnPosition, Quaternion.identity);
+            
+            yield return new WaitForSeconds(spawnInterval);
         }
     }
 
-    void ApplySpawnInterval(int fiveMinuteStep)
+    Vector3 GetRandomSpawnPosition()
     {
-        CancelInvoke(nameof(SpawnOne));
-        float interval = Mathf.Max(0.5f, spawnInterval * SpawnIntervalMultiplier);
-        float delay = fiveMinuteStep > 0 ? interval : firstSpawnDelay;
-        InvokeRepeating(nameof(SpawnOne), delay, interval);
-    }
+        if (mainCamera == null) return Vector3.zero;
 
-    void SpawnOne()
-    {
-        if (player == null) return;
-        if (maxEnemies > 0 && CountEnemies() >= maxEnemies) return;
+        // Get camera bounds
+        float orthographicSize = mainCamera.orthographicSize;
+        float aspect = mainCamera.aspect;
+        float cameraWidth = orthographicSize * aspect;
+        float cameraHeight = orthographicSize;
 
-        GameObject prefab = Random.value < 0.5f ? enemy1Prefab : enemy2Prefab;
-        if (prefab == null) return;
+        Vector3 cameraPos = mainCamera.transform.position;
 
-        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        float dist = Random.Range(minDistance, maxDistance);
-        Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
-        Vector3 pos = player.position + new Vector3(offset.x, offset.y, 0f);
+        // Randomly choose which edge to spawn from (0=top, 1=right, 2=bottom, 3=left)
+        int edge = Random.Range(0, 4);
+        Vector3 spawnPos = Vector3.zero;
 
-        Instantiate(prefab, pos, Quaternion.identity);
-    }
+        switch (edge)
+        {
+            case 0: // Top edge
+                spawnPos = new Vector3(
+                    cameraPos.x + Random.Range(-cameraWidth - spawnDistanceFromCamera, cameraWidth + spawnDistanceFromCamera),
+                    cameraPos.y + cameraHeight + spawnDistanceFromCamera,
+                    0f
+                );
+                break;
+            case 1: // Right edge
+                spawnPos = new Vector3(
+                    cameraPos.x + cameraWidth + spawnDistanceFromCamera,
+                    cameraPos.y + Random.Range(-cameraHeight - spawnDistanceFromCamera, cameraHeight + spawnDistanceFromCamera),
+                    0f
+                );
+                break;
+            case 2: // Bottom edge
+                spawnPos = new Vector3(
+                    cameraPos.x + Random.Range(-cameraWidth - spawnDistanceFromCamera, cameraWidth + spawnDistanceFromCamera),
+                    cameraPos.y - cameraHeight - spawnDistanceFromCamera,
+                    0f
+                );
+                break;
+            case 3: // Left edge
+                spawnPos = new Vector3(
+                    cameraPos.x - cameraWidth - spawnDistanceFromCamera,
+                    cameraPos.y + Random.Range(-cameraHeight - spawnDistanceFromCamera, cameraHeight + spawnDistanceFromCamera),
+                    0f
+                );
+                break;
+        }
 
-    int CountEnemies()
-    {
-        return FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None).Length;
-    }
-
-    // For UI: MM:SS or HH:MM:SS
-    public string GetTimeString()
-    {
-        int totalSeconds = Mathf.FloorToInt(elapsedSeconds);
-        int hours = totalSeconds / 3600;
-        int minutes = (totalSeconds % 3600) / 60;
-        int seconds = totalSeconds % 60;
-        if (hours > 0)
-            return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
-        return $"{minutes:D2}:{seconds:D2}";
+        return spawnPos;
     }
 }
