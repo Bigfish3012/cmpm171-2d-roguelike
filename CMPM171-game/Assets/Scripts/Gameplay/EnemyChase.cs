@@ -35,4 +35,17 @@ public class EnemyChase : MonoBehaviour
         Vector2 newPos = rb.position + dir * speed * Time.fixedDeltaTime;
         rb.MovePosition(newPos);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Check if enemy collided with player
+        if (other.CompareTag("Player"))
+        {
+            PlayerController playerController = other.GetComponent<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.TakeDamage(1);
+            }
+        }
+    }
 }

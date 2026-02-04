@@ -1,15 +1,11 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Projectile : MonoBehaviour
+public class EnemyProjectile : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float speed = 12f;
     [SerializeField] private float lifeTime = 2f;
-
-    [Header("Hit Filter")]
-    [SerializeField] private string enemyTag = "Enemies";
-    //[SerializeField] private string obstacleTag = "Obstacle";
 
     private Rigidbody2D rb;
     private bool dead;
@@ -40,29 +36,22 @@ public class Projectile : MonoBehaviour
     {
         if (dead) return;
 
-        if (other.CompareTag("Player")) return;
+        // Ignore enemies (don't damage other enemies)
+        if (other.CompareTag("Enemies")) return;
 
-        // Hit enemy: deal damage
-        if (other.CompareTag(enemyTag))
+        // Hit player: deal damage
+        if (other.CompareTag("Player"))
         {
             dead = true;
 
-            // Deal damage to enemy
-            EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
+            PlayerController playerController = other.GetComponent<PlayerController>();
+            if (playerController != null)
             {
-                enemyHealth.TakeDamage(1);
+                playerController.TakeDamage(1);
             }
 
             Destroy(gameObject);
             return;
         }
-
-        // Hit obstacle: destroy
-        // if (!string.IsNullOrEmpty(obstacleTag) && other.CompareTag(obstacleTag))
-        // {
-        //     dead = true;
-        //     Destroy(gameObject);
-        // }
     }
 }
