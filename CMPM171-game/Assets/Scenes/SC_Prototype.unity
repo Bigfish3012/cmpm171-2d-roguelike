@@ -305,6 +305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 6
+  maxHealth: 3
 --- !u!50 &986606183
 Rigidbody2D:
   serializedVersion: 5
@@ -408,7 +409,7 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
@@ -846,6 +847,9 @@ MonoBehaviour:
   cam: {fileID: 1156203096}
   player: {fileID: 1142786145}
   radius: 0.5
+  enemyTag: Enemies
+  maxTargetRange: 50
+  currentAimMode: 0
 --- !u!1 &2022114214
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,10 +881,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPrefabs:
   - {fileID: 1833789152688208827, guid: 281aecf6c769b80468376b9841fea705, type: 3}
+  - {fileID: 8160819208677212515, guid: a093214975b28354e85dd798584fbd2d, type: 3}
   spawnPoints:
   - {fileID: 1178945227}
   - {fileID: 1401901313}
-  spawnCount: 5
   spawnInterval: 0.3
 --- !u!4 &2022114216
 Transform:
