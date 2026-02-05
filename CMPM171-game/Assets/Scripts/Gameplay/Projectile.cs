@@ -4,7 +4,7 @@ public class Projectile : MonoBehaviour
 {
     public float speed = 12f;
     public float lifeTime = 2f;
-    [SerializeField] private int damage = 1;
+    private int damage;
 
     private Rigidbody2D rb;
 
@@ -13,26 +13,22 @@ public class Projectile : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(Vector2 dir)
+    public void Init(Vector2 dir, int projectileDamage = 1)
     {
+        damage = projectileDamage;
         rb.linearVelocity = dir.normalized * speed;
         Destroy(gameObject, lifeTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player")) return; // Don't destroy the projectile if it hits the player
-        
-        // Damage enemy if it's an enemy
-        if (other.CompareTag("Enemies"))
+        // Try to damage the object if it implements IDamageable
+        // Layer collision matrix handles faction separation (PlayerProjectile vs Player, EnemyProjectile vs Enemies)
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            Enemy1 enemy = other.GetComponent<Enemy1>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-            }
+            damageable.TakeDamage(damage);
+            Destroy(gameObject);
         }
-        
-        Destroy(gameObject);
     }
 }
