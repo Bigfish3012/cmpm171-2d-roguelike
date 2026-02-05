@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class RangedShooter : MonoBehaviour
 {
+    [SerializeField] private int attackDamage = 1;
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float fireCooldown = 0.2f;
@@ -23,6 +24,6 @@ public class RangedShooter : MonoBehaviour
         Vector2 dir = firePoint.right;
 
         Projectile p = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        p.Init(dir);
+        p.Init(dir, attackDamage); // don't damage the player when it hits the player
     }
 }

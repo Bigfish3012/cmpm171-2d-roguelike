@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Player_settings : MonoBehaviour
+public class Player_settings : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHealth = 10;
     

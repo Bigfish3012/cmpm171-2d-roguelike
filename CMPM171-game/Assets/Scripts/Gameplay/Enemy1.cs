@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Enemy1 : MonoBehaviour
+public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 {
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private float moveSpeed = 3f;
@@ -11,6 +11,7 @@ public class Enemy1 : MonoBehaviour
     private Transform playerTransform;
     private Rigidbody2D rb;
     private float lastDamageTime;
+    private float stopUntilTime = 0f; // Time until enemy can move again after hitting player
 
     void Start()
     {
@@ -25,28 +26,35 @@ public class Enemy1 : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        // Move towards player
-        if (playerTransform != null)
-        {
-            Vector2 direction = (playerTransform.position - transform.position).normalized;
-            rb.linearVelocity = direction * moveSpeed;
-        }
+        if (playerTransform == null) return;
+        
+        // Stop moving if still in cooldown after hitting player
+        if (Time.time < stopUntilTime) return;
+
+        Vector2 currentPos = rb.position;
+        Vector2 targetPos = (Vector2)playerTransform.position;
+
+        Vector2 direction = (targetPos - currentPos).normalized;
+        Vector2 nextPos = currentPos + direction * moveSpeed * Time.fixedDeltaTime;
+
+        rb.MovePosition(nextPos);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        // Damage player when touching
-        if (other.CompareTag("Player"))
+        // Damage player when colliding
+        if (collision.gameObject.CompareTag("Player"))
         {
             if (Time.time >= lastDamageTime + damageCooldown)
             {
-                Player_settings playerSettings = other.GetComponent<Player_settings>();
+                Player_settings playerSettings = collision.gameObject.GetComponent<Player_settings>();
                 if (playerSettings != null)
                 {
                     playerSettings.TakeDamage(1);
                     lastDamageTime = Time.time;
+                    stopUntilTime = Time.time + 0.5f; // Stop moving for 1 second
                 }
             }
         }
@@ -66,5 +74,16 @@ public class Enemy1 : MonoBehaviour
     private void Die()
     {
         Destroy(gameObject);
+    }
+
+    // Public getters for health bar
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 }
