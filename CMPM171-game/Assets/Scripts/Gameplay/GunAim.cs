@@ -8,18 +8,20 @@ public enum AimMode
 
 public class GunAim : MonoBehaviour
 {
-    [SerializeField] private Camera cam;
-    [SerializeField] private Transform player;   // Player's Transform (parent object)
-    [SerializeField] private float radius = 0.6f; // Distance of gun around player
-    [SerializeField] private string enemyTag = "Enemies";
-    [SerializeField] private float maxTargetRange = 50f; // Maximum range to target enemies
-    [SerializeField] private AimMode currentAimMode = AimMode.Auto; // Current aiming mode
+    [SerializeField] private Camera cam;                                                 // Camera reference for mouse position calculation
+    [SerializeField] private Transform player;                                           // Player's Transform (parent object)
+    [SerializeField] private float radius = 0.6f;                                        // Distance of gun around player
+    [SerializeField] private string enemyTag = "Enemies";                               // Tag of enemy objects
+    [SerializeField] private float maxTargetRange = 50f;                                 // Maximum range to target enemies
+    [SerializeField] private AimMode currentAimMode = AimMode.Auto;                    // Current aiming mode
 
+    // Awake method to initialize the camera reference
     void Awake()
     {
         if (cam == null) cam = Camera.main;
     }
 
+    // Update method to handle aiming and gun positioning
     void Update()
     {
         // Toggle aim mode when R key is pressed
@@ -60,6 +62,7 @@ public class GunAim : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
+    // FindNearestEnemyPosition method to find the nearest enemy within range
     private Vector3 FindNearestEnemyPosition()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);

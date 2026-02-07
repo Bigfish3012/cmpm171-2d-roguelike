@@ -2,17 +2,19 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float speed = 12f;
-    public float lifeTime = 2f;
-    private int damage;
+    public float speed = 12f;                                                            // Speed of the projectile
+    public float lifeTime = 2f;                                                          // Lifetime of the projectile before it gets destroyed
+    private int damage;                                                                  // Damage dealt by the projectile
 
-    private Rigidbody2D rb;
+    private Rigidbody2D rb;                                                              // Rigidbody2D component of the projectile
 
+    // Awake method to initialize the Rigidbody2D component
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    // Init method to initialize the projectile with direction and damage
     public void Init(Vector2 dir, int projectileDamage = 1)
     {
         damage = projectileDamage;
@@ -20,6 +22,7 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject, lifeTime);
     }
 
+    // OnTriggerEnter2D method to damage objects that implement IDamageable
     void OnTriggerEnter2D(Collider2D other)
     {
         // Try to damage the object if it implements IDamageable

@@ -8,6 +8,7 @@ public class GameOver : MonoBehaviour
     // [SerializeField] private TextMeshProUGUI currentScoreText;
     // [SerializeField] private AudioSource audioSource;
 
+    // Start method to initialize the game over screen
     private void Start()
     {
         // source from: https://www.youtube.com/watch?v=6PkdHcVFM6M
@@ -19,10 +20,14 @@ public class GameOver : MonoBehaviour
 
         // audioSource.Play();
     }
+
+    // Restart method to restart the game
     public void Restart()
     {
         SceneManager.LoadScene("SC_Prototype");
     }
+
+    // Home method to return to the main menu
     public void Home()
     {
         //PlayerPrefs.DeleteKey("HighScore");

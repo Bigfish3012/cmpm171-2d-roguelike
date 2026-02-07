@@ -7,9 +7,10 @@ using UnityEngine.UI;
 /// </summary>
 public class Enemy_healthbar : MonoBehaviour
 {
-    private Slider healthSlider;
-    private IHealth healthComponent;
+    private Slider healthSlider;                                                         // Slider component for displaying health
+    private IHealth healthComponent;                                                     // Component implementing IHealth interface
 
+    // Start method to initialize the health bar
     void Start()
     {
         // Get the Slider component
@@ -36,6 +37,7 @@ public class Enemy_healthbar : MonoBehaviour
         }
     }
 
+    // Update method to update the health bar display
     void Update()
     {
         if (healthComponent == null || healthSlider == null) return;

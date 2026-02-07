@@ -3,11 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class Player_settings : MonoBehaviour, IDamageable
 {
-    [SerializeField] private int maxHealth = 10;
+    [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
     
-    private int currentHealth;
-    private int lastPrintedHealth;
+    private int currentHealth;                                                           // Current health of the player
+    private int lastPrintedHealth;                                                      // Last printed health value for debug logging
 
+    // Start method to initialize the player
     void Start()
     {
         currentHealth = maxHealth;
@@ -15,6 +16,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         Debug.Log($"Player Health: {currentHealth}");
     }
 
+    // Update method to print health to console when it changes
     void Update()
     {
         // Print health to console when it changes
@@ -25,6 +27,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
     }
 
+    // Take damage method to reduce player health and handle death
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -38,6 +41,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
     }
 
+    // Get the current health of the player
     public int GetCurrentHealth()
     {
         return currentHealth;
