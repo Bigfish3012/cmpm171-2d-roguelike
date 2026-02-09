@@ -11,14 +11,10 @@ public class CameraFollow : MonoBehaviour
     // Awake method to find the player if no target is assigned
     void Awake()
     {
-        // If no target is assigned, try to find the player
-        if (target == null)
+        // If no target is assigned, get player transform from singleton
+        if (target == null && Player_settings.Instance != null)
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                target = player.transform;
-            }
+            target = Player_settings.Instance.PlayerTransform;
         }
     }
 

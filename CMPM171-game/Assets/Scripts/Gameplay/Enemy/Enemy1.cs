@@ -6,12 +6,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private int maxHealth = 3;                                          // Maximum health of the enemy
     [SerializeField] private float moveSpeed = 3f;                                       // Movement speed of the enemy
     [SerializeField] private float damageCooldown = 1f;                                  // Cooldown between damage to player
+    [SerializeField] private float avoidanceRadius = 2f;                                 // Radius to detect other enemies for avoidance
+    [SerializeField] private float avoidanceStrength = 2f;                               // Strength of avoidance force
     
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the enemy
     private float lastDamageTime;                                                        // Time when the enemy last damaged the player
-    private float stopUntilTime = 0f;                                                   // Time until enemy can move again after hitting player
+    private float stopUntilTime = 0f;                                                    // Time until enemy can move again after hitting player
 
     // Start method to initialize the enemy
     void Start()
@@ -19,15 +21,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         
-        // Find player
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        // Get player transform from singleton
+        if (Player_settings.Instance != null)
         {
-            playerTransform = player.transform;
+            playerTransform = Player_settings.Instance.PlayerTransform;
         }
     }
 
-    // FixedUpdate method to move the enemy towards the player
+    // FixedUpdate method to move the enemy towards the player with avoidance
     void FixedUpdate()
     {
         if (playerTransform == null) return;
@@ -38,21 +39,57 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         Vector2 currentPos = rb.position;
         Vector2 targetPos = (Vector2)playerTransform.position;
 
+        // Calculate direction towards player
         Vector2 direction = (targetPos - currentPos).normalized;
-        Vector2 nextPos = currentPos + direction * moveSpeed * Time.fixedDeltaTime;
+        
+        // Apply avoidance behavior
+        Vector2 avoidanceVector = CalculateAvoidance(currentPos);
+        
+        // Combine direction towards player with avoidance
+        Vector2 finalDirection = (direction + avoidanceVector).normalized;
+        Vector2 nextPos = currentPos + finalDirection * moveSpeed * Time.fixedDeltaTime;
 
         rb.MovePosition(nextPos);
     }
-
-    // OnCollisionEnter2D method to damage player when colliding
-    void OnCollisionEnter2D(Collision2D collision)
+    
+    // Calculate avoidance vector to avoid other enemies
+    private Vector2 CalculateAvoidance(Vector2 currentPos)
     {
-        // Damage player when colliding
-        if (collision.gameObject.CompareTag("Player"))
+        Vector2 avoidance = Vector2.zero;
+        
+        // Find all enemies within avoidance radius
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(currentPos, avoidanceRadius);
+        
+        foreach (Collider2D col in nearbyEnemies)
+        {
+            // Skip self and non-enemy objects
+            if (col.gameObject == gameObject) continue;
+            if (!col.CompareTag("Enemies")) continue;
+            
+            // Calculate separation vector
+            Vector2 toEnemy = (Vector2)col.transform.position - currentPos;
+            float distance = toEnemy.magnitude;
+            
+            if (distance > 0f && distance < avoidanceRadius)
+            {
+                // Calculate avoidance force (stronger when closer)
+                float avoidanceForce = avoidanceStrength * (1f - (distance / avoidanceRadius));
+                avoidance -= toEnemy.normalized * avoidanceForce;
+            }
+        }
+        
+        return avoidance;
+    }
+
+    // OnTriggerEnter2D method to damage player when triggering
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        // Damage player when triggering
+        if (other.CompareTag("Player"))
         {
             if (Time.time >= lastDamageTime + damageCooldown)
             {
-                Player_settings playerSettings = collision.gameObject.GetComponent<Player_settings>();
+                Player_settings playerSettings = other.GetComponent<Player_settings>();
                 if (playerSettings != null)
                 {
                     playerSettings.TakeDamage(1);
