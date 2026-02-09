@@ -3,13 +3,14 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Prefabs")]
-    public GameObject[] enemyPrefabs;
+    public GameObject[] enemyPrefabs;                                                    // Array of enemy prefabs to spawn
 
     [Header("Spawn Settings")]
-    public float spawnInterval = 1f;
-    public float spawnDistanceFromCamera = 8f; // Distance from camera edge to spawn enemies
-    public Camera mainCamera;
+    public float spawnInterval = 1f;                                                     // Time interval between each spawn
+    public float spawnDistanceFromCamera = 8f;                                          // Distance from camera edge to spawn enemies
+    public Camera mainCamera;                                                           // Main camera reference
 
+    // Start method to initialize the spawner
     void Start()
     {
         if (mainCamera == null)
@@ -19,6 +20,7 @@ public class EnemySpawner : MonoBehaviour
         StartCoroutine(SpawnEnemies());
     }
 
+    // SpawnEnemies coroutine to continuously spawn enemies at random positions
     System.Collections.IEnumerator SpawnEnemies()
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) yield break;
@@ -35,6 +37,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // GetRandomSpawnPosition method to get a random spawn position around the camera
     Vector3 GetRandomSpawnPosition()
     {
         if (mainCamera == null) return Vector3.zero;

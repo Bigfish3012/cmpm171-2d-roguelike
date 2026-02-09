@@ -82,5 +82,5 @@ Favor clarity, stability, and correctness over optimization or polish.
 
 ## 9. Branches
 - Do NOT work directly on the main branch
-- Feature branches should merge into test-main first
+- Feature branches should merge into main after testing and review
 - main should only receive changes that are tested and approved
