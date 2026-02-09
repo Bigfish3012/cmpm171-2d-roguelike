@@ -22,6 +22,18 @@ MonoBehaviour:
     m_Localized: Play
     m_Metadata:
       m_Items: []
+  - m_Id: 152787818090496
+    m_Localized: Setting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154592618713088
+    m_Localized: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 155750489886720
+    m_Localized: Combat Shuang
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

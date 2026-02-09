@@ -19,6 +19,18 @@ MonoBehaviour:
     m_Key: Menu_Play
     m_Metadata:
       m_Items: []
+  - m_Id: 152787818090496
+    m_Key: Menu_Setting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154592618713088
+    m_Key: Menu_Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 155750489886720
+    m_Key: Menu_GameTitle
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
