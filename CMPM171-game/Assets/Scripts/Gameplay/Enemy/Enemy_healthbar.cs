@@ -1,22 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Generic health bar that works with any object implementing IHealth interface
-/// Can be used for enemy with health. Bounces when entity takes damage.
-/// </summary>
+// Generic health bar that works with any object implementing IHealth interface.
+// Can be used for enemy with health. Bounces when entity takes damage.
 public class Enemy_healthbar : MonoBehaviour
 {
-    [SerializeField] private float bounceDuration = 0.2f;     // Duration of bounce animation
-    [SerializeField] private float bounceScale = 1.15f;     // Max scale during bounce
+    [SerializeField] private float bounceDuration = 0.2f;                               // Duration of bounce animation
+    [SerializeField] private float bounceScale = 1.15f;                                 // Max scale during bounce
 
-    private Slider healthSlider;
-    private IHealth healthComponent;
-    private RectTransform rectTransform;
-    private float previousHealth;
-    private float bounceTimer;
-    private Vector3 originalScale;
+    private Slider healthSlider;                                                        // Slider component for health display
+    private IHealth healthComponent;                                                    // Component implementing IHealth (e.g. enemy)
+    private RectTransform rectTransform;                                                 // RectTransform for bounce animation
+    private float previousHealth;                                                       // Previous health value to detect damage
+    private float bounceTimer;                                                          // Timer for bounce animation
+    private Vector3 originalScale;                                                      // Original scale before bounce
 
+    // Start method to initialize health bar components
     void Start()
     {
         healthSlider = GetComponent<Slider>();
@@ -46,6 +45,7 @@ public class Enemy_healthbar : MonoBehaviour
         originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
     }
 
+    // Update method to sync health bar with entity health and handle bounce
     void Update()
     {
         if (healthComponent == null || healthSlider == null) return;

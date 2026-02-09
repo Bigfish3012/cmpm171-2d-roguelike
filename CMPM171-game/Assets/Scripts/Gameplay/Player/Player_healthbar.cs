@@ -1,23 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Player health bar UI. Attach to a Slider under a Canvas.
-/// Position the parent RectTransform at top-left (anchor preset: Top Left) so the bar stays fixed there.
-/// Bounces when player takes damage.
-/// </summary>
+// Player health bar UI. Attach to a Slider under a Canvas.
+// Position the parent RectTransform at top-left (anchor preset: Top Left) so the bar stays fixed there.
+// Bounces when player takes damage.
 public class Player_healthbar : MonoBehaviour
 {
-    [SerializeField] private float bounceDuration = 0.2f;     // Duration of bounce animation
-    [SerializeField] private float bounceScale = 1.15f;       // Max scale during bounce
+    [SerializeField] private float bounceDuration = 0.2f;                               // Duration of bounce animation
+    [SerializeField] private float bounceScale = 1.15f;                                 // Max scale during bounce
 
-    private Slider healthSlider;
-    private Player_settings playerSettings;
-    private RectTransform rectTransform;
-    private float previousHealth;
-    private float bounceTimer;
-    private Vector3 originalScale;
+    private Slider healthSlider;                                                        // Slider component for health display
+    private Player_settings playerSettings;                                             // Reference to player health data
+    private RectTransform rectTransform;                                                 // RectTransform for bounce animation
+    private float previousHealth;                                                       // Previous health value to detect damage
+    private float bounceTimer;                                                          // Timer for bounce animation
+    private Vector3 originalScale;                                                      // Original scale before bounce
 
+    // Start method to initialize health bar components
     void Start()
     {
         healthSlider = GetComponent<Slider>();
@@ -44,6 +43,7 @@ public class Player_healthbar : MonoBehaviour
         originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
     }
 
+    // Update method to sync health bar with player health and handle bounce
     void Update()
     {
         if (playerSettings == null || healthSlider == null) return;

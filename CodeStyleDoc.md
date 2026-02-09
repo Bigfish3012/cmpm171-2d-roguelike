@@ -10,13 +10,13 @@
 ### Files
 - In general, filenames and directory names are: `PascalCase.cs`
 - For game objects (enemy/player), name them as: `GameObject_function.cs`
-  - Examples:
-    - `Enemy_shooter.cs`
-    - `Player_settings.cs`
-    - `Player_health.cs`
-    - `Enemy_healthbar.cs`
+    - Examples:
+        - `Enemy_shooter.cs`
+        - `Player_settings.cs`
+        - `Player_health.cs`
+        - `Enemy_healthbar.cs`
 - Name of interface classes: `I<values>`
-  - Example: `IHealth`, `IDamageable`
+    - Example: `IHealth`, `IDamageable`
 - Generally, one file will only have one class.
 
 ### Scenes
@@ -27,10 +27,47 @@
 - `AboutTheTeam`
 
 ## Whitespace Rules
-- Use tabs for indentation, or 4 spaces
-- Column limit: 150 characters (no longer than the screen)
-- Brace Styling: Allman style
+- Use `tabs` for indentation, or `4 spaces`
+- Column limit: `150 characters` (no longer than the screen)
+- Brace Styling: `Allman style`
 - Leave a blank line before and after each function
+
+## Asset Naming Conventions
+- For assets, ensure that their names correctly correspond to their functions.
+- Use format: `Type_Function` or `Type_Name` (e.g., Button_Back, Enemy_bullet).
+- Avoid spaces in asset names.
+    - Character Examples:
+        - Player_Roll
+        - Player_Idle
+        - Enemy_Movement
+        - Enemy_Idle
+        - Enemy_Aiming
+    - Prefab/Projectile Examples:
+        - Enemy_bullet
+        - Player_bullet
+        - Enemy_Charge
+        - Enemy_shooter
+    - Button Examples:
+        - Button_Back
+        - Button_Start
+        - Button_Close
+        - Button_Confirm
+    - Menu Examples:
+        - MainMenu_Title
+        - MainMenu_Background
+        - Menu_Pause
+    - Art Examples:
+        - Heart_Full
+        - Heart_Empty
+        - Heart_Half
+    - Audio Examples:
+        - SFX_Shoot
+        - SFX_Hit
+        - BGM_MainMenu
+
+## UI Style
+- The UI should maintain a pixel style and be bright.
+
 
 ## Comment Rules
 - Leave a comment explaining what it does before each function
@@ -57,10 +94,9 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     void Start()
     {
         currentHealth = maxHealth;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (Player_settings.Instance != null)
         {
-            playerTransform = player.transform;
+            playerTransform = Player_settings.Instance.PlayerTransform;
         }
     }
 
