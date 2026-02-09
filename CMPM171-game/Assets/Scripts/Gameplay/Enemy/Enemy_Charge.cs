@@ -33,12 +33,11 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
-        
-        // Find player
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+
+        // Get player transform from singleton
+        if (Player_settings.Instance != null)
         {
-            playerTransform = player.transform;
+            playerTransform = Player_settings.Instance.PlayerTransform;
         }
     }
 

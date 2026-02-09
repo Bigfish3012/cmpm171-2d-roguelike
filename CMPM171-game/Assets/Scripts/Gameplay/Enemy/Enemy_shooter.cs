@@ -49,6 +49,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         if (wanderDirection.sqrMagnitude < 0.01f) wanderDirection = Vector2.right;
     }
 
+    // FixedUpdate method to aim, shoot, or wander based on player distance
     void FixedUpdate()
     {
         if (playerTransform == null) return;
