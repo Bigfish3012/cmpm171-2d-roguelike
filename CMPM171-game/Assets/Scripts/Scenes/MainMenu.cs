@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    // PlayGame method to load the game scene
     public void PlayGame()
     {
         SceneManager.LoadScene("SC_Prototype");

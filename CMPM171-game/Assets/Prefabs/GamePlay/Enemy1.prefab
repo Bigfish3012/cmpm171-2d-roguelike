@@ -120,7 +120,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4290829611506956615
 RectTransform:
   m_ObjectHideFlags: 0
@@ -237,7 +237,7 @@ RectTransform:
   m_Father: {fileID: 1622986781024721458}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -289,7 +289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 478891873346098597}
   - component: {fileID: 2037828403847453874}
-  - component: {fileID: 1158528986250633947}
+  - component: {fileID: 8226159379413513292}
   - component: {fileID: 7725059412560665529}
   - component: {fileID: 8038371311414868065}
   m_Layer: 7
@@ -325,9 +325,9 @@ Rigidbody2D:
   m_GameObject: {fileID: 7311251146721653967}
   m_BodyType: 0
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
@@ -340,9 +340,9 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &1158528986250633947
+--- !u!61 &8226159379413513292
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -372,7 +372,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -401,8 +401,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy1
   maxHealth: 3
-  moveSpeed: 3
+  moveSpeed: 4
   damageCooldown: 1
+  avoidanceRadius: 2
+  avoidanceStrength: 2
 --- !u!212 &8038371311414868065
 SpriteRenderer:
   m_ObjectHideFlags: 0
