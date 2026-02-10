@@ -8,8 +8,14 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("SC_Prototype");
     }
-
-    // QuitGame method to quit the application
+    public void OpenCredits()
+    {
+        SceneManager.LoadScene("Credits");
+    }
+        public void OpenHowToPlay()
+    {
+        SceneManager.LoadScene("HowToPlay");
+    }
     public void QuitGame()
     {
         Application.Quit();
