@@ -18,7 +18,7 @@ public class LanguageDropdown : MonoBehaviour
 
     private readonly List<string> optionLabels = new()
     {
-        "English (English)",
+        "English",
         "Japanese (日本語)",
         "Simplified Chinese (简体中文)"
     };

@@ -7,6 +7,14 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("SC_Prototype");
     }
+    public void OpenCredits()
+    {
+        SceneManager.LoadScene("Credits");
+    }
+        public void OpenHowToPlay()
+    {
+        SceneManager.LoadScene("HowToPlay");
+    }
     public void QuitGame()
     {
         Application.Quit();
