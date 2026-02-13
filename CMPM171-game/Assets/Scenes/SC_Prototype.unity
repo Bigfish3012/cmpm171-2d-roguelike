@@ -398,7 +398,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1470703898}
@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 236169704}
   m_Layer: 6
   m_Name: gun_sprite
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -640,8 +640,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1687401315
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.4761196, g: 0.8792453, b: 0.5410754, a: 1}
@@ -898,8 +898,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1540904077
-  m_SortingLayer: 6
+  m_SortingLayerID: 2134067569
+  m_SortingLayer: 2
   m_SortingOrder: 5
   m_Sprite: {fileID: -1560824407875404175, guid: bfa151a653a9de84b9820c270f01ba92, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1035,8 +1035,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1540904077
-  m_SortingLayer: 6
+  m_SortingLayerID: 2134067569
+  m_SortingLayer: 2
   m_SortingOrder: 5
   m_Sprite: {fileID: -1188695920070242444, guid: 4a70396e4b9cb5647a9b1e116b5384e7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1704,8 +1704,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1540904077
-  m_SortingLayer: 6
+  m_SortingLayerID: 2134067569
+  m_SortingLayer: 2
   m_SortingOrder: 5
   m_Sprite: {fileID: 5585461391211756163, guid: d505b13d1ae0c3a47b5deac4e29353a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2171,7 +2171,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1133890535}
   - component: {fileID: 1133890534}
-  - component: {fileID: 1133890536}
   m_Layer: 10
   m_Name: ground
   m_TagString: Background
@@ -2252,52 +2251,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &1133890536
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1133890533}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 15.36, y: 10.24}
-    newSize: {x: 1.6, y: 1.59}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 15.36, y: 10.24}
-  m_EdgeRadius: 0
 --- !u!1 &1156203094
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,7 +2314,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2664,8 +2617,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1540904077
-  m_SortingLayer: 6
+  m_SortingLayerID: 2134067569
+  m_SortingLayer: 2
   m_SortingOrder: 5
   m_Sprite: {fileID: -4396434015380614688, guid: cc2fd7aff0d2f124a8ddd00c8c22ffc9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2944,7 +2897,7 @@ GameObject:
   - component: {fileID: 1470703899}
   m_Layer: 6
   m_Name: gun
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
