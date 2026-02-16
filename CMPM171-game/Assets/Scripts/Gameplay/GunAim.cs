@@ -12,9 +12,8 @@ public class GunAim : MonoBehaviour
     [SerializeField] private Transform player;                                           // Player's Transform (parent object)
     [SerializeField] private float radius = 0.6f;                                        // Distance of gun around player
     [SerializeField] private string enemyTag = "Enemies";                               // Tag of enemy objects
-    [SerializeField] private float maxTargetRange = 50f;                                 // Maximum range to target enemies
-    [SerializeField] private AimMode currentAimMode = AimMode.Auto;                    // Current aiming mode
-
+    [SerializeField] private float maxTargetRange = 15f;                                 // Maximum range to target enemies
+    [SerializeField] private AimMode currentAimMode = AimMode.Auto;      
     // Awake method to initialize the camera reference
     void Awake()
     {
