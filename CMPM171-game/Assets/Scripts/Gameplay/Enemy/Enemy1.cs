@@ -9,7 +9,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float avoidanceRadius = 2f;                                 // Radius to detect other enemies for avoidance
     [SerializeField] private float avoidanceStrength = 2f;                               // Strength of avoidance force
     [SerializeField] private int experience = 1;                                         // Experience points given to player when killed
-    
+    [SerializeField] private GameObject damagePopUpPrefab;                               // Prefab for damage pop-up text (optional)
+
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the enemy
@@ -105,7 +106,17 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        
+
+        if (damagePopUpPrefab != null)
+        {
+            GameObject popup = Instantiate(damagePopUpPrefab, transform.position, Quaternion.identity);
+            DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
+            if (popupScript != null)
+            {
+                popupScript.Init(damage, transform.position);
+            }
+        }
+
         if (currentHealth <= 0)
         {
             Die();

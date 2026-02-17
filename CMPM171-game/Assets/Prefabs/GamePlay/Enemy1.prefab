@@ -407,6 +407,8 @@ MonoBehaviour:
   damageCooldown: 1
   avoidanceRadius: 2
   avoidanceStrength: 2
+  experience: 1
+  damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
 --- !u!212 &8038371311414868065
 SpriteRenderer:
   m_ObjectHideFlags: 0
