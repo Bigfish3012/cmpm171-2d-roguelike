@@ -12,6 +12,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float aimTime = 0.5f;                                     // Time to aim before firing
     [SerializeField] private float wanderSpeed = 1.5f;                                  // Speed when randomly wandering
     [SerializeField] private float wanderDirectionInterval = 2f;                        // Seconds before picking a new random direction
+    [SerializeField] private int experience = 2;                                        // Experience points given to player when killed
 
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
@@ -112,9 +113,13 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             Die();
         }
     }
-    // Die method to destroy the enemy
+    // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (Player_settings.Instance != null)
+        {
+            Player_settings.Instance.AddExperience(experience);
+        }
         Destroy(gameObject);
     }
 

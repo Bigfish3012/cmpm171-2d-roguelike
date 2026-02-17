@@ -8,6 +8,7 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float damageCooldown = 1f;                                  // Cooldown between damage to player
     [SerializeField] private float avoidanceRadius = 2f;                                 // Radius to detect other enemies for avoidance
     [SerializeField] private float avoidanceStrength = 2f;                               // Strength of avoidance force
+    [SerializeField] private int experience = 1;                                         // Experience points given to player when killed
     
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
@@ -111,9 +112,13 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         }
     }
 
-    // Die method to destroy the enemy
+    // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (Player_settings.Instance != null)
+        {
+            Player_settings.Instance.AddExperience(experience);
+        }
         Destroy(gameObject);
     }
 

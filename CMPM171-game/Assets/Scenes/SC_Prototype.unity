@@ -196,6 +196,7 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 7311251146721653967, guid: 0b092602ec9b23840891ce1e91b37979, type: 3}
   - {fileID: 2035685506511785700, guid: e70426205a2df154baebbe0ef6a95539, type: 3}
+  - {fileID: 8873213055497842075, guid: e0face1790efc2041a61cf4eac618a0b, type: 3}
   spawnInterval: 1
   spawnDistanceFromCamera: 2
   mainCamera: {fileID: 1156203096}
@@ -842,9 +843,9 @@ GameObject:
   - component: {fileID: 299861727}
   - component: {fileID: 299861726}
   - component: {fileID: 299861725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: table_1_0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -979,9 +980,9 @@ GameObject:
   - component: {fileID: 304736107}
   - component: {fileID: 304736106}
   - component: {fileID: 304736105}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: table_2_0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1689,9 +1690,9 @@ GameObject:
   - component: {fileID: 904878101}
   - component: {fileID: 904878100}
   - component: {fileID: 904878099}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: table_3_0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2602,9 +2603,9 @@ GameObject:
   - component: {fileID: 1223290193}
   - component: {fileID: 1223290192}
   - component: {fileID: 1223290191}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: table_4_0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
