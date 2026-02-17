@@ -1,11 +1,16 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    // PlayGame method to load the game scene
     public void PlayGame()
     {
+        StartCoroutine(PlayGameDelayed());
+    }
+    private IEnumerator PlayGameDelayed()
+    {
+        yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene("SC_Prototype");
     }
     public void OpenCredits()
@@ -15,6 +20,10 @@ public class MainMenu : MonoBehaviour
         public void OpenHowToPlay()
     {
         SceneManager.LoadScene("HowToPlay");
+    }
+    public void OpenSetting()
+    {
+        SceneManager.LoadScene("Setting");
     }
     public void QuitGame()
     {
