@@ -18,6 +18,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float chargeTime = 1f;                                      // Time to charge before dashing
     [SerializeField] private float dashDuration = 2f;                                    // Duration of the dash
     [SerializeField] private float damageCooldown = 2f;                                  // Cooldown between damage to player
+    [SerializeField] private int experience = 3;                                         // Experience points given to player when killed
     
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
@@ -129,9 +130,13 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
         }
     }
 
-    // Die method to destroy the enemy
+    // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (Player_settings.Instance != null)
+        {
+            Player_settings.Instance.AddExperience(experience);
+        }
         Destroy(gameObject);
     }
 
