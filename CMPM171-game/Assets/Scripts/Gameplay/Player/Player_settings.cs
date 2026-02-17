@@ -12,6 +12,7 @@ public class Player_settings : MonoBehaviour, IDamageable
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
     
     private int currentHealth;                                                           // Current health of the player
+    private int currentExperience;                                                       // Experience points gained from killing enemies
     private int lastPrintedHealth;                                                      // Last printed health value for debug logging
     private bool isInvincible = false;                                                  // Whether the player is currently invincible
 
@@ -85,5 +86,18 @@ public class Player_settings : MonoBehaviour, IDamageable
     public int GetMaxHealth()
     {
         return maxHealth;
+    }
+
+    // Add experience when killing an enemy
+    public void AddExperience(int amount)
+    {
+        currentExperience += amount;
+        Debug.Log($"Player Experience: {currentExperience}");
+    }
+
+    // Get the current experience of the player
+    public int GetCurrentExperience()
+    {
+        return currentExperience;
     }
 }
