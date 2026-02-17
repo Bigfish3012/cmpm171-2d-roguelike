@@ -55,6 +55,10 @@ MonoBehaviour:
     m_Key: HowToPlay
     m_Metadata:
       m_Items: []
+  - m_Id: 353995409297408
+    m_Key: Pause
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
