@@ -365,7 +365,6 @@ GameObject:
   - component: {fileID: 144195450}
   - component: {fileID: 144195455}
   - component: {fileID: 144195457}
-  - component: {fileID: 144195458}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -565,21 +564,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &144195458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 144195449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6789012345678901234ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 1369899861}
-  smoothSpeed: 0
-  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &236169702
 GameObject:
   m_ObjectHideFlags: 0
@@ -3011,6 +2995,8 @@ GameObject:
   - component: {fileID: 1369899863}
   - component: {fileID: 1369899862}
   - component: {fileID: 1369899864}
+  - component: {fileID: 1369899865}
+  - component: {fileID: 1369899866}
   m_Layer: 0
   m_Name: EffectTrigger
   m_TagString: Untagged
@@ -3185,6 +3171,35 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1369899865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369899859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6789012345678901234ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
+  target: {fileID: 144195451}
+  smoothSpeed: 0
+  offset: {x: 0, y: 0, z: 0}
+--- !u!114 &1369899866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369899859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c7dd6d9d99243589d9a0e9ebffd70f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Upgrade
+  animator: {fileID: 0}
+  targetAnimation: {fileID: 7400000, guid: 5d03536dfd17a4b7daf64acca6a541c5, type: 2}
 --- !u!1 &1397307777
 GameObject:
   m_ObjectHideFlags: 0
