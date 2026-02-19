@@ -1,0 +1,1053 @@
+fileFormatVersion: 2
+guid: 36c37b7eaa0b245dc998c9b46bf55526
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2502223585362514597
+    second: tangyuan_attack_0
+  - first:
+      213: -7868451067381943409
+    second: tangyuan_attack_1
+  - first:
+      213: 6908939080218589201
+    second: tangyuan_attack_2
+  - first:
+      213: 3962429647366571505
+    second: tangyuan_attack_3
+  - first:
+      213: -6304592806491066610
+    second: tangyuan_attack_4
+  - first:
+      213: -313841004542645162
+    second: tangyuan_attack_5
+  - first:
+      213: -8725577866691682627
+    second: tangyuan_attack_6
+  - first:
+      213: 4575022625931090419
+    second: tangyuan_attack_7
+  - first:
+      213: 367923890688367933
+    second: tangyuan_attack_8
+  - first:
+      213: 923955176004020748
+    second: tangyuan_attack_9
+  - first:
+      213: 4140418699777231770
+    second: tangyuan_attack_10
+  - first:
+      213: 4076225472130959695
+    second: tangyuan_attack_11
+  - first:
+      213: -7994771372836434472
+    second: tangyuan_attack_12
+  - first:
+      213: 3596234289660521784
+    second: tangyuan_attack_13
+  - first:
+      213: 8775736471933226136
+    second: tangyuan_attack_14
+  - first:
+      213: 4258610091998348603
+    second: tangyuan_attack_15
+  - first:
+      213: 8179032863101661686
+    second: tangyuan_attack_16
+  - first:
+      213: 4800292937206085613
+    second: tangyuan_attack_17
+  - first:
+      213: 7771548590292386648
+    second: tangyuan_attack_18
+  - first:
+      213: 4785003018095028209
+    second: tangyuan_attack_19
+  - first:
+      213: -7549334716888216419
+    second: tangyuan_attack_20
+  - first:
+      213: 3969824191113809695
+    second: tangyuan_attack_21
+  - first:
+      213: -8870839926598233626
+    second: tangyuan_attack_22
+  - first:
+      213: 8545070112025606708
+    second: tangyuan_attack_23
+  - first:
+      213: -1494379944241925658
+    second: tangyuan_attack_24
+  - first:
+      213: -3340852896299683497
+    second: tangyuan_attack_25
+  - first:
+      213: 3173536550706917808
+    second: tangyuan_attack_26
+  - first:
+      213: 9051865334342480578
+    second: tangyuan_attack_27
+  - first:
+      213: 3043869708076788853
+    second: tangyuan_attack_28
+  - first:
+      213: 2178698951991441935
+    second: tangyuan_attack_29
+  - first:
+      213: -9025942396471801695
+    second: tangyuan_attack_30
+  - first:
+      213: 5500068792078294467
+    second: tangyuan_attack_31
+  - first:
+      213: -514294231929540420
+    second: tangyuan_attack_32
+  - first:
+      213: -8490739198966568618
+    second: tangyuan_attack_33
+  - first:
+      213: -2471312692149252606
+    second: tangyuan_attack_34
+  - first:
+      213: -1257254744705698655
+    second: tangyuan_attack_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tangyuan_attack_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 171
+        width: 64
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5decdd08e0564dd0800000000000000
+      internalID: -2502223585362514597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_1
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 176
+        width: 52
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f83f72c6175adc290800000000000000
+      internalID: -7868451067381943409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_2
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 176
+        width: 52
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1183e330d7b71ef50800000000000000
+      internalID: 6908939080218589201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_3
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 199
+        width: 31
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5c2ca35c06df630800000000000000
+      internalID: 3962429647366571505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_4
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 176
+        width: 55
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0fed93ee369188a0800000000000000
+      internalID: -6304592806491066610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_5
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 204
+        width: 16
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65ca848e44305abf0800000000000000
+      internalID: -313841004542645162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_6
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 200
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbed4db092588e680800000000000000
+      internalID: -8725577866691682627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_7
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 200
+        width: 80
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f95ff9b6debd7f30800000000000000
+      internalID: 4575022625931090419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_8
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 176
+        width: 55
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3d1cd844d02b1500800000000000000
+      internalID: 367923890688367933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_9
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 202
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0a6a16565c82dc00800000000000000
+      internalID: 923955176004020748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_10
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9b4b9dded8b57930800000000000000
+      internalID: 4140418699777231770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_11
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f49c3ca5879a19830800000000000000
+      internalID: 4076225472130959695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_12
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd4f956bcddc0190800000000000000
+      internalID: -7994771372836434472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_13
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83d6b44680468e130800000000000000
+      internalID: 3596234289660521784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_14
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c050c43dda9c970800000000000000
+      internalID: 8775736471933226136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_15
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 175
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b35847ac05f991b30800000000000000
+      internalID: 4258610091998348603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_16
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 185
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f1bb6bfd03c18170800000000000000
+      internalID: 8179032863101661686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_17
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 179
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de73cfb4ef01e9240800000000000000
+      internalID: 4800292937206085613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_18
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 163
+        width: 35
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 853c01774461adb60800000000000000
+      internalID: 7771548590292386648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_19
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 163
+        width: 32
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f7e9b694eeb76240800000000000000
+      internalID: 4785003018095028209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_20
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 185
+        width: 20
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c8a55b2106b3790800000000000000
+      internalID: -7549334716888216419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_21
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 161
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1f471c9116a71730800000000000000
+      internalID: 3969824191113809695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_22
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 157
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e192c3261274e480800000000000000
+      internalID: -8870839926598233626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_23
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 170
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43af7104eff269670800000000000000
+      internalID: 8545070112025606708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_24
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 157
+        width: 20
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e1fdf7bb55e24be0800000000000000
+      internalID: -1494379944241925658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_25
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 167
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 751f83dcdf7e2a1d0800000000000000
+      internalID: -3340852896299683497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_26
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 157
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b1ba92cdaaaa0c20800000000000000
+      internalID: 3173536550706917808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_27
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 166
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c2f720109fae9d70800000000000000
+      internalID: 9051865334342480578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_28
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 158
+        width: 22
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57c2d745f5ffd3a20800000000000000
+      internalID: 3043869708076788853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_29
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 10
+        width: 128
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0a37f1572b4c3e10800000000000000
+      internalID: 2178698951991441935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_30
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 107
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a8092f36396db280800000000000000
+      internalID: -9025942396471801695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_31
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 113
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cdd9000d6b245c40800000000000000
+      internalID: 5500068792078294467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_32
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 112
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb0bec3fe1cdcd8f0800000000000000
+      internalID: -514294231929540420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_33
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 106
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 659ec153fa5da2a80800000000000000
+      internalID: -8490739198966568618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_34
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 1
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20e8787333224bdd0800000000000000
+      internalID: -2471312692149252606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tangyuan_attack_35
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 1
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a474ad88755d8ee0800000000000000
+      internalID: -1257254744705698655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tangyuan_attack_0: -2502223585362514597
+      tangyuan_attack_1: -7868451067381943409
+      tangyuan_attack_10: 4140418699777231770
+      tangyuan_attack_11: 4076225472130959695
+      tangyuan_attack_12: -7994771372836434472
+      tangyuan_attack_13: 3596234289660521784
+      tangyuan_attack_14: 8775736471933226136
+      tangyuan_attack_15: 4258610091998348603
+      tangyuan_attack_16: 8179032863101661686
+      tangyuan_attack_17: 4800292937206085613
+      tangyuan_attack_18: 7771548590292386648
+      tangyuan_attack_19: 4785003018095028209
+      tangyuan_attack_2: 6908939080218589201
+      tangyuan_attack_20: -7549334716888216419
+      tangyuan_attack_21: 3969824191113809695
+      tangyuan_attack_22: -8870839926598233626
+      tangyuan_attack_23: 8545070112025606708
+      tangyuan_attack_24: -1494379944241925658
+      tangyuan_attack_25: -3340852896299683497
+      tangyuan_attack_26: 3173536550706917808
+      tangyuan_attack_27: 9051865334342480578
+      tangyuan_attack_28: 3043869708076788853
+      tangyuan_attack_29: 2178698951991441935
+      tangyuan_attack_3: 3962429647366571505
+      tangyuan_attack_30: -9025942396471801695
+      tangyuan_attack_31: 5500068792078294467
+      tangyuan_attack_32: -514294231929540420
+      tangyuan_attack_33: -8490739198966568618
+      tangyuan_attack_34: -2471312692149252606
+      tangyuan_attack_35: -1257254744705698655
+      tangyuan_attack_4: -6304592806491066610
+      tangyuan_attack_5: -313841004542645162
+      tangyuan_attack_6: -8725577866691682627
+      tangyuan_attack_7: 4575022625931090419
+      tangyuan_attack_8: 367923890688367933
+      tangyuan_attack_9: 923955176004020748
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

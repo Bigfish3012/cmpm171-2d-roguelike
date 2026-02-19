@@ -8,7 +8,8 @@ public class PlayerController : MonoBehaviour
     public float rollDuration = 0.3f;                                                    // Duration of the roll
     public float rollCooldown = 0.5f;                                                    // Cooldown between rolls
 
-    private Rigidbody2D rb;                                                              // Rigidbody2D component of the player
+    private Rigidbody2D rb;  
+    private Animator anim;                                                              // Rigidbody2D component of the player
     private Vector2 move;                                                                // Movement direction vector
     private Player_settings playerSettings;                                              // Reference to Player_settings component
     private bool isRolling = false;                                                      // Whether the player is currently rolling
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         playerSettings = GetComponent<Player_settings>();
     }
 
@@ -28,6 +30,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        
+        handleAnimations();
 
         // Update last movement direction if player is moving
         if (move.magnitude > 0.1f)
@@ -71,6 +75,12 @@ public class PlayerController : MonoBehaviour
                 playerSettings.SetInvincible(false);
             }
         }
+    }
+
+    void handleAnimations()
+    {
+        bool isMove = move.magnitude > 0.1f;
+        anim.SetBool("isMove", isMove);
     }
 
     // FixedUpdate method to apply movement to the player

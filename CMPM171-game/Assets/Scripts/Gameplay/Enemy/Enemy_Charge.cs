@@ -18,7 +18,9 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float chargeTime = 1f;                                      // Time to charge before dashing
     [SerializeField] private float dashDuration = 2f;                                    // Duration of the dash
     [SerializeField] private float damageCooldown = 2f;                                  // Cooldown between damage to player
-    
+    [SerializeField] private int experience = 3;                                         // Experience points given to player when killed
+    [SerializeField] private GameObject damagePopUpPrefab;                               // Prefab for damage pop-up text (optional)
+
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the enemy
@@ -122,16 +124,30 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        
+
+        if (damagePopUpPrefab != null)
+        {
+            GameObject popup = Instantiate(damagePopUpPrefab, transform.position, Quaternion.identity);
+            DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
+            if (popupScript != null)
+            {
+                popupScript.Init(damage, transform.position);
+            }
+        }
+
         if (currentHealth <= 0)
         {
             Die();
         }
     }
 
-    // Die method to destroy the enemy
+    // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (Player_settings.Instance != null)
+        {
+            Player_settings.Instance.AddExperience(experience);
+        }
         Destroy(gameObject);
     }
 
