@@ -29,7 +29,7 @@ public class Menu_Pause : MonoBehaviour
     public void PauseGame()
     {
         pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
+        Time.timeScale = 0;
         isPaused = true;
     }
 

@@ -54,11 +54,13 @@ public class MenuItemHoverSmooth : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (!inited) return;
 
-        transform.localPosition = Vector3.Lerp(transform.localPosition, targetPos, Time.deltaTime * speed);
-        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * speed);
+        float dt = Time.unscaledDeltaTime;
 
-        if (hoverBG) hoverBG.alpha = Mathf.Lerp(hoverBG.alpha, targetHoverA, Time.deltaTime * speed);
-        if (activeBar) activeBar.alpha = Mathf.Lerp(activeBar.alpha, targetBarA, Time.deltaTime * speed);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, targetPos, dt * speed);
+        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, dt * speed);
+
+        if (hoverBG) hoverBG.alpha = Mathf.Lerp(hoverBG.alpha, targetHoverA, dt * speed);
+        if (activeBar) activeBar.alpha = Mathf.Lerp(activeBar.alpha, targetBarA, dt * speed);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
