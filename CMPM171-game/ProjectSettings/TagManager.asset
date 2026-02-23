@@ -8,6 +8,7 @@ TagManager:
   - Enemies
   - Bullet
   - Background
+  - 'DamagePopUp '
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Player
   - Enemies
   - Obstacle
-  - 
+  - DamagePopUp
   - Ground
   - PlayerProjectile
   - EnemyProjectile
@@ -63,7 +64,11 @@ TagManager:
   - name: Props
     uniqueID: 2754063219
     locked: 0
+  - name: DamagePopUp
+    uniqueID: 1049356261
+    locked: 0
   m_RenderingLayers:
   - Default
   - Ground
   - Player
+  - UI
