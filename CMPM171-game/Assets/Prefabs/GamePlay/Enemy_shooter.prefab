@@ -188,4 +188,4 @@ MonoBehaviour:
   wanderSpeed: 1.5
   wanderDirectionInterval: 2
   experience: 2
-  damagePopUpPrefab: {fileID: 0}
+  damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
