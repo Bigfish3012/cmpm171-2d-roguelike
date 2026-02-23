@@ -5,14 +5,14 @@ public class RangedShooter : MonoBehaviour
     [SerializeField] private int attackDamage = 1;                                      // Damage of the projectile
     [SerializeField] private Projectile projectilePrefab;                               // Prefab of the projectile
     [SerializeField] private Transform firePoint;                                       // Point to spawn the projectile
-    [SerializeField] private float fireCooldown = 3f;                                 // Cooldown between each shot
+    [SerializeField] private float fireCooldown = 0.2f;                                 // Cooldown between each shot
 
     private float nextFireTime;                                                          // Time to spawn the next projectile
 
-    // Update method to auto-fire when cooldown is ready
+    // Update method to check for input and shoot when cooldown is ready
     void Update()
     {
-        if (Time.time >= nextFireTime)
+        if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
             Shoot();
             nextFireTime = Time.time + fireCooldown;
