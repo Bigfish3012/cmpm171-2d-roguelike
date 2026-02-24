@@ -192,14 +192,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6190493654e3645459e3f2a34e23762b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_shooter
-  maxHealth: 2
+  maxHealth: 5
   attackDamage: 1
   enemyBulletPrefab: {fileID: 6244557654308570867, guid: 8b534d4e35e4c404bb548712e65a4bb0, type: 3}
   firePoint: {fileID: 0}
   fireCooldown: 1.5
-  shootRange: 10
+  shootRange: 7
   aimTime: 0.5
-  wanderSpeed: 1.5
+  wanderSpeed: 2
   wanderDirectionInterval: 2
   experience: 2
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}

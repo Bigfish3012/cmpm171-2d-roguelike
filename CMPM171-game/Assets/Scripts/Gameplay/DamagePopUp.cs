@@ -12,12 +12,17 @@ public class DamagePopUp : MonoBehaviour
     private float timer;
     private Vector3 startPos;
 
-    public void Init(int damage, Vector3 worldPosition)
+    public void Init(int damage, Vector3 worldPosition, bool isCrit = false)
     {
         textMesh = GetComponentInChildren<TextMeshProUGUI>();
         if (textMesh != null)
         {
             textMesh.text = damage.ToString();
+            if(isCrit)
+            {
+                textMesh.color = Color.red;
+                textMesh.fontSize = 40;
+            }
         }
         Vector3 offset = Vector3.up * 0.5f + Vector3.right * Random.Range(-horizontalOffsetRange, horizontalOffsetRange);
         transform.position = worldPosition + offset;

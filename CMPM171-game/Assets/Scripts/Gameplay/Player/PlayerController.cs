@@ -111,6 +111,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Upgrade method for Level Up Menu
+    public void AddMoveSpeed(float amount)
+    {
+        moveSpeed += amount;
+    }
+
     // Clamp player position to movement bounds (e.g. cutting board) after physics
     void LateUpdate()
     {
