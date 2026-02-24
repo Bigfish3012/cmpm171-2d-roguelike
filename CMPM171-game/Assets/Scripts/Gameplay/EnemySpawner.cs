@@ -7,7 +7,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Spawn Settings")]
     public float spawnInterval = 1f;                                                     // Time interval between each spawn
-    public float spawnDistanceFromCamera = 8f;                                          // Distance from camera edge to spawn enemies
+    public float spawnDistanceFromCamera = 2f;                                          // Distance from camera edge to spawn enemies
     public Camera mainCamera;                                                           // Main camera reference
 
     // Start method to initialize the spawner

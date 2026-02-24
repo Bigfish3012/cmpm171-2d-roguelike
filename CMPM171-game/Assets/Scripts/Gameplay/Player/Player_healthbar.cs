@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 // Player health bar UI. Attach to a Slider under a Canvas.
 // Position the parent RectTransform at top-left (anchor preset: Top Left) so the bar stays fixed there.
@@ -8,6 +9,7 @@ public class Player_healthbar : MonoBehaviour
 {
     [SerializeField] private float bounceDuration = 0.2f;                               // Duration of bounce animation
     [SerializeField] private float bounceScale = 1.15f;                                 // Max scale during bounce
+    [SerializeField] private TextMeshProUGUI healthText;                                 // Optional: shows "current/max" (e.g. 12/12)
 
     private Slider healthSlider;                                                        // Slider component for health display
     private Player_settings playerSettings;                                             // Reference to player health data
@@ -39,6 +41,11 @@ public class Player_healthbar : MonoBehaviour
         healthSlider.maxValue = 1f;
         healthSlider.value = 1f;
 
+        if (healthText == null)
+        {
+            healthText = GetComponentInChildren<TextMeshProUGUI>(true);
+        }
+
         previousHealth = playerSettings.GetCurrentHealth();
         originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
     }
@@ -54,6 +61,11 @@ public class Player_healthbar : MonoBehaviour
         int currentHealth = playerSettings.GetCurrentHealth();
         float ratio = (float)currentHealth / maxHp;
         healthSlider.value = ratio;
+
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth}/{maxHp}";
+        }
 
         // Detect damage and trigger bounce
         if (currentHealth < previousHealth)

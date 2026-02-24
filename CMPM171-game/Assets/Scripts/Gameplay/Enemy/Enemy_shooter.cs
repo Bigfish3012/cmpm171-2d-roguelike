@@ -8,7 +8,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private Projectile enemyBulletPrefab;                              // Prefab of the enemy bullet
     [SerializeField] private Transform firePoint;                                       // Point to spawn the enemy bullet
     [SerializeField] private float fireCooldown = 1.5f;                                 // Cooldown between each shot
-    [SerializeField] private float shootRange = 10f;                                    // Range to spawn the enemy bullet
+    [SerializeField] private float shootRange = 5f;                                     // Range to spawn the enemy bullet (closer = must get nearer to player)
     [SerializeField] private float aimTime = 0.5f;                                     // Time to aim before firing
     [SerializeField] private float wanderSpeed = 1.5f;                                  // Speed when randomly wandering
     [SerializeField] private float wanderDirectionInterval = 2f;                        // Seconds before picking a new random direction
@@ -105,7 +105,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     }
 
     // Take damage from projectiles
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         currentHealth -= damage;
 
@@ -115,7 +115,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
             if (popupScript != null)
             {
-                popupScript.Init(damage, transform.position);
+                popupScript.Init(damage, transform.position, isCrit);
             }
         }
 

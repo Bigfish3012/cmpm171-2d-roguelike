@@ -13,7 +13,9 @@ public class Player_settings : MonoBehaviour, IDamageable
     public Transform PlayerTransform => transform;
     
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
-    [SerializeField] private int xpPerLevel = 100;                                      // XP required per level (e.g. 100 XP = level 2)
+    [SerializeField] private int xpPerLevel = 30;                                      // XP required per level (e.g. 100 XP = level 2)
+    [SerializeField] private float critRate = 20f;                                     // Critical hit chance (default 20%)
+    [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
 
     private int currentHealth;                                                           // Current health of the player
     private int currentExperience;                                                       // Experience points gained from killing enemies
@@ -55,7 +57,7 @@ public class Player_settings : MonoBehaviour, IDamageable
     }
 
     // Take damage method to reduce player health and handle death
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         // Don't take damage if invincible
         if (isInvincible)
@@ -102,6 +104,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         if (levelAfter > levelBefore)
         {
             Debug.Log($"Level Up! Now Level {levelAfter}");
+            currentHealth = maxHealth;  // Restore full health on level up
             OnLevelUp?.Invoke(levelAfter);
         }
         Debug.Log($"Player Experience: {currentExperience} (Level {levelAfter})");
@@ -129,5 +132,45 @@ public class Player_settings : MonoBehaviour, IDamageable
     public int GetXPPerLevel()
     {
         return xpPerLevel;
+    }
+
+    // Calculate damage with critical hit roll. Returns (damage, isCrit).
+    public (int damage, bool isCrit) CalculateDamageWithCrit(int baseDamage)
+    {
+        bool isCrit = UnityEngine.Random.Range(0f, 100f) < critRate;
+        if (isCrit)
+        {
+            return (Mathf.RoundToInt(baseDamage * (1f + critDamage / 100f)), true);
+        }
+        return (baseDamage, false);
+    }
+
+    // Get crit rate for display or other use
+    public float GetCritRate()
+    {
+        return critRate;
+    }
+
+    // Get crit damage for display or other use
+    public float GetCritDamage()
+    {
+        return critDamage;
+    }
+
+    // Upgrade methods for Level Up Menu
+    public void AddMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth += amount;
+    }
+
+    public void AddCritRate(float amount)
+    {
+        critRate += amount;
+    }
+
+    public void AddCritDamage(float amount)
+    {
+        critDamage += amount;
     }
 }

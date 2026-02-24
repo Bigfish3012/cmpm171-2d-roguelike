@@ -121,7 +121,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     }
 
     // Take damage from projectiles
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         currentHealth -= damage;
 
@@ -131,7 +131,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
             DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
             if (popupScript != null)
             {
-                popupScript.Init(damage, transform.position);
+                popupScript.Init(damage, transform.position, isCrit);
             }
         }
 
