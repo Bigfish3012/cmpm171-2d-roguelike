@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 {
-    [SerializeField] private int maxHealth = 3;                                          // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 30;                                          // Maximum health of the enemy
     [SerializeField] private float moveSpeed = 3f;                                       // Movement speed of the enemy
     [SerializeField] private float damageCooldown = 1f;                                  // Cooldown between damage to player
     [SerializeField] private float avoidanceRadius = 2f;                                 // Radius to detect other enemies for avoidance

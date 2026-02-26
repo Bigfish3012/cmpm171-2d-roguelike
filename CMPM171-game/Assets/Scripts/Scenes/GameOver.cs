@@ -24,13 +24,22 @@ public class GameOver : MonoBehaviour
     // Restart method to restart the game
     public void Restart()
     {
-        SceneManager.LoadScene("SC_Prototype");
+        if (GameManager.Instance != null)
+            GameManager.Instance.ClearSavedData();
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene("SC_Prototype");
+        else
+            SceneManager.LoadScene("SC_Prototype");
     }
 
     // Home method to return to the main menu
     public void Home()
     {
-        //PlayerPrefs.DeleteKey("HighScore");
-        SceneManager.LoadScene("MainMenu");
+        if (GameManager.Instance != null)
+            GameManager.Instance.ClearSavedData();
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene("MainMenu");
+        else
+            SceneManager.LoadScene("MainMenu");
     }
 }

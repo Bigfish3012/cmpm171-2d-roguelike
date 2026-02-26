@@ -6,12 +6,21 @@ public class RangedShooter : MonoBehaviour
     [SerializeField] private Projectile projectilePrefab;                               // Prefab of the projectile
     [SerializeField] private Transform firePoint;                                       // Point to spawn the projectile
     [SerializeField] private float fireCooldown = 3f;                                 // Cooldown between each shot
+    [SerializeField] private GunAim gunAim;                                              // Gun aiming state for target checks
 
     private float nextFireTime;                                                          // Time to spawn the next projectile
+
+    void Awake()
+    {
+        if (gunAim == null)
+            gunAim = GetComponentInChildren<GunAim>();
+    }
 
     // Update method to auto-fire when cooldown is ready
     void Update()
     {
+        if (gunAim == null || !gunAim.HasTarget) return;
+
         if (Time.time >= nextFireTime)
         {
             Shoot();
@@ -44,5 +53,11 @@ public class RangedShooter : MonoBehaviour
     public void AddAttackDamage(int amount)
     {
         attackDamage += amount;
+        if (GameManager.Instance != null && Player_settings.Instance != null)
+            GameManager.Instance.SaveFrom(Player_settings.Instance, GetComponent<PlayerController>(), this);
     }
+
+    // For GameManager persistence
+    public int GetAttackDamage() => attackDamage;
+    public void SetAttackDamage(int value) => attackDamage = value;
 }

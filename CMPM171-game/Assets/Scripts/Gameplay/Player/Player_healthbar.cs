@@ -31,29 +31,32 @@ public class Player_healthbar : MonoBehaviour
             return;
         }
 
-        if (playerSettings == null)
-        {
-            Debug.LogError("Player_healthbar: Player_settings instance not found!");
-            return;
-        }
-
         healthSlider.minValue = 0f;
         healthSlider.maxValue = 1f;
         healthSlider.value = 1f;
 
         if (healthText == null)
-        {
             healthText = GetComponentInChildren<TextMeshProUGUI>(true);
-        }
 
-        previousHealth = playerSettings.GetCurrentHealth();
-        originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        // playerSettings may be null in MainMenu (no Player); we retry in Update when entering gameplay
+        if (playerSettings != null)
+        {
+            previousHealth = playerSettings.GetCurrentHealth();
+            originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        }
     }
 
     // Update method to sync health bar with player health and handle bounce
     void Update()
     {
-        if (playerSettings == null || healthSlider == null) return;
+        if (healthSlider == null) return;
+        if (playerSettings == null)
+        {
+            playerSettings = Player_settings.Instance;
+            if (playerSettings == null) return;
+            previousHealth = playerSettings.GetCurrentHealth();
+            originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        }
 
         int maxHp = playerSettings.GetMaxHealth();
         if (maxHp <= 0) return;

@@ -59,11 +59,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 353995409297408
-    m_Localized: Level UP!!!
+    m_Localized: Pause
     m_Metadata:
       m_Items: []
   - m_Id: 3799513049305088
     m_Localized: English
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5886803411165184
+    m_Localized: Level Up!!!
     m_Metadata:
       m_Items: []
   references:

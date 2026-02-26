@@ -11,7 +11,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
         Dashing         // Charging complete, dashing towards player
     }
 
-    [SerializeField] private int maxHealth = 5;                                          // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 50;                                          // Maximum health of the enemy
     [SerializeField] private int attackDamage = 1;                                       // Damage dealt to player on collision
     [SerializeField] private float dashSpeed = 20f;                                      // Speed when dashing towards player
     [SerializeField] private float detectionRange = 30f;                                 // Range to detect player

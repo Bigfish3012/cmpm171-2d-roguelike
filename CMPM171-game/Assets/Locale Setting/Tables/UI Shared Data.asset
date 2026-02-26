@@ -56,11 +56,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 353995409297408
-    m_Key: Level UP!!!
+    m_Key: Pause
     m_Metadata:
       m_Items: []
   - m_Id: 3799513049305088
     m_Key: English
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5886803411165184
+    m_Key: Level Up!!!
     m_Metadata:
       m_Items: []
   m_Metadata:

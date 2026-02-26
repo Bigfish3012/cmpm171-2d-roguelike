@@ -6,29 +6,33 @@ using TMPro;
 // Attach to PlayerXP parent or a dedicated controller; assign references in Inspector.
 public class Player_XPDisplay : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI uiLevelText;   // Shows "Lv.X"
-    [SerializeField] private TextMeshProUGUI uiXPText;      // Shows "current/max" (e.g. "13/100")
-    [SerializeField] private Slider xpSlider;               // Progress bar toward next level (0-1)
+    [SerializeField] private TextMeshProUGUI uiLevelText;                                // Shows "Lv.X"
+    [SerializeField] private TextMeshProUGUI uiXPText;                                   // Shows "current/max" (e.g. "13/100")
+    [SerializeField] private Slider xpSlider;                                            // Progress bar toward next level (0-1)
 
-    private Player_settings playerSettings;
+    private Player_settings playerSettings;                                              // Reference to player settings
 
+    // Initialize player settings reference and refresh display
     void Start()
     {
         playerSettings = Player_settings.Instance;
+        // playerSettings may be null in MainMenu (no Player); we retry in Update when entering gameplay
+        if (playerSettings != null)
+            RefreshDisplay();
+    }
+
+    // Retry finding player settings and refresh display each frame
+    void Update()
+    {
         if (playerSettings == null)
         {
-            Debug.LogError("Player_XPDisplay: Player_settings instance not found!");
-            return;
+            playerSettings = Player_settings.Instance;
+            if (playerSettings == null) return;
         }
         RefreshDisplay();
     }
 
-    void Update()
-    {
-        if (playerSettings == null) return;
-        RefreshDisplay();
-    }
-
+    // Update level text, XP text and slider with current player data
     private void RefreshDisplay()
     {
         int level = playerSettings.GetCurrentLevel();
