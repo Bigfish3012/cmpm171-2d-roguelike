@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
 {
-    [SerializeField] private int maxHealth = 2;                                         // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 20;                                         // Maximum health of the enemy
     [SerializeField] private int attackDamage = 1;                                      // Damage of the enemy bullet
     [SerializeField] private Projectile enemyBulletPrefab;                              // Prefab of the enemy bullet
     [SerializeField] private Transform firePoint;                                       // Point to spawn the enemy bullet
@@ -12,6 +12,8 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float aimTime = 0.5f;                                     // Time to aim before firing
     [SerializeField] private float wanderSpeed = 1.5f;                                  // Speed when randomly wandering
     [SerializeField] private float wanderDirectionInterval = 2f;                        // Seconds before picking a new random direction
+    [SerializeField] private float maxDistanceFromPlayer = 12f;                         // If too far, force move back to player
+    [SerializeField] private float returnSpeed = 2.5f;                                  // Move speed when returning to player
     [SerializeField] private int experience = 2;                                        // Experience points given to player when killed
     [SerializeField] private GameObject damagePopUpPrefab;                             // Prefab for damage pop-up text (optional)
 
@@ -83,6 +85,13 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             return;
         }
 
+        // Prevent getting stuck far away from player.
+        if (distanceToPlayer > maxDistanceFromPlayer)
+        {
+            MoveTowardPlayer(returnSpeed);
+            return;
+        }
+
         // Random wander when not aiming
         if (Time.time >= nextWanderDirectionTime)
         {
@@ -102,6 +111,14 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         // Instantiate bullet and initialize with direction and damage
         Projectile bullet = Instantiate(enemyBulletPrefab, firePoint.position, Quaternion.identity);
         bullet.Init(direction, attackDamage);
+    }
+
+    // Move toward player to keep shooter in combat area
+    private void MoveTowardPlayer(float speed)
+    {
+        Vector2 directionToPlayer = ((Vector2)playerTransform.position - rb.position).normalized;
+        Vector2 newPos = rb.position + directionToPlayer * speed * Time.fixedDeltaTime;
+        rb.MovePosition(newPos);
     }
 
     // Take damage from projectiles

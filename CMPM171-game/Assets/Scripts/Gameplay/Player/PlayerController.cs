@@ -15,8 +15,8 @@ public class PlayerController : MonoBehaviour
     public float rollCooldown = 0.5f;                                                    // Cooldown between rolls
     public float doubleTapWindow = 0.3f;                                                 // Max time between two taps to count as double-tap
 
-    private Rigidbody2D rb;  
-    private Animator anim;                                                              // Rigidbody2D component of the player
+    private Rigidbody2D rb;                                                              // Rigidbody2D component of the player
+    private Animator anim;                                                               // Animator component of the player
     private Vector2 move;                                                                // Movement direction vector
     private Player_settings playerSettings;                                              // Reference to Player_settings component
     private bool isRolling = false;                                                      // Whether the player is currently rolling
@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     {
         move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         
-        handleAnimations();
+        HandleAnimations();
 
         // Update last movement direction if player is moving
         if (move.magnitude > 0.1f)
@@ -90,7 +90,8 @@ public class PlayerController : MonoBehaviour
         lastKeyTime = Time.time;
     }
 
-    void handleAnimations()
+    // Handle player movement animations
+    void HandleAnimations()
     {
         bool isMove = move.magnitude > 0.1f;
         anim.SetBool("isMove", isMove);
@@ -115,6 +116,8 @@ public class PlayerController : MonoBehaviour
     public void AddMoveSpeed(float amount)
     {
         moveSpeed += amount;
+        if (GameManager.Instance != null && playerSettings != null)
+            GameManager.Instance.SaveFrom(playerSettings, this, GetComponent<RangedShooter>());
     }
 
     // Clamp player position to movement bounds (e.g. cutting board) after physics

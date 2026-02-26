@@ -192,8 +192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6190493654e3645459e3f2a34e23762b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_shooter
-  maxHealth: 5
-  attackDamage: 1
+  maxHealth: 30
+  attackDamage: 2
   enemyBulletPrefab: {fileID: 6244557654308570867, guid: 8b534d4e35e4c404bb548712e65a4bb0, type: 3}
   firePoint: {fileID: 0}
   fireCooldown: 1.5

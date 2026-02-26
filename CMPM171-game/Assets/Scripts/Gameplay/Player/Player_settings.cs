@@ -40,9 +40,22 @@ public class Player_settings : MonoBehaviour, IDamageable
     // Start method to initialize the player
     void Start()
     {
-        currentHealth = maxHealth;
-        lastPrintedHealth = currentHealth;
-        Debug.Log($"Player Health: {currentHealth}");
+        var gm = GameManager.Instance;
+        var pc = GetComponent<PlayerController>();
+        var rs = GetComponent<RangedShooter>();
+
+        if (gm != null && gm.HasSavedData)
+        {
+            gm.RestoreTo(this, pc, rs);
+            lastPrintedHealth = currentHealth;
+            Debug.Log($"Player Health restored: {currentHealth}/{maxHealth}");
+        }
+        else
+        {
+            currentHealth = maxHealth;
+            lastPrintedHealth = currentHealth;
+            Debug.Log($"Player Health: {currentHealth}");
+        }
     }
 
     // Update method to print health to console when it changes
@@ -66,13 +79,18 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
 
         currentHealth -= damage;
-        
+        SaveToGameManager();
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            // Handle player death here by reloading the scene
             Debug.Log("Player Died!");
-            SceneManager.LoadScene("Gameover");
+            if (GameManager.Instance != null)
+                GameManager.Instance.ClearSavedData();
+            if (SceneTransition.Instance != null)
+                SceneTransition.Instance.LoadScene("Gameover");
+            else
+                SceneManager.LoadScene("Gameover");
         }
     }
 
@@ -107,6 +125,7 @@ public class Player_settings : MonoBehaviour, IDamageable
             currentHealth = maxHealth;  // Restore full health on level up
             OnLevelUp?.Invoke(levelAfter);
         }
+        SaveToGameManager();
         Debug.Log($"Player Experience: {currentExperience} (Level {levelAfter})");
     }
 
@@ -157,20 +176,52 @@ public class Player_settings : MonoBehaviour, IDamageable
         return critDamage;
     }
 
+    // For GameManager persistence - restore saved data when entering a new scene
+    public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD)
+    {
+        currentHealth = currentHp;
+        maxHealth = maxHp;
+        currentExperience = currentExp;
+        xpPerLevel = xpPerLvl;
+        critRate = critR;
+        critDamage = critD;
+        lastPrintedHealth = currentHealth;
+    }
+
     // Upgrade methods for Level Up Menu
     public void AddMaxHealth(int amount)
     {
         maxHealth += amount;
         currentHealth += amount;
+        SaveToGameManager();
     }
 
     public void AddCritRate(float amount)
     {
         critRate += amount;
+        SaveToGameManager();
     }
 
     public void AddCritDamage(float amount)
     {
         critDamage += amount;
+        SaveToGameManager();
+    }
+
+    private void SaveToGameManager()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.SaveFrom(this, GetComponent<PlayerController>(), GetComponent<RangedShooter>());
+    }
+
+    // Save when destroyed (e.g. scene transition) so data is preserved for next scene.
+    // Skip if data was explicitly cleared (e.g. GoHome, death) to avoid overwriting the clear.
+    private void OnDestroy()
+    {
+        var gm = GameManager.Instance;
+        if (currentHealth > 0 && gm != null && gm.HasSavedData)
+            SaveToGameManager();
+        if (Instance == this)
+            Instance = null;
     }
 }

@@ -7,6 +7,10 @@ public class DamagePopUp : MonoBehaviour
     [SerializeField] private float floatSpeed = 2f;
     [SerializeField] private float lifetime = 0.8f;
     [SerializeField] private float horizontalOffsetRange = 0.3f;
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private float normalFontSize = 36f;
+    [SerializeField] private Color critColor = Color.red;
+    [SerializeField] private float critFontSize = 40f;
 
     private TextMeshProUGUI textMesh;
     private float timer;
@@ -20,8 +24,11 @@ public class DamagePopUp : MonoBehaviour
             textMesh.text = damage.ToString();
             if(isCrit)
             {
-                textMesh.color = Color.red;
-                textMesh.fontSize = 40;
+                textMesh.color = critColor;
+                textMesh.fontSize = critFontSize;
+            } else {
+                textMesh.color = normalColor;
+                textMesh.fontSize = normalFontSize;
             }
         }
         Vector3 offset = Vector3.up * 0.5f + Vector3.right * Random.Range(-horizontalOffsetRange, horizontalOffsetRange);
