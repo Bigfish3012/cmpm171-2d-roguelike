@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fed8ae9b7d64da241b1386b3fd256476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_Charge
-  maxHealth: 5
+  maxHealth: 30
   attackDamage: 1
   dashSpeed: 10
   detectionRange: 20
