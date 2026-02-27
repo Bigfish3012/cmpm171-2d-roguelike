@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -13,9 +14,9 @@ public class Menu_LevelUp : MonoBehaviour
     public struct UpgradeRanges
     {
         public int healthMin, healthMax;      // e.g. 2, 4
-        public int speedMin, speedMax;         // e.g. 1, 3
-        public int critRateMin, critRateMax;   // e.g. 5, 25
-        public int critDamageMin, critDamageMax; // e.g. 30, 80
+        public float speedMin, speedMax;       // e.g. 0.1, 1
+        public int critRateMin, critRateMax;   // e.g. 5, 15
+        public int critDamageMin, critDamageMax; // e.g. 10, 40
         public int damageMin, damageMax;      // e.g. 2, 5
     }
 
@@ -24,9 +25,9 @@ public class Menu_LevelUp : MonoBehaviour
     [SerializeField] private UpgradeRanges ranges = new UpgradeRanges
     {
         healthMin = 2, healthMax = 4,
-        speedMin = 1, speedMax = 3,
-        critRateMin = 5, critRateMax = 25,
-        critDamageMin = 30, critDamageMax = 80,
+        speedMin = 0.1f, speedMax = 1f,
+        critRateMin = 5, critRateMax = 15,
+        critDamageMin = 10, critDamageMax = 40,
         damageMin = 2, damageMax = 5
     };
 
@@ -36,7 +37,7 @@ public class Menu_LevelUp : MonoBehaviour
     private struct UpgradeOption
     {
         public UpgradeType type;
-        public int value;
+        public float value;
     }
 
     void Start()
@@ -85,20 +86,37 @@ public class Menu_LevelUp : MonoBehaviour
 
     private void GenerateUpgradeOptions()
     {
+        var types = new List<UpgradeType>
+        {
+            UpgradeType.Health,
+            UpgradeType.Speed,
+            UpgradeType.CritRate,
+            UpgradeType.CritDamage,
+            UpgradeType.Damage
+        };
+
+        for (int i = 0; i < types.Count; i++)
+        {
+            int swapIndex = Random.Range(i, types.Count);
+            UpgradeType temp = types[i];
+            types[i] = types[swapIndex];
+            types[swapIndex] = temp;
+        }
+
         for (int i = 0; i < optionButtons.Length; i++)
         {
-            UpgradeType type = (UpgradeType)Random.Range(0, 5);
-            int value = GetRandomValueForType(type);
+            UpgradeType type = i < types.Count ? types[i] : (UpgradeType)Random.Range(0, 5);
+            float value = GetRandomValueForType(type);
             currentOptions[i] = new UpgradeOption { type = type, value = value };
         }
     }
 
-    private int GetRandomValueForType(UpgradeType type)
+    private float GetRandomValueForType(UpgradeType type)
     {
         switch (type)
         {
             case UpgradeType.Health: return Random.Range(ranges.healthMin, ranges.healthMax + 1);
-            case UpgradeType.Speed: return Random.Range(ranges.speedMin, ranges.speedMax + 1);
+            case UpgradeType.Speed: return Mathf.Round(Random.Range(ranges.speedMin, ranges.speedMax) * 10f) / 10f;
             case UpgradeType.CritRate: return Random.Range(ranges.critRateMin, ranges.critRateMax + 1);
             case UpgradeType.CritDamage: return Random.Range(ranges.critDamageMin, ranges.critDamageMax + 1);
             case UpgradeType.Damage: return Random.Range(ranges.damageMin, ranges.damageMax + 1);
@@ -120,13 +138,15 @@ public class Menu_LevelUp : MonoBehaviour
 
     private string GetDisplayText(UpgradeOption opt)
     {
+        string valueText = opt.type == UpgradeType.Speed ? opt.value.ToString("0.0") : Mathf.RoundToInt(opt.value).ToString();
+
         switch (opt.type)
         {
-            case UpgradeType.Health: return $"Health +{opt.value}";
-            case UpgradeType.Speed: return $"Speed +{opt.value}";
-            case UpgradeType.CritRate: return $"Crit Rate +{opt.value}";
-            case UpgradeType.CritDamage: return $"Crit Damage +{opt.value}";
-            case UpgradeType.Damage: return $"Damage +{opt.value}";
+            case UpgradeType.Health: return $"Health +{valueText}";
+            case UpgradeType.Speed: return $"Speed +{valueText}";
+            case UpgradeType.CritRate: return $"Crit Rate +{valueText}";
+            case UpgradeType.CritDamage: return $"Crit Damage +{valueText}";
+            case UpgradeType.Damage: return $"Damage +{valueText}";
             default: return "";
         }
     }
@@ -162,7 +182,7 @@ public class Menu_LevelUp : MonoBehaviour
         switch (opt.type)
         {
             case UpgradeType.Health:
-                if (playerSettings != null) playerSettings.AddMaxHealth(opt.value);
+                if (playerSettings != null) playerSettings.AddMaxHealth(Mathf.RoundToInt(opt.value));
                 break;
             case UpgradeType.Speed:
                 if (playerController != null) playerController.AddMoveSpeed(opt.value);
@@ -174,7 +194,7 @@ public class Menu_LevelUp : MonoBehaviour
                 if (playerSettings != null) playerSettings.AddCritDamage(opt.value);
                 break;
             case UpgradeType.Damage:
-                if (rangedShooter != null) rangedShooter.AddAttackDamage(opt.value);
+                if (rangedShooter != null) rangedShooter.AddAttackDamage(Mathf.RoundToInt(opt.value));
                 break;
         }
     }

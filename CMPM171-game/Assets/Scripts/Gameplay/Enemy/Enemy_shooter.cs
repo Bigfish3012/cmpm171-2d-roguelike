@@ -157,6 +157,12 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         return currentHealth;
     }
 
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    {
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
+        attackDamage = Mathf.Max(1, attackDamage + damageBonus);
+    }
+
     // Get the maximum health of the enemy
     public int GetMaxHealth()
     {

@@ -14,10 +14,14 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float maxSpawnDistanceFromPlayer = 10f;                       // Maximum distance from player
 
     [Header("Wave Settings")]
-    [SerializeField] private int startingWaveEnemyCount = 50;                             // Wave 1 enemy count
+    [SerializeField] private int startingWaveEnemyCount = 30;                             // Wave 1 enemy count
     [SerializeField] private int enemyCountIncreasePerWave = 10;                          // +10 enemies per new wave
-    [SerializeField] private float spawnInterval = 0.08f;                                 // Delay between each enemy spawn in a wave
+    [SerializeField] private float startingSpawnInterval = 1f;                            // Wave 1 spawn interval
+    [SerializeField] private float spawnIntervalDecreasePerWave = 0.1f;                   // Spawn interval decrease each wave
+    [SerializeField] private float minimumSpawnInterval = 0.4f;                           // Minimum spawn interval cap
     [SerializeField] private float nextWaveDelay = 5f;                                    // Delay before next wave starts
+    [SerializeField] private float enemyHealthIncreasePercentPerWave = 30f;               // Enemy health increase per wave (%)
+    [SerializeField] private int enemyDamageIncreasePerWave = 1;                          // Enemy damage increase per wave
 
     [Header("Debug")]
     [SerializeField] private bool logWaveDebug = true;                                     // Print spawn/death counts in Console
@@ -135,15 +139,26 @@ public class EnemySpawner : MonoBehaviour
         UpdateWaveNumberUI();
 
         int enemyCountThisWave = startingWaveEnemyCount + (currentWave - 1) * enemyCountIncreasePerWave;
+        float healthMultiplierThisWave = 1f + (currentWave - 1) * (enemyHealthIncreasePercentPerWave / 100f);
+        int damageBonusThisWave = (currentWave - 1) * enemyDamageIncreasePerWave;
+        float spawnIntervalThisWave = Mathf.Max(
+            minimumSpawnInterval,
+            startingSpawnInterval - (currentWave - 1) * spawnIntervalDecreasePerWave
+        );
         enemiesLeftToSpawnInWave = enemyCountThisWave;
 
-        LogWave($"Wave {currentWave} start. Target enemy count: {enemyCountThisWave}");
+        LogWave(
+            $"Wave {currentWave} start. Target enemy count: {enemyCountThisWave}, " +
+            $"Health x{healthMultiplierThisWave:0.00}, Damage +{damageBonusThisWave}, " +
+            $"SpawnInterval {spawnIntervalThisWave:0.00}s"
+        );
 
         for (int i = 0; i < enemyCountThisWave; i++)
         {
             Vector3 spawnPos = GetRandomSpawnPosition();
             GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
             GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+            ApplyWaveScalingToEnemy(enemy, healthMultiplierThisWave, damageBonusThisWave);
 
             aliveEnemies++;
             enemiesLeftToSpawnInWave--;
@@ -155,8 +170,8 @@ public class EnemySpawner : MonoBehaviour
 
             LogWave($"Spawned enemy {i + 1}/{enemyCountThisWave}. Alive: {aliveEnemies}, LeftToSpawn: {enemiesLeftToSpawnInWave}");
 
-            if (spawnInterval > 0f)
-                yield return new WaitForSeconds(spawnInterval);
+            if (spawnIntervalThisWave > 0f)
+                yield return new WaitForSeconds(spawnIntervalThisWave);
         }
 
         preparingNextWave = false;
@@ -293,5 +308,28 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         Debug.Log($"[EnemySpawner] {message}", this);
+    }
+
+    private static void ApplyWaveScalingToEnemy(GameObject enemy, float healthMultiplier, int damageBonus)
+    {
+        if (enemy == null) return;
+
+        Enemy1 enemy1 = enemy.GetComponent<Enemy1>();
+        if (enemy1 != null)
+        {
+            enemy1.ApplyWaveScaling(healthMultiplier, damageBonus);
+            return;
+        }
+
+        Enemy_shooter enemyShooter = enemy.GetComponent<Enemy_shooter>();
+        if (enemyShooter != null)
+        {
+            enemyShooter.ApplyWaveScaling(healthMultiplier, damageBonus);
+            return;
+        }
+
+        Enemy_Charge enemyCharge = enemy.GetComponent<Enemy_Charge>();
+        if (enemyCharge != null)
+            enemyCharge.ApplyWaveScaling(healthMultiplier, damageBonus);
     }
 }

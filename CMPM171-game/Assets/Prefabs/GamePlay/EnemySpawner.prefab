@@ -52,10 +52,14 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   minSpawnDistanceFromPlayer: 6
   maxSpawnDistanceFromPlayer: 7
-  startingWaveEnemyCount: 50
+  startingWaveEnemyCount: 30
   enemyCountIncreasePerWave: 10
-  spawnInterval: 1
+  startingSpawnInterval: 1
+  spawnIntervalDecreasePerWave: 0.1
+  minimumSpawnInterval: 0.4
   nextWaveDelay: 5
+  enemyHealthIncreasePercentPerWave: 30
+  enemyDamageIncreasePerWave: 1
   logWaveDebug: 1
   waveNumberText: {fileID: 0}
   waveWarningRoot: {fileID: 0}

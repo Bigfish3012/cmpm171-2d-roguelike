@@ -13,12 +13,15 @@ public class Player_settings : MonoBehaviour, IDamageable
     public Transform PlayerTransform => transform;
     
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
-    [SerializeField] private int xpPerLevel = 30;                                      // XP required per level (e.g. 100 XP = level 2)
+    [SerializeField] private int xpPerLevel = 20;                                      // Current XP required for next level (starts at 20)
+    [SerializeField] private int xpIncreasePerLevel = 20;                              // XP increase required after each level up
     [SerializeField] private float critRate = 20f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
 
     private int currentHealth;                                                           // Current health of the player
-    private int currentExperience;                                                       // Experience points gained from killing enemies
+    private int currentExperience;                                                       // Current XP progress toward next level
+    private int currentLevel = 1;                                                       // Player level (starts at 1)
+    private int startingXPPerLevel;                                                     // Base XP requirement used to reconstruct level after restore
     private int lastPrintedHealth;                                                      // Last printed health value for debug logging
     private bool isInvincible = false;                                                  // Whether the player is currently invincible
 
@@ -35,6 +38,8 @@ public class Player_settings : MonoBehaviour, IDamageable
             Debug.LogWarning("Multiple Player_settings instances found. Destroying duplicate.");
             Destroy(gameObject);
         }
+
+        startingXPPerLevel = xpPerLevel;
     }
 
     // Start method to initialize the player
@@ -115,18 +120,19 @@ public class Player_settings : MonoBehaviour, IDamageable
     // Add experience when killing an enemy
     public void AddExperience(int amount)
     {
-        int levelBefore = GetCurrentLevel();
         currentExperience += amount;
-        int levelAfter = GetCurrentLevel();
-
-        if (levelAfter > levelBefore)
+        while (currentExperience >= xpPerLevel)
         {
-            Debug.Log($"Level Up! Now Level {levelAfter}");
+            currentExperience -= xpPerLevel;
+            currentLevel++;
+            xpPerLevel += xpIncreasePerLevel;
+
+            Debug.Log($"Level Up! Now Level {currentLevel}");
             currentHealth = maxHealth;  // Restore full health on level up
-            OnLevelUp?.Invoke(levelAfter);
+            OnLevelUp?.Invoke(currentLevel);
         }
         SaveToGameManager();
-        Debug.Log($"Player Experience: {currentExperience} (Level {levelAfter})");
+        Debug.Log($"Player Experience: {currentExperience}/{xpPerLevel} (Level {currentLevel})");
     }
 
     // Get the current experience of the player
@@ -135,16 +141,16 @@ public class Player_settings : MonoBehaviour, IDamageable
         return currentExperience;
     }
 
-    // Get current level (starts at 1, +1 per 100 XP by default)
+    // Get current level (starts at 1)
     public int GetCurrentLevel()
     {
-        return 1 + (currentExperience / xpPerLevel);
+        return currentLevel;
     }
 
     // Get XP progress toward next level (0 to xpPerLevel-1)
     public int GetXPProgressTowardsNextLevel()
     {
-        return currentExperience % xpPerLevel;
+        return currentExperience;
     }
 
     // Get XP required for next level (e.g. 100)
@@ -183,6 +189,10 @@ public class Player_settings : MonoBehaviour, IDamageable
         maxHealth = maxHp;
         currentExperience = currentExp;
         xpPerLevel = xpPerLvl;
+        if (xpIncreasePerLevel > 0 && xpPerLevel >= startingXPPerLevel)
+            currentLevel = 1 + ((xpPerLevel - startingXPPerLevel) / xpIncreasePerLevel);
+        else
+            currentLevel = 1;
         critRate = critR;
         critDamage = critD;
         lastPrintedHealth = currentHealth;
