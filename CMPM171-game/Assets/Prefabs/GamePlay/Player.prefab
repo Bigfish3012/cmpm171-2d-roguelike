@@ -49,7 +49,7 @@ MonoBehaviour:
   player: {fileID: 7060881325425034521}
   radius: 0.5
   enemyTag: Enemies
-  maxTargetRange: 8
+  maxTargetRange: 5
   gunSpriteRenderer: {fileID: 3176034772759811258}
 --- !u!1 &4499811730914584331
 GameObject:
@@ -334,7 +334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_settings
   maxHealth: 10
   xpPerLevel: 20
-  critRate: 20
+  xpIncreasePerLevel: 20
+  critRate: 10
   critDamage: 100
 --- !u!212 &1087225547976335830
 SpriteRenderer:
