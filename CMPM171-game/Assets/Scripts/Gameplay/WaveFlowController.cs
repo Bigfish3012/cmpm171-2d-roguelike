@@ -63,6 +63,9 @@ public class WaveFlowController : MonoBehaviour
 
     private void HandleWaveCleared(int wave)
     {
+        if (wave != currentWave)
+            Debug.LogWarning($"[WaveFlowController] Wave mismatch: spawner reported wave {wave}, controller is on wave {currentWave}.", this);
+
         if (ShouldWaitForMapTransition())
         {
             SetNextMapVisible(true);
@@ -148,52 +151,24 @@ public class WaveFlowController : MonoBehaviour
     private void TryAutoBindUI()
     {
         if (waveNumberText == null)
-            waveNumberText = FindSceneTMPByName("Wave_Number");
+            waveNumberText = SceneSearchHelper.FindSceneTMPByName("Wave_Number");
 
         if (waveWarningText == null)
-            waveWarningText = FindSceneTMPByName("Wave_Warning");
+            waveWarningText = SceneSearchHelper.FindSceneTMPByName("Wave_Warning");
 
         if (waveWarningRoot == null)
         {
             if (waveWarningText != null)
                 waveWarningRoot = waveWarningText.gameObject;
             else
-                waveWarningRoot = FindSceneObjectByName("Wave_Warning");
+                waveWarningRoot = SceneSearchHelper.FindSceneObjectByName("Wave_Warning");
         }
     }
 
     private void TryAutoBindNextMap()
     {
         if (nextMapObject == null && !string.IsNullOrEmpty(nextMapObjectName))
-            nextMapObject = FindSceneObjectByName(nextMapObjectName);
-    }
-
-    // ---- Scene search utilities ----
-
-    private static TextMeshProUGUI FindSceneTMPByName(string targetName)
-    {
-        TextMeshProUGUI[] allTexts = Resources.FindObjectsOfTypeAll<TextMeshProUGUI>();
-        for (int i = 0; i < allTexts.Length; i++)
-        {
-            TextMeshProUGUI text = allTexts[i];
-            if (text == null) continue;
-            if (!text.gameObject.scene.IsValid()) continue;
-            if (text.name == targetName) return text;
-        }
-        return null;
-    }
-
-    private static GameObject FindSceneObjectByName(string targetName)
-    {
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        for (int i = 0; i < allObjects.Length; i++)
-        {
-            GameObject go = allObjects[i];
-            if (go == null) continue;
-            if (!go.scene.IsValid()) continue;
-            if (go.name == targetName) return go;
-        }
-        return null;
+            nextMapObject = SceneSearchHelper.FindSceneObjectByName(nextMapObjectName);
     }
 
     private void Log(string message)

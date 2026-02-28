@@ -39,6 +39,7 @@ public class EnemySpawner : MonoBehaviour
     private int enemiesLeftToSpawnInWave = 0;
     private bool spawning = false;
     private bool missingMapBoundsWarningShown = false;
+    private Coroutine activeSpawnRoutine;
 
     private void Start()
     {
@@ -49,8 +50,18 @@ public class EnemySpawner : MonoBehaviour
     public void StartWave(int waveNumber)
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
+
+        if (spawning)
+        {
+            LogWave($"StartWave({waveNumber}) called while wave {currentWaveNumber} is still spawning. Stopping previous routine.");
+            if (activeSpawnRoutine != null)
+                StopCoroutine(activeSpawnRoutine);
+            spawning = false;
+            enemiesLeftToSpawnInWave = 0;
+        }
+
         currentWaveNumber = waveNumber;
-        StartCoroutine(SpawnWaveRoutine(waveNumber));
+        activeSpawnRoutine = StartCoroutine(SpawnWaveRoutine(waveNumber));
     }
 
     // Called by EnemyWaveMember when one spawned enemy gets destroyed.
@@ -106,6 +117,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         spawning = false;
+        activeSpawnRoutine = null;
         CheckWaveCleared();
     }
 
@@ -186,22 +198,9 @@ public class EnemySpawner : MonoBehaviour
         if (mapSpawnBounds != null || string.IsNullOrEmpty(mapSpawnBoundsName))
             return;
 
-        GameObject boundObject = FindSceneObjectByName(mapSpawnBoundsName);
+        GameObject boundObject = SceneSearchHelper.FindSceneObjectByName(mapSpawnBoundsName);
         if (boundObject != null)
             mapSpawnBounds = boundObject.transform;
-    }
-
-    private static GameObject FindSceneObjectByName(string targetName)
-    {
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        for (int i = 0; i < allObjects.Length; i++)
-        {
-            GameObject go = allObjects[i];
-            if (go == null) continue;
-            if (!go.scene.IsValid()) continue;
-            if (go.name == targetName) return go;
-        }
-        return null;
     }
 
     // ---- Utility ----
