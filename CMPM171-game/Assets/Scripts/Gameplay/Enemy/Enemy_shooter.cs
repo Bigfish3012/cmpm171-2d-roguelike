@@ -9,6 +9,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private Transform firePoint;                                       // Point to spawn the enemy bullet
     [SerializeField] private float fireCooldown = 1.5f;                                 // Cooldown between each shot
     [SerializeField] private float shootRange = 5f;                                     // Range to spawn the enemy bullet (closer = must get nearer to player)
+    [SerializeField] private float aimCancelRangeBuffer = 0.75f;                        // Extra distance before cancelling aim to prevent range-edge jitter
     [SerializeField] private float aimTime = 0.5f;                                     // Time to aim before firing
     [SerializeField] private float wanderSpeed = 1.5f;                                  // Speed when randomly wandering
     [SerializeField] private float wanderDirectionInterval = 2f;                        // Seconds before picking a new random direction
@@ -60,11 +61,12 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
 
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
         bool playerInRange = distanceToPlayer <= shootRange;
+        bool playerStillInAimWindow = distanceToPlayer <= shootRange + aimCancelRangeBuffer;
 
         // Aiming: player in range and we started aiming
         if (aimStartTime >= 0f)
         {
-            if (!playerInRange)
+            if (!playerStillInAimWindow)
             {
                 aimStartTime = -1f;
             }
@@ -92,7 +94,14 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             return;
         }
 
-        // Random wander when not aiming
+        // Move toward player when not in shooting range to avoid wandering away.
+        if (!playerInRange)
+        {
+            MoveTowardPlayer(wanderSpeed);
+            return;
+        }
+
+        // Random wander only when already in shooting range but not currently aiming/firing.
         if (Time.time >= nextWanderDirectionTime)
         {
             PickNewWanderDirection();

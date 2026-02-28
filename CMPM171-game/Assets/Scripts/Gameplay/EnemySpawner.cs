@@ -1,164 +1,95 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Spawns enemies for a given wave. Wave flow and UI are handled by
+/// <see cref="WaveFlowController"/> which calls <see cref="StartWave"/>.
+/// </summary>
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject[] enemyPrefabs;                                   // Enemy prefabs to spawn
 
     [Header("Spawn Position")]
-    [SerializeField] private float spawnDistanceFromCamera = 2f;                          // Distance from camera edge to spawn enemies
-    [SerializeField] private Camera mainCamera;                                            // Main camera reference
-    [SerializeField] private float minSpawnDistanceFromPlayer = 6f;                        // Minimum distance from player
-    [SerializeField] private float maxSpawnDistanceFromPlayer = 10f;                       // Maximum distance from player
+    [SerializeField] private Transform mapSpawnBounds;                                     // Bounds object used for in-map spawning
+    [SerializeField] private string mapSpawnBoundsName = "ground";                         // Auto-bind fallback when reference is empty
+    [SerializeField] private float spawnBoundsPadding = 0.5f;                              // Inset from map edges to avoid clipping spawns
+    [SerializeField] private Transform spawnExclusionZone;                                  // Object whose bounds enemies must not spawn inside
+    [SerializeField] private float exclusionPadding = 0.5f;                                // Extra margin around each exclusion zone
+    [SerializeField] private int maxSpawnRetries = 30;                                     // Max retries to find a valid spawn position
 
-    [Header("Wave Settings")]
-    [SerializeField] private int startingWaveEnemyCount = 30;                             // Wave 1 enemy count
-    [SerializeField] private int enemyCountIncreasePerWave = 10;                          // +10 enemies per new wave
-    [SerializeField] private float startingSpawnInterval = 1f;                            // Wave 1 spawn interval
-    [SerializeField] private float spawnIntervalDecreasePerWave = 0.1f;                   // Spawn interval decrease each wave
-    [SerializeField] private float minimumSpawnInterval = 0.4f;                           // Minimum spawn interval cap
-    [SerializeField] private float nextWaveDelay = 5f;                                    // Delay before next wave starts
-    [SerializeField] private float enemyHealthIncreasePercentPerWave = 30f;               // Enemy health increase per wave (%)
-    [SerializeField] private int enemyDamageIncreasePerWave = 1;                          // Enemy damage increase per wave
+    [Header("Wave Scaling")]
+    [SerializeField] private int startingWaveEnemyCount = 30;                              // Wave 1 enemy count
+    [SerializeField] private int enemyCountIncreasePerWave = 10;                           // +10 enemies per new wave
+    [SerializeField] private float startingSpawnInterval = 2f;                             // Wave 1 spawn interval
+    [SerializeField] private float spawnIntervalDecreasePerWave = 0.1f;                    // Spawn interval decrease each wave
+    [SerializeField] private float minimumSpawnInterval = 0.5f;                            // Minimum spawn interval cap
+    [SerializeField] private float enemyHealthIncreasePercentPerWave = 30f;                // Enemy health increase per wave (%)
+    [SerializeField] private int enemyDamageIncreasePerWave = 1;                           // Enemy damage increase per wave
 
     [Header("Debug")]
     [SerializeField] private bool logWaveDebug = true;                                     // Print spawn/death counts in Console
 
-    [Header("UI")]
-    [SerializeField] private TextMeshProUGUI waveNumberText;                              // UI text for current wave
-    [SerializeField] private GameObject waveWarningRoot;                                   // Optional warning container (GameObject)
-    [SerializeField] private TextMeshProUGUI waveWarningText;                              // Warning text content
-    [SerializeField] private string warningMessage = "Warning: Next Wave coming";
+    /// <summary>Raised when all enemies in the current wave have been destroyed.
+    /// Parameter is the wave number that was cleared.</summary>
+    public event System.Action<int> OnWaveCleared;
 
-    [Header("Map Transition")]
-    [SerializeField] private int wavesPerMapTransition = 5;                                // Show next-map portal every N cleared waves
-    [SerializeField] private GameObject nextMapObject;                                     // Scene object that handles map transition
-    [SerializeField] private string nextMapObjectName = "NextMap";                         // Auto-bind fallback when reference is empty
-
-    private int currentWave = 0;
-    private int aliveEnemies = 0;                                                          // Alive enemies in current wave
-    private int enemiesLeftToSpawnInWave = 0;                                              // Not spawned yet in current wave
-    private bool preparingNextWave = false;
+    private int currentWaveNumber = 0;
+    private int aliveEnemies = 0;
+    private int enemiesLeftToSpawnInWave = 0;
+    private bool spawning = false;
+    private bool missingMapBoundsWarningShown = false;
 
     private void Start()
     {
-        if (mainCamera == null)
-            mainCamera = Camera.main;
-
-        TryAutoBindUI();
-        TryAutoBindNextMap();
-
-        if (GameManager.Instance != null)
-            currentWave = GameManager.Instance.GetSavedWaveProgress();
-
-        if (waveWarningText != null)
-            waveWarningText.text = warningMessage;
-
-        SetWarningVisible(false);
-        SetNextMapVisible(false);
-        UpdateWaveNumberUI();
-
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0 || mainCamera == null)
-            return;
-
-        StartCoroutine(BeginNextWaveRoutine());
+        TryAutoBindSpawnBounds();
     }
 
-    private void TryAutoBindUI()
+    /// <summary>Begin spawning enemies for the given wave number.</summary>
+    public void StartWave(int waveNumber)
     {
-        // Prefab assets cannot serialize scene references. If fields are empty,
-        // bind by HUD object names at runtime.
-        if (waveNumberText == null)
-            waveNumberText = FindSceneTMPByName("Wave_Number");
-
-        if (waveWarningText == null)
-            waveWarningText = FindSceneTMPByName("Wave_Warning");
-
-        if (waveWarningRoot == null)
-        {
-            if (waveWarningText != null)
-                waveWarningRoot = waveWarningText.gameObject;
-            else
-                waveWarningRoot = FindSceneObjectByName("Wave_Warning");
-        }
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
+        currentWaveNumber = waveNumber;
+        StartCoroutine(SpawnWaveRoutine(waveNumber));
     }
 
-    private void TryAutoBindNextMap()
+    // Called by EnemyWaveMember when one spawned enemy gets destroyed.
+    public void NotifyEnemyDestroyed()
     {
-        if (nextMapObject == null && !string.IsNullOrEmpty(nextMapObjectName))
-            nextMapObject = FindSceneObjectByName(nextMapObjectName);
+        if (aliveEnemies > 0)
+            aliveEnemies--;
+
+        LogWave($"Enemy destroyed. Alive: {aliveEnemies}, Left: {enemiesLeftToSpawnInWave}");
+        CheckWaveCleared();
     }
 
-    private static TextMeshProUGUI FindSceneTMPByName(string targetName)
+    // ---- Spawn coroutine ----
+
+    private IEnumerator SpawnWaveRoutine(int waveNumber)
     {
-        TextMeshProUGUI[] allTexts = Resources.FindObjectsOfTypeAll<TextMeshProUGUI>();
-        for (int i = 0; i < allTexts.Length; i++)
-        {
-            TextMeshProUGUI text = allTexts[i];
-            if (text == null) continue;
-            if (!text.gameObject.scene.IsValid()) continue;                               // Exclude prefab assets
-            if (text.name == targetName) return text;
-        }
-        return null;
-    }
+        spawning = true;
 
-    private static GameObject FindSceneObjectByName(string targetName)
-    {
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        for (int i = 0; i < allObjects.Length; i++)
-        {
-            GameObject go = allObjects[i];
-            if (go == null) continue;
-            if (!go.scene.IsValid()) continue;                                            // Exclude prefab assets
-            if (go.name == targetName) return go;
-        }
-        return null;
-    }
-
-    private IEnumerator BeginNextWaveRoutine()
-    {
-        if (preparingNextWave)
-            yield break;
-
-        preparingNextWave = true;
-        SetNextMapVisible(false);
-
-        // Wave 2+ show warning first, then spawn.
-        if (currentWave > 0)
-        {
-            SetWarningVisible(true);
-            yield return new WaitForSeconds(nextWaveDelay);
-            SetWarningVisible(false);
-        }
-
-        currentWave++;
-        if (GameManager.Instance != null)
-            GameManager.Instance.SaveWaveProgress(currentWave);
-        UpdateWaveNumberUI();
-
-        int enemyCountThisWave = startingWaveEnemyCount + (currentWave - 1) * enemyCountIncreasePerWave;
-        float healthMultiplierThisWave = 1f + (currentWave - 1) * (enemyHealthIncreasePercentPerWave / 100f);
-        int damageBonusThisWave = (currentWave - 1) * enemyDamageIncreasePerWave;
-        float spawnIntervalThisWave = Mathf.Max(
+        int enemyCount = startingWaveEnemyCount + (waveNumber - 1) * enemyCountIncreasePerWave;
+        float healthMultiplier = 1f + (waveNumber - 1) * (enemyHealthIncreasePercentPerWave / 100f);
+        int damageBonus = (waveNumber - 1) * enemyDamageIncreasePerWave;
+        float spawnInterval = Mathf.Max(
             minimumSpawnInterval,
-            startingSpawnInterval - (currentWave - 1) * spawnIntervalDecreasePerWave
+            startingSpawnInterval - (waveNumber - 1) * spawnIntervalDecreasePerWave
         );
-        enemiesLeftToSpawnInWave = enemyCountThisWave;
+        enemiesLeftToSpawnInWave = enemyCount;
 
         LogWave(
-            $"Wave {currentWave} start. Target enemy count: {enemyCountThisWave}, " +
-            $"Health x{healthMultiplierThisWave:0.00}, Damage +{damageBonusThisWave}, " +
-            $"SpawnInterval {spawnIntervalThisWave:0.00}s"
+            $"Wave {waveNumber} spawning. Count: {enemyCount}, " +
+            $"Health x{healthMultiplier:0.00}, Damage +{damageBonus}, " +
+            $"Interval {spawnInterval:0.00}s"
         );
 
-        for (int i = 0; i < enemyCountThisWave; i++)
+        for (int i = 0; i < enemyCount; i++)
         {
             Vector3 spawnPos = GetRandomSpawnPosition();
             GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
             GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
-            ApplyWaveScalingToEnemy(enemy, healthMultiplierThisWave, damageBonusThisWave);
+            ApplyWaveScalingToEnemy(enemy, healthMultiplier, damageBonus);
 
             aliveEnemies++;
             enemiesLeftToSpawnInWave--;
@@ -168,145 +99,116 @@ public class EnemySpawner : MonoBehaviour
                 waveMember = enemy.AddComponent<EnemyWaveMember>();
             waveMember.Init(this);
 
-            LogWave($"Spawned enemy {i + 1}/{enemyCountThisWave}. Alive: {aliveEnemies}, LeftToSpawn: {enemiesLeftToSpawnInWave}");
+            LogWave($"Spawned {i + 1}/{enemyCount}. Alive: {aliveEnemies}, Left: {enemiesLeftToSpawnInWave}");
 
-            if (spawnIntervalThisWave > 0f)
-                yield return new WaitForSeconds(spawnIntervalThisWave);
+            if (spawnInterval > 0f)
+                yield return new WaitForSeconds(spawnInterval);
         }
 
-        preparingNextWave = false;
-        TryStartNextWave();
+        spawning = false;
+        CheckWaveCleared();
     }
 
-    // Called by EnemyWaveMember when one spawned enemy gets destroyed.
-    public void NotifyEnemyDestroyed()
+    private void CheckWaveCleared()
     {
-        if (aliveEnemies > 0)
-            aliveEnemies--;
+        if (spawning) return;
+        if (enemiesLeftToSpawnInWave > 0 || aliveEnemies > 0) return;
 
-        LogWave($"Enemy destroyed. Alive: {aliveEnemies}, LeftToSpawn: {enemiesLeftToSpawnInWave}");
-
-        TryStartNextWave();
+        LogWave($"Wave {currentWaveNumber} cleared.");
+        OnWaveCleared?.Invoke(currentWaveNumber);
     }
 
-    private void TryStartNextWave()
-    {
-        if (preparingNextWave)
-            return;
+    // ---- Spawn position ----
 
-        bool waveFullySpawned = enemiesLeftToSpawnInWave <= 0;
-        bool waveFullyCleared = aliveEnemies <= 0;
-
-        if (waveFullySpawned && waveFullyCleared)
-        {
-            if (ShouldWaitForMapTransition())
-            {
-                SetNextMapVisible(true);
-                LogWave($"Wave {currentWave} cleared. Waiting for map transition.");
-                return;
-            }
-
-            LogWave($"Wave {currentWave} cleared. Next wave in {nextWaveDelay:F1}s.");
-            StartCoroutine(BeginNextWaveRoutine());
-        }
-    }
-
-    private void UpdateWaveNumberUI()
-    {
-        if (waveNumberText != null)
-            waveNumberText.text = $"Wave:{currentWave}";
-    }
-
-    private void SetWarningVisible(bool visible)
-    {
-        if (waveWarningRoot != null)
-            waveWarningRoot.SetActive(visible);
-
-        if (waveWarningText != null)
-            waveWarningText.gameObject.SetActive(visible);
-    }
-
-    private void SetNextMapVisible(bool visible)
-    {
-        if (nextMapObject != null)
-            nextMapObject.SetActive(visible);
-    }
-
-    private bool ShouldWaitForMapTransition()
-    {
-        return wavesPerMapTransition > 0 && currentWave > 0 && currentWave % wavesPerMapTransition == 0;
-    }
-
-    // Get a random spawn position around player. Fallback to camera edge if player is missing.
     private Vector3 GetRandomSpawnPosition()
     {
-        Transform player = Player_settings.Instance != null ? Player_settings.Instance.PlayerTransform : null;
-        if (player != null)
+        if (TryGetMapSpawnBounds(out Bounds bounds))
         {
-            float minRadius = Mathf.Max(0f, minSpawnDistanceFromPlayer);
-            float maxRadius = Mathf.Max(minRadius, maxSpawnDistanceFromPlayer);
+            float minX = bounds.min.x + spawnBoundsPadding;
+            float maxX = bounds.max.x - spawnBoundsPadding;
+            float minY = bounds.min.y + spawnBoundsPadding;
+            float maxY = bounds.max.y - spawnBoundsPadding;
 
-            float angle = Random.Range(0f, Mathf.PI * 2f);
-            float radius = Random.Range(minRadius, maxRadius);
-            Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
-            Vector2 spawn2D = (Vector2)player.position + offset;
+            if (minX > maxX) { float c = bounds.center.x; minX = c; maxX = c; }
+            if (minY > maxY) { float c = bounds.center.y; minY = c; maxY = c; }
 
-            return new Vector3(spawn2D.x, spawn2D.y, 0f);
+            for (int attempt = 0; attempt < maxSpawnRetries; attempt++)
+            {
+                Vector3 candidate = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0f);
+                if (!IsInsideExclusionZone(candidate))
+                    return candidate;
+            }
+
+            return new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0f);
         }
 
-        if (mainCamera == null)
-            return Vector3.zero;
-
-        float orthographicSize = mainCamera.orthographicSize;
-        float aspect = mainCamera.aspect;
-        float cameraWidth = orthographicSize * aspect;
-        float cameraHeight = orthographicSize;
-
-        Vector3 cameraPos = mainCamera.transform.position;
-
-        int edge = Random.Range(0, 4);                                                    // 0=top,1=right,2=bottom,3=left
-        Vector3 spawnPos = Vector3.zero;
-
-        switch (edge)
+        if (!missingMapBoundsWarningShown)
         {
-            case 0:
-                spawnPos = new Vector3(
-                    cameraPos.x + Random.Range(-cameraWidth - spawnDistanceFromCamera, cameraWidth + spawnDistanceFromCamera),
-                    cameraPos.y + cameraHeight + spawnDistanceFromCamera,
-                    0f
-                );
-                break;
-            case 1:
-                spawnPos = new Vector3(
-                    cameraPos.x + cameraWidth + spawnDistanceFromCamera,
-                    cameraPos.y + Random.Range(-cameraHeight - spawnDistanceFromCamera, cameraHeight + spawnDistanceFromCamera),
-                    0f
-                );
-                break;
-            case 2:
-                spawnPos = new Vector3(
-                    cameraPos.x + Random.Range(-cameraWidth - spawnDistanceFromCamera, cameraWidth + spawnDistanceFromCamera),
-                    cameraPos.y - cameraHeight - spawnDistanceFromCamera,
-                    0f
-                );
-                break;
-            default:
-                spawnPos = new Vector3(
-                    cameraPos.x - cameraWidth - spawnDistanceFromCamera,
-                    cameraPos.y + Random.Range(-cameraHeight - spawnDistanceFromCamera, cameraHeight + spawnDistanceFromCamera),
-                    0f
-                );
-                break;
+            Debug.LogWarning("[EnemySpawner] mapSpawnBounds not set. Falling back to spawner position.", this);
+            missingMapBoundsWarningShown = true;
         }
-
-        return spawnPos;
+        return transform.position;
     }
+
+    private bool IsInsideExclusionZone(Vector3 point)
+    {
+        if (spawnExclusionZone == null) return false;
+        if (!TryGetBounds(spawnExclusionZone, out Bounds b)) return false;
+
+        Bounds expanded = b;
+        expanded.Expand(exclusionPadding * 2f);
+        return expanded.Contains(point);
+    }
+
+    private static bool TryGetBounds(Transform target, out Bounds bounds)
+    {
+        bounds = default;
+        if (target == null) return false;
+
+        SpriteRenderer sr = target.GetComponent<SpriteRenderer>();
+        if (sr != null) { bounds = sr.bounds; return true; }
+
+        Collider2D col = target.GetComponent<Collider2D>();
+        if (col != null) { bounds = col.bounds; return true; }
+
+        return false;
+    }
+
+    private bool TryGetMapSpawnBounds(out Bounds bounds)
+    {
+        return TryGetBounds(mapSpawnBounds, out bounds);
+    }
+
+    // ---- Auto-bind ----
+
+    private void TryAutoBindSpawnBounds()
+    {
+        if (mapSpawnBounds != null || string.IsNullOrEmpty(mapSpawnBoundsName))
+            return;
+
+        GameObject boundObject = FindSceneObjectByName(mapSpawnBoundsName);
+        if (boundObject != null)
+            mapSpawnBounds = boundObject.transform;
+    }
+
+    private static GameObject FindSceneObjectByName(string targetName)
+    {
+        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+        for (int i = 0; i < allObjects.Length; i++)
+        {
+            GameObject go = allObjects[i];
+            if (go == null) continue;
+            if (!go.scene.IsValid()) continue;
+            if (go.name == targetName) return go;
+        }
+        return null;
+    }
+
+    // ---- Utility ----
 
     private void LogWave(string message)
     {
-        if (!logWaveDebug)
-            return;
-
+        if (!logWaveDebug) return;
         Debug.Log($"[EnemySpawner] {message}", this);
     }
 
@@ -315,18 +217,10 @@ public class EnemySpawner : MonoBehaviour
         if (enemy == null) return;
 
         Enemy1 enemy1 = enemy.GetComponent<Enemy1>();
-        if (enemy1 != null)
-        {
-            enemy1.ApplyWaveScaling(healthMultiplier, damageBonus);
-            return;
-        }
+        if (enemy1 != null) { enemy1.ApplyWaveScaling(healthMultiplier, damageBonus); return; }
 
         Enemy_shooter enemyShooter = enemy.GetComponent<Enemy_shooter>();
-        if (enemyShooter != null)
-        {
-            enemyShooter.ApplyWaveScaling(healthMultiplier, damageBonus);
-            return;
-        }
+        if (enemyShooter != null) { enemyShooter.ApplyWaveScaling(healthMultiplier, damageBonus); return; }
 
         Enemy_Charge enemyCharge = enemy.GetComponent<Enemy_Charge>();
         if (enemyCharge != null)

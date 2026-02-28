@@ -4,7 +4,6 @@ using UnityEngine;
 public class SceneLoadTrigger : MonoBehaviour
 {
     [SerializeField] private string targetSceneName = "Level2";                          // Name of the scene to load
-    [Tooltip("Tag to check for (default: Player)")]
     [SerializeField] private string playerTag = "Player";                                // Tag used to identify the player
     [SerializeField] private KeyCode interactKey = KeyCode.F;                            // Key to confirm scene transition
     [SerializeField] private GameObject promptRoot;                                       // Optional "Press F" UI root near portal
