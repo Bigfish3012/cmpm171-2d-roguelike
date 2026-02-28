@@ -14,8 +14,8 @@ public class Player_settings : MonoBehaviour, IDamageable
     
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
     [SerializeField] private int xpPerLevel = 20;                                      // Current XP required for next level (starts at 20)
-    [SerializeField] private int xpIncreasePerLevel = 20;                              // XP increase required after each level up
-    [SerializeField] private float critRate = 20f;                                     // Critical hit chance (default 20%)
+    [SerializeField] private int xpIncreasePerLevel = 10;                              // XP increase required after each level up
+    [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
 
     private int currentHealth;                                                           // Current health of the player
