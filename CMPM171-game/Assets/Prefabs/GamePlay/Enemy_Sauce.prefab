@@ -197,12 +197,12 @@ MonoBehaviour:
   enemyBulletPrefab: {fileID: 6244557654308570867, guid: 8b534d4e35e4c404bb548712e65a4bb0, type: 3}
   firePoint: {fileID: 0}
   fireCooldown: 1.5
-  shootRange: 7
-  aimCancelRangeBuffer: 0.75
+  shootRange: 4
+  aimCancelRangeBuffer: 1
   aimTime: 0.5
   wanderSpeed: 2
-  wanderDirectionInterval: 2
-  maxDistanceFromPlayer: 12
+  wanderDirectionInterval: 3
+  maxDistanceFromPlayer: 10
   returnSpeed: 2.5
   experience: 2
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
