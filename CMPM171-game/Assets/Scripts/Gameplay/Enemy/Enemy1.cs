@@ -3,7 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 {
-    [SerializeField] private int maxHealth = 3;                                          // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 30;                                          // Maximum health of the enemy
+    [SerializeField] private int attackDamage = 1;                                        // Damage dealt to player on contact
     [SerializeField] private float moveSpeed = 3f;                                       // Movement speed of the enemy
     [SerializeField] private float damageCooldown = 1f;                                  // Cooldown between damage to player
     [SerializeField] private float avoidanceRadius = 2f;                                 // Radius to detect other enemies for avoidance
@@ -94,7 +95,7 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
                 Player_settings playerSettings = other.GetComponent<Player_settings>();
                 if (playerSettings != null)
                 {
-                    playerSettings.TakeDamage(1);
+                    playerSettings.TakeDamage(attackDamage);
                     lastDamageTime = Time.time;
                     stopUntilTime = Time.time + 0.5f; // Stop moving for 0.5 seconds
                 }
@@ -102,8 +103,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         }
     }
 
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    {
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
+        attackDamage = Mathf.Max(1, attackDamage + damageBonus);
+    }
+
     // Take damage from projectiles
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         currentHealth -= damage;
 
@@ -113,7 +120,7 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
             DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
             if (popupScript != null)
             {
-                popupScript.Init(damage, transform.position);
+                popupScript.Init(damage, transform.position, isCrit);
             }
         }
 

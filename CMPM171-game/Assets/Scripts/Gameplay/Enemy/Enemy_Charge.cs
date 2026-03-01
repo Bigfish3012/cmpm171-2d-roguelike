@@ -11,7 +11,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
         Dashing         // Charging complete, dashing towards player
     }
 
-    [SerializeField] private int maxHealth = 5;                                          // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 30;                                          // Maximum health of the enemy
     [SerializeField] private int attackDamage = 1;                                       // Damage dealt to player on collision
     [SerializeField] private float dashSpeed = 20f;                                      // Speed when dashing towards player
     [SerializeField] private float detectionRange = 30f;                                 // Range to detect player
@@ -121,7 +121,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     }
 
     // Take damage from projectiles
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         currentHealth -= damage;
 
@@ -131,7 +131,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
             DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
             if (popupScript != null)
             {
-                popupScript.Init(damage, transform.position);
+                popupScript.Init(damage, transform.position, isCrit);
             }
         }
 
@@ -155,6 +155,12 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     public int GetCurrentHealth()
     {
         return currentHealth;
+    }
+
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    {
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
+        attackDamage = Mathf.Max(1, attackDamage + damageBonus);
     }
 
     // Get the maximum health of the enemy

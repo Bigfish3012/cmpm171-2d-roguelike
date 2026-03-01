@@ -19,6 +19,7 @@ Git history, or team workflow.
 - **NEVER rename serialized fields** in MonoBehaviours or ScriptableObjects
 - **NEVER rename public fields** used in the Inspector
 - **DO NOT touch `.meta` files** unless explicitly instructed
+- **DO NOT add `.meta` files** unless the user requests
 - **DO NOT modify** `/Library`, `/Temp`, `/Logs`, or `/Build`
 - Avoid changing Script Execution Order
 - Assume Unity version is fixed for the project

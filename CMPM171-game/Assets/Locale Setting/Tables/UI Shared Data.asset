@@ -77,6 +77,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7056385009225728
     m_Key: RIGHT
+  - m_Id: 5886803411165184
+    m_Key: Level Up!!!
     m_Metadata:
       m_Items: []
   m_Metadata:

@@ -9,12 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/SC_Prototype.unity
-    guid: e1d7f3216e939c14585d84358871c00f
-  - enabled: 1
-    path: Assets/Scenes/Gameover.unity
-    guid: df60f12f07709ce45938a89d888b5301
-  - enabled: 1
     path: Assets/Scenes/Credits.unity
     guid: efad41db6756bbe4393a64862cd51abb
   - enabled: 1
@@ -23,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Setting.unity
     guid: 154462dbc5e16264cb3db8ae3ae7e6eb
+  - enabled: 1
+    path: Assets/Scenes/SC_Prototype.unity
+    guid: e1d7f3216e939c14585d84358871c00f
+  - enabled: 1
+    path: Assets/Scenes/Level2.unity
+    guid: c62745e2aad8e614c919dfd6e6a5e7cf
+  - enabled: 1
+    path: Assets/Scenes/Gameover.unity
+    guid: df60f12f07709ce45938a89d888b5301
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: a939ef9c786dddc47b76d6f2035c781c, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

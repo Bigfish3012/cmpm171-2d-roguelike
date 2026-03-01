@@ -80,6 +80,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7056385009225728
     m_Localized: RIGHT
+  - m_Id: 5886803411165184
+    m_Localized: Level Up!!!
     m_Metadata:
       m_Items: []
   references:

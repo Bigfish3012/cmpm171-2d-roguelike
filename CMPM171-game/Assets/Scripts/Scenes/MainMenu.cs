@@ -1,30 +1,47 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    // Start a new game by clearing saved data and loading the first gameplay scene
     public void PlayGame()
     {
-        StartCoroutine(PlayGameDelayed());
+        if (GameManager.Instance != null)
+            GameManager.Instance.ClearSavedData();
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadSceneDelayed("SC_Prototype", 0.5f);
+        else
+            SceneManager.LoadScene("SC_Prototype");
     }
-    private IEnumerator PlayGameDelayed()
-    {
-        yield return new WaitForSeconds(0.5f);
-        SceneManager.LoadScene("SC_Prototype");
-    }
+
+    // Open the credits scene
     public void OpenCredits()
     {
-        SceneManager.LoadScene("Credits");
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene("Credits");
+        else
+            SceneManager.LoadScene("Credits");
     }
-        public void OpenHowToPlay()
+
+    // Open the how to play scene
+    public void OpenHowToPlay()
     {
-        SceneManager.LoadScene("HowToPlay");
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene("HowToPlay");
+        else
+            SceneManager.LoadScene("HowToPlay");
     }
+
+    // Open the settings scene
     public void OpenSetting()
     {
-        SceneManager.LoadScene("Setting");
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene("Setting");
+        else
+            SceneManager.LoadScene("Setting");
     }
+
+    // Quit the application
     public void QuitGame()
     {
         Application.Quit();
