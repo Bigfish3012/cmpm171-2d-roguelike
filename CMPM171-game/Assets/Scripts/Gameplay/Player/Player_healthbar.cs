@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 // Player health bar UI. Attach to a Slider under a Canvas.
 // Position the parent RectTransform at top-left (anchor preset: Top Left) so the bar stays fixed there.
@@ -8,6 +9,7 @@ public class Player_healthbar : MonoBehaviour
 {
     [SerializeField] private float bounceDuration = 0.2f;                               // Duration of bounce animation
     [SerializeField] private float bounceScale = 1.15f;                                 // Max scale during bounce
+    [SerializeField] private TextMeshProUGUI healthText;                                 // Optional: shows "current/max" (e.g. 12/12)
 
     private Slider healthSlider;                                                        // Slider component for health display
     private Player_settings playerSettings;                                             // Reference to player health data
@@ -29,24 +31,32 @@ public class Player_healthbar : MonoBehaviour
             return;
         }
 
-        if (playerSettings == null)
-        {
-            Debug.LogError("Player_healthbar: Player_settings instance not found!");
-            return;
-        }
-
         healthSlider.minValue = 0f;
         healthSlider.maxValue = 1f;
         healthSlider.value = 1f;
 
-        previousHealth = playerSettings.GetCurrentHealth();
-        originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        if (healthText == null)
+            healthText = GetComponentInChildren<TextMeshProUGUI>(true);
+
+        // playerSettings may be null in MainMenu (no Player); we retry in Update when entering gameplay
+        if (playerSettings != null)
+        {
+            previousHealth = playerSettings.GetCurrentHealth();
+            originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        }
     }
 
     // Update method to sync health bar with player health and handle bounce
     void Update()
     {
-        if (playerSettings == null || healthSlider == null) return;
+        if (healthSlider == null) return;
+        if (playerSettings == null)
+        {
+            playerSettings = Player_settings.Instance;
+            if (playerSettings == null) return;
+            previousHealth = playerSettings.GetCurrentHealth();
+            originalScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+        }
 
         int maxHp = playerSettings.GetMaxHealth();
         if (maxHp <= 0) return;
@@ -54,6 +64,11 @@ public class Player_healthbar : MonoBehaviour
         int currentHealth = playerSettings.GetCurrentHealth();
         float ratio = (float)currentHealth / maxHp;
         healthSlider.value = ratio;
+
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth}/{maxHp}";
+        }
 
         // Detect damage and trigger bounce
         if (currentHealth < previousHealth)

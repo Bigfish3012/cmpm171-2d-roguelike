@@ -21,7 +21,12 @@ public class CameraFollow : MonoBehaviour
     // LateUpdate method to smoothly follow the target
     void LateUpdate()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            if (Player_settings.Instance != null)
+                target = Player_settings.Instance.PlayerTransform;
+            if (target == null) return;
+        }
 
         // Calculate desired position
         Vector3 desiredPosition = target.position + offset;

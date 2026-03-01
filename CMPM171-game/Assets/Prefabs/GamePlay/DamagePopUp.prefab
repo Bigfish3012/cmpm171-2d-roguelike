@@ -184,6 +184,10 @@ MonoBehaviour:
   floatSpeed: 2
   lifetime: 0.8
   horizontalOffsetRange: 0.3
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalFontSize: 15
+  critColor: {r: 1, g: 0, b: 0, a: 1}
+  critFontSize: 20
 --- !u!1 &5360858598905559526
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +247,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: -1579317501
+  m_SortingLayerID: 1049356261
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &1287330917913880311

@@ -43,7 +43,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 335937395462144
-    m_Localized: Back
+    m_Localized: Resume
     m_Metadata:
       m_Items: []
   - m_Id: 343418435768320
@@ -60,6 +60,28 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 353995409297408
     m_Localized: Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3799513049305088
+    m_Localized: English
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056284396261376
+    m_Localized: UP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056380890419200
+    m_Localized: LEFT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056383625105408
+    m_Localized: DOWN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056385009225728
+    m_Localized: RIGHT
+  - m_Id: 5886803411165184
+    m_Localized: Level Up!!!
     m_Metadata:
       m_Items: []
   references:

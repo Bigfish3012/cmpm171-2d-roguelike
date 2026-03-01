@@ -26,19 +26,19 @@ public class HeartLowHealthFlash : MonoBehaviour
             return;
         }
 
-        if (playerSettings == null)
-        {
-            Debug.LogError("HeartLowHealthFlash: Player_settings instance not found!");
-            return;
-        }
-
         originalColor = heartImage.color;
+        // playerSettings may be null in MainMenu (no Player); we retry in Update when entering gameplay
     }
 
     // Update method to flash heart when health is low
     void Update()
     {
-        if (heartImage == null || playerSettings == null) return;
+        if (heartImage == null) return;
+        if (playerSettings == null)
+        {
+            playerSettings = Player_settings.Instance;
+            if (playerSettings == null) return;
+        }
 
         int maxHp = playerSettings.GetMaxHealth();
         if (maxHp <= 0) return;

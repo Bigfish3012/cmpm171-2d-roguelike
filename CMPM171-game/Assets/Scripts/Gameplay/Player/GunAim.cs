@@ -1,55 +1,31 @@
 using UnityEngine;
 
-public enum AimMode
-{
-    Auto,
-    Manual
-}
-
 public class GunAim : MonoBehaviour
 {
-    [SerializeField] private Camera cam;                                                 // Camera reference for mouse position calculation
     [SerializeField] private Transform player;                                           // Player's Transform (parent object)
     [SerializeField] private float radius = 0.6f;                                        // Distance of gun around player
     [SerializeField] private string enemyTag = "Enemies";                               // Tag of enemy objects
     [SerializeField] private float maxTargetRange = 50f;                                 // Maximum range to target enemies
-    [SerializeField] private AimMode currentAimMode = AimMode.Auto;                    // Current aiming mode
+    [SerializeField] private SpriteRenderer gunSpriteRenderer;                            // Sprite renderer for gun visibility
 
-    // Awake method to initialize the camera reference
+    public bool HasTarget { get; private set; }                                           // Whether a valid enemy target exists
+
     void Awake()
     {
-        if (cam == null) cam = Camera.main;
+        if (gunSpriteRenderer == null)
+            gunSpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update method to handle aiming and gun positioning
+    // Update method to handle aiming and gun positioning (always auto-aim at nearest enemy)
     void Update()
     {
-        // Toggle aim mode when R key is pressed
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            currentAimMode = currentAimMode == AimMode.Auto ? AimMode.Manual : AimMode.Auto;
-        }
+        Vector3 targetPosition = FindNearestEnemyPosition();
+        HasTarget = targetPosition != Vector3.zero;
+        if (gunSpriteRenderer != null)
+            gunSpriteRenderer.enabled = HasTarget;
 
-        Vector3 targetPosition;
-
-        // Choose target based on current aim mode
-        if (currentAimMode == AimMode.Auto)
-        {
-            targetPosition = FindNearestEnemyPosition();
-            
-            // If no enemy found, use player's forward direction or default direction
-            if (targetPosition == Vector3.zero)
-            {
-                targetPosition = player.position + Vector3.right;
-            }
-        }
-        else // Manual mode
-        {
-            // Aim at mouse position in world space
-            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
-            targetPosition = mouseWorldPos;
-        }
+        // If no target exists, keep gun hidden and skip reposition/rotation updates.
+        if (!HasTarget) return;
 
         Vector3 dir = (targetPosition - player.position);
         dir.z = 0f;

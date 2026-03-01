@@ -3,15 +3,18 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
 {
-    [SerializeField] private int maxHealth = 2;                                         // Maximum health of the enemy
+    [SerializeField] private int maxHealth = 20;                                         // Maximum health of the enemy
     [SerializeField] private int attackDamage = 1;                                      // Damage of the enemy bullet
     [SerializeField] private Projectile enemyBulletPrefab;                              // Prefab of the enemy bullet
     [SerializeField] private Transform firePoint;                                       // Point to spawn the enemy bullet
     [SerializeField] private float fireCooldown = 1.5f;                                 // Cooldown between each shot
-    [SerializeField] private float shootRange = 10f;                                    // Range to spawn the enemy bullet
+    [SerializeField] private float shootRange = 5f;                                     // Range to spawn the enemy bullet (closer = must get nearer to player)
+    [SerializeField] private float aimCancelRangeBuffer = 0.75f;                        // Extra distance before cancelling aim to prevent range-edge jitter
     [SerializeField] private float aimTime = 0.5f;                                     // Time to aim before firing
     [SerializeField] private float wanderSpeed = 1.5f;                                  // Speed when randomly wandering
     [SerializeField] private float wanderDirectionInterval = 2f;                        // Seconds before picking a new random direction
+    [SerializeField] private float maxDistanceFromPlayer = 12f;                         // If too far, force move back to player
+    [SerializeField] private float returnSpeed = 2.5f;                                  // Move speed when returning to player
     [SerializeField] private int experience = 2;                                        // Experience points given to player when killed
     [SerializeField] private GameObject damagePopUpPrefab;                             // Prefab for damage pop-up text (optional)
 
@@ -58,11 +61,12 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
 
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
         bool playerInRange = distanceToPlayer <= shootRange;
+        bool playerStillInAimWindow = distanceToPlayer <= shootRange + aimCancelRangeBuffer;
 
         // Aiming: player in range and we started aiming
         if (aimStartTime >= 0f)
         {
-            if (!playerInRange)
+            if (!playerStillInAimWindow)
             {
                 aimStartTime = -1f;
             }
@@ -83,7 +87,21 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             return;
         }
 
-        // Random wander when not aiming
+        // Prevent getting stuck far away from player.
+        if (distanceToPlayer > maxDistanceFromPlayer)
+        {
+            MoveTowardPlayer(returnSpeed);
+            return;
+        }
+
+        // Move toward player when not in shooting range to avoid wandering away.
+        if (!playerInRange)
+        {
+            MoveTowardPlayer(wanderSpeed);
+            return;
+        }
+
+        // Random wander only when already in shooting range but not currently aiming/firing.
         if (Time.time >= nextWanderDirectionTime)
         {
             PickNewWanderDirection();
@@ -104,8 +122,16 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         bullet.Init(direction, attackDamage);
     }
 
+    // Move toward player to keep shooter in combat area
+    private void MoveTowardPlayer(float speed)
+    {
+        Vector2 directionToPlayer = ((Vector2)playerTransform.position - rb.position).normalized;
+        Vector2 newPos = rb.position + directionToPlayer * speed * Time.fixedDeltaTime;
+        rb.MovePosition(newPos);
+    }
+
     // Take damage from projectiles
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool isCrit = false)
     {
         currentHealth -= damage;
 
@@ -115,7 +141,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
             DamagePopUp popupScript = popup.GetComponent<DamagePopUp>();
             if (popupScript != null)
             {
-                popupScript.Init(damage, transform.position);
+                popupScript.Init(damage, transform.position, isCrit);
             }
         }
 
@@ -138,6 +164,12 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     public int GetCurrentHealth()
     {
         return currentHealth;
+    }
+
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    {
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
+        attackDamage = Mathf.Max(1, attackDamage + damageBonus);
     }
 
     // Get the maximum health of the enemy
