@@ -66,6 +66,20 @@ MonoBehaviour:
     m_Localized: "\u65E5\u672C\u8A9E(Japanese)"
     m_Metadata:
       m_Items: []
+  - m_Id: 7056284396261376
+    m_Localized: "\u4E0A"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056380890419200
+    m_Localized: "\u5DE6"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056383625105408
+    m_Localized: "\u4E0B"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056385009225728
+    m_Localized: "\u53F3"
   - m_Id: 5886803411165184
     m_Localized: "\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7!!!"
     m_Metadata:

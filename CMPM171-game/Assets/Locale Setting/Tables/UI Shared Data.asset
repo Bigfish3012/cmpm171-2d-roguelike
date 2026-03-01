@@ -63,6 +63,20 @@ MonoBehaviour:
     m_Key: English
     m_Metadata:
       m_Items: []
+  - m_Id: 7056284396261376
+    m_Key: UP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056380890419200
+    m_Key: LEFT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056383625105408
+    m_Key: DOWN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7056385009225728
+    m_Key: RIGHT
   - m_Id: 5886803411165184
     m_Key: Level Up!!!
     m_Metadata:
