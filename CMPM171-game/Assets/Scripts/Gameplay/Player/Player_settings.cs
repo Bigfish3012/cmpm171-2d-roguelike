@@ -8,27 +8,28 @@ public class Player_settings : MonoBehaviour, IDamageable
     public static event Action<int> OnLevelUp;
     // Singleton instance
     public static Player_settings Instance { get; private set; }
-    
+
     // Public property to get player transform
     public Transform PlayerTransform => transform;
-    
+
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
     [SerializeField] private int xpPerLevel = 20;                                      // Current XP required for next level (starts at 20)
     [SerializeField] private int xpIncreasePerLevel = 10;                              // XP increase required after each level up
     [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
 
-    private int currentHealth;                                                           // Current health of the player
-    private int currentExperience;                                                       // Current XP progress toward next level
-    private int currentLevel = 1;                                                       // Player level (starts at 1)
-    private int startingXPPerLevel;                                                     // Base XP requirement used to reconstruct level after restore
-    private int lastPrintedHealth;                                                      // Last printed health value for debug logging
-    private bool isInvincible = false;                                                  // Whether the player is currently invincible
+    private int currentHealth;                                                         // Current health of the player
+    private int currentExperience;                                                     // Current XP progress toward next level
+    private int currentLevel = 1;                                                      // Player level (starts at 1)
+    private int startingXPPerLevel;                                                    // Base XP requirement used to reconstruct level after restore
+    private int lastPrintedHealth;                                                     // Last printed health value for debug logging
+    private bool isInvincible = false;                                                 // Whether the player is currently invincible
 
-    // Awake method to initialize singleton
+    // NEW: damage taken multiplier (1 = normal, 1.1 = +10% damage taken)
+    private float damageTakenMultiplier = 1f;
+
     void Awake()
     {
-        // Set singleton instance
         if (Instance == null)
         {
             Instance = this;
@@ -42,7 +43,6 @@ public class Player_settings : MonoBehaviour, IDamageable
         startingXPPerLevel = xpPerLevel;
     }
 
-    // Start method to initialize the player
     void Start()
     {
         var gm = GameManager.Instance;
@@ -63,10 +63,8 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
     }
 
-    // Update method to print health to console when it changes
     void Update()
     {
-        // Print health to console when it changes
         if (currentHealth != lastPrintedHealth)
         {
             Debug.Log($"Player Health: {currentHealth}");
@@ -74,16 +72,14 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
     }
 
-    // Take damage method to reduce player health and handle death
     public void TakeDamage(int damage, bool isCrit = false)
     {
-        // Don't take damage if invincible
-        if (isInvincible)
-        {
-            return;
-        }
+        if (isInvincible) return;
 
-        currentHealth -= damage;
+        // NEW: apply damage taken multiplier
+        int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage * damageTakenMultiplier));
+
+        currentHealth -= finalDamage;
         SaveToGameManager();
 
         if (currentHealth <= 0)
@@ -99,28 +95,25 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
     }
 
-    // Set invincible state (used during roll)
     public void SetInvincible(bool invincible)
     {
         isInvincible = invincible;
     }
 
-    // Get the current health of the player
     public int GetCurrentHealth()
     {
         return currentHealth;
     }
 
-    // Get the maximum health of the player
     public int GetMaxHealth()
     {
         return maxHealth;
     }
 
-    // Add experience when killing an enemy
     public void AddExperience(int amount)
     {
-        currentExperience += amount;
+        currentExperience += amount;  
+        //currentExperience += 9999;  //testing new upgrades
         while (currentExperience >= xpPerLevel)
         {
             currentExperience -= xpPerLevel;
@@ -135,31 +128,26 @@ public class Player_settings : MonoBehaviour, IDamageable
         Debug.Log($"Player Experience: {currentExperience}/{xpPerLevel} (Level {currentLevel})");
     }
 
-    // Get the current experience of the player
     public int GetCurrentExperience()
     {
         return currentExperience;
     }
 
-    // Get current level (starts at 1)
     public int GetCurrentLevel()
     {
         return currentLevel;
     }
 
-    // Get XP progress toward next level (0 to xpPerLevel-1)
     public int GetXPProgressTowardsNextLevel()
     {
         return currentExperience;
     }
 
-    // Get XP required for next level (e.g. 100)
     public int GetXPPerLevel()
     {
         return xpPerLevel;
     }
 
-    // Calculate damage with critical hit roll. Returns (damage, isCrit).
     public (int damage, bool isCrit) CalculateDamageWithCrit(int baseDamage)
     {
         bool isCrit = UnityEngine.Random.Range(0f, 100f) < critRate;
@@ -170,19 +158,16 @@ public class Player_settings : MonoBehaviour, IDamageable
         return (baseDamage, false);
     }
 
-    // Get crit rate for display or other use
     public float GetCritRate()
     {
         return critRate;
     }
 
-    // Get crit damage for display or other use
     public float GetCritDamage()
     {
         return critDamage;
     }
 
-    // For GameManager persistence - restore saved data when entering a new scene
     public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD)
     {
         currentHealth = currentHp;
@@ -196,6 +181,8 @@ public class Player_settings : MonoBehaviour, IDamageable
         critRate = critR;
         critDamage = critD;
         lastPrintedHealth = currentHealth;
+
+        // NOTE: damageTakenMultiplier is not restored (kept simple for now)
     }
 
     // Upgrade methods for Level Up Menu
@@ -218,14 +205,19 @@ public class Player_settings : MonoBehaviour, IDamageable
         SaveToGameManager();
     }
 
+    // NEW: called by penalty system (e.g. +0.10f => +10% more damage taken)
+    public void AddDamageTakenMultiplier(float amount)
+    {
+        damageTakenMultiplier = Mathf.Max(0.1f, damageTakenMultiplier + amount);
+        // NOTE: not saved/restored yet (we can add persistence later if you want)
+    }
+
     private void SaveToGameManager()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.SaveFrom(this, GetComponent<PlayerController>(), GetComponent<RangedShooter>());
     }
 
-    // Save when destroyed (e.g. scene transition) so data is preserved for next scene.
-    // Skip if data was explicitly cleared (e.g. GoHome, death) to avoid overwriting the clear.
     private void OnDestroy()
     {
         var gm = GameManager.Instance;

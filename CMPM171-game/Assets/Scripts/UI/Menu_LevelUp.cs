@@ -13,26 +13,41 @@ public class Menu_LevelUp : MonoBehaviour
     [System.Serializable]
     public struct UpgradeRanges
     {
-        public int healthMin, healthMax;      // e.g. 2, 4
-        public float speedMin, speedMax;       // e.g. 0.1, 1
-        public int critRateMin, critRateMax;   // e.g. 5, 15
+        public int healthMin, healthMax;          // e.g. 2, 4
+        public float speedMin, speedMax;         // e.g. 0.1, 1
+        public int critRateMin, critRateMax;     // e.g. 5, 15
         public int critDamageMin, critDamageMax; // e.g. 10, 40
-        public int damageMin, damageMax;      // e.g. 2, 5
+        public int damageMin, damageMax;         // e.g. 2, 5
     }
 
     [SerializeField] private GameObject levelUpMenuUI;
     [SerializeField] private float clickDelaySeconds = 1f;
-    [SerializeField] private UpgradeRanges ranges = new UpgradeRanges
+
+    [Header("Penalty Rules")]
+    [SerializeField] private int penaltyStartLevel = 6;          // Level >= 6 starts having drawbacks
+    [SerializeField] private float damagePickDamageTakenPlus = 0.10f; // Picking Damage => +10% damage taken
+    [SerializeField] private float speedPickDamageMultMinus = 0.10f;  // Picking Speed  => -10% damage dealt
+    [SerializeField] private float healthPickSpeedMinus = 0.30f;      // Picking Health => -0.3 move speed
+
+    [SerializeField]
+    private UpgradeRanges ranges = new UpgradeRanges
     {
-        healthMin = 2, healthMax = 4,
-        speedMin = 0.1f, speedMax = 1f,
-        critRateMin = 5, critRateMax = 15,
-        critDamageMin = 10, critDamageMax = 40,
-        damageMin = 2, damageMax = 5
+        healthMin = 2,
+        healthMax = 4,
+        speedMin = 0.1f,
+        speedMax = 1f,
+        critRateMin = 5,
+        critRateMax = 15,
+        critDamageMin = 10,
+        critDamageMax = 40,
+        damageMin = 2,
+        damageMax = 5
     };
 
     private Button[] optionButtons;
     private UpgradeOption[] currentOptions;
+
+    private bool penaltyMode = false;
 
     private struct UpgradeOption
     {
@@ -68,18 +83,19 @@ public class Menu_LevelUp : MonoBehaviour
 
     private void ShowMenu(int newLevel)
     {
+        penaltyMode = newLevel >= penaltyStartLevel;
+
         GenerateUpgradeOptions();
         RefreshButtonTexts();
+
         levelUpMenuUI.SetActive(true);
         Time.timeScale = 0f;
 
-        Debug.Log($"[Level Up] Level {newLevel} - Options: " +
+        Debug.Log($"[Level Up] Level {newLevel} (PenaltyMode={penaltyMode}) - Options: " +
             string.Join(", ", System.Array.ConvertAll(currentOptions, o => GetDisplayText(o))));
 
         foreach (var btn in optionButtons)
-        {
             btn.interactable = false;
-        }
 
         StartCoroutine(EnableButtonsAfterDelay());
     }
@@ -98,14 +114,12 @@ public class Menu_LevelUp : MonoBehaviour
         for (int i = 0; i < types.Count; i++)
         {
             int swapIndex = Random.Range(i, types.Count);
-            UpgradeType temp = types[i];
-            types[i] = types[swapIndex];
-            types[swapIndex] = temp;
+            (types[i], types[swapIndex]) = (types[swapIndex], types[i]);
         }
 
         for (int i = 0; i < optionButtons.Length; i++)
         {
-            UpgradeType type = i < types.Count ? types[i] : (UpgradeType)Random.Range(0, 5);
+            UpgradeType type = i < types.Count ? types[i] : (UpgradeType)Random.Range(0, types.Count);
             float value = GetRandomValueForType(type);
             currentOptions[i] = new UpgradeOption { type = type, value = value };
         }
@@ -130,9 +144,7 @@ public class Menu_LevelUp : MonoBehaviour
         {
             var text = optionButtons[i].GetComponentInChildren<TextMeshProUGUI>(true);
             if (text != null)
-            {
                 text.text = GetDisplayText(currentOptions[i]);
-            }
         }
     }
 
@@ -140,15 +152,28 @@ public class Menu_LevelUp : MonoBehaviour
     {
         string valueText = opt.type == UpgradeType.Speed ? opt.value.ToString("0.0") : Mathf.RoundToInt(opt.value).ToString();
 
-        switch (opt.type)
+        string baseText = opt.type switch
         {
-            case UpgradeType.Health: return $"Health +{valueText}";
-            case UpgradeType.Speed: return $"Speed +{valueText}";
-            case UpgradeType.CritRate: return $"Crit Rate +{valueText}";
-            case UpgradeType.CritDamage: return $"Crit Damage +{valueText}";
-            case UpgradeType.Damage: return $"Damage +{valueText}";
-            default: return "";
-        }
+            UpgradeType.Health => $"Health +{valueText}",
+            UpgradeType.Speed => $"Speed +{valueText}",
+            UpgradeType.CritRate => $"Crit Rate +{valueText}",
+            UpgradeType.CritDamage => $"Crit Damage +{valueText}",
+            UpgradeType.Damage => $"Damage +{valueText}",
+            _ => ""
+        };
+
+        if (!penaltyMode) return baseText;
+
+        // Optional: show short drawback hint after level 6+
+        string drawback = opt.type switch
+        {
+            UpgradeType.Damage => $"  <color=#FF5555>(Take +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% dmg)</color>",
+            UpgradeType.Speed => $"  <color=#FF5555>(Dmg -{Mathf.RoundToInt(speedPickDamageMultMinus * 100f)}%)</color>",
+            UpgradeType.Health => $"  <color=#FF5555>(Speed -{healthPickSpeedMinus:0.0})</color>",
+            _ => ""
+        };
+
+        return baseText + drawback;
     }
 
     private IEnumerator EnableButtonsAfterDelay()
@@ -156,9 +181,7 @@ public class Menu_LevelUp : MonoBehaviour
         yield return new WaitForSecondsRealtime(clickDelaySeconds);
 
         foreach (var btn in optionButtons)
-        {
             btn.interactable = true;
-        }
     }
 
     private void OnOptionClicked(int buttonIndex)
@@ -183,18 +206,31 @@ public class Menu_LevelUp : MonoBehaviour
         {
             case UpgradeType.Health:
                 if (playerSettings != null) playerSettings.AddMaxHealth(Mathf.RoundToInt(opt.value));
+
+                // Penalty: health pick => slower move
+                if (penaltyMode && playerController != null) playerController.AddMoveSpeed(-healthPickSpeedMinus);
                 break;
+
             case UpgradeType.Speed:
                 if (playerController != null) playerController.AddMoveSpeed(opt.value);
+
+                // Penalty: speed pick => lower damage dealt
+                if (penaltyMode && rangedShooter != null) rangedShooter.AddDamageMultiplier(-speedPickDamageMultMinus);
                 break;
+
             case UpgradeType.CritRate:
                 if (playerSettings != null) playerSettings.AddCritRate(opt.value);
                 break;
+
             case UpgradeType.CritDamage:
                 if (playerSettings != null) playerSettings.AddCritDamage(opt.value);
                 break;
+
             case UpgradeType.Damage:
                 if (rangedShooter != null) rangedShooter.AddAttackDamage(Mathf.RoundToInt(opt.value));
+
+                // Penalty: damage pick => take more damage
+                if (penaltyMode && playerSettings != null) playerSettings.AddDamageTakenMultiplier(damagePickDamageTakenPlus);
                 break;
         }
     }
