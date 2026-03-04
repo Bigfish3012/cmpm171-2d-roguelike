@@ -1,24 +1,42 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class GameOver : MonoBehaviour
 {
-    // [SerializeField] private TextMeshProUGUI highScoreText;
-    // [SerializeField] private TextMeshProUGUI currentScoreText;
-    // [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip gameOverClip;
+    [Range(0f, 1f)] [SerializeField] private float volume = 1f;
 
-    // Start method to initialize the game over screen
+    [Header("Loop BGM")]
+    [SerializeField] private AudioClip bgmLoopClip;
+    [Range(0f, 1f)] [SerializeField] private float bgmVolume = 1f;
+
     private void Start()
     {
-        // source from: https://www.youtube.com/watch?v=6PkdHcVFM6M
-        // int highScore = PlayerPrefs.GetInt("HighScore", 0);
-        // highScoreText.text = "High Score: " + highScore.ToString();
+        // One-shot game over sound effect
+        if (gameOverClip != null)
+        {
+            Vector3 pos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            AudioSource.PlayClipAtPoint(gameOverClip, pos, volume);
+        }
 
-        // int lastScore = PlayerPrefs.GetInt("LastScore", 0);
-        // currentScoreText.text = "Score: " + lastScore.ToString();
+        // Looping background music starts 0.2s after gameOverClip ends
+        if (bgmLoopClip != null)
+            StartCoroutine(PlayBgmAfterDelay());
+    }
 
-        // audioSource.Play();
+    private IEnumerator PlayBgmAfterDelay()
+    {
+        float delay = (gameOverClip != null ? gameOverClip.length : 0f) + 0.2f;
+        yield return new WaitForSeconds(delay);
+
+        var source = gameObject.AddComponent<AudioSource>();
+        source.clip = bgmLoopClip;
+        source.loop = true;
+        source.volume = bgmVolume;
+        source.spatialBlend = 0f;
+        source.playOnAwake = false;
+        source.Play();
     }
 
     // Restart method to restart the game
