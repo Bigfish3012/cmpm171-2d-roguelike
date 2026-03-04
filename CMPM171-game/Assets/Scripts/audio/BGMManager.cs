@@ -8,9 +8,19 @@ public class BGMManager : MonoBehaviour
     [Header("Menu BGM")]
     [SerializeField] private AudioSource audioSource;                                    // Audio source for playing BGM
     [SerializeField] private AudioClip menuClip;                                         // Menu background music clip
-    [SerializeField] private float menuVolume = 0.2f;                                    // Volume for menu BGM
+    [SerializeField] private float menuVolume = 0.1f;                                    // Volume for menu BGM
+
+    [Header("Level 1 BGM")]
+    [SerializeField] private AudioClip level1Clip;                                        // BGM for SC_Prototype (level 1)
+    [SerializeField] private float level1Volume = 0.3f;
+
+    [Header("Level 2 BGM")]
+    [SerializeField] private AudioClip level2Clip;                                        // BGM for SC_Prototype (level 2)
+    [SerializeField] private float level2Volume = 0.3f;
 
     private readonly string[] keepMenuBgmScenes = { "MainMenu", "Credits", "Setting" };  // Scenes that keep menu BGM playing
+    private const string Level1SceneName = "SC_Prototype";
+    private const string Level2SceneName = "Level2";
 
     // Initialize singleton, set up audio source and subscribe to scene events
     private void Awake()
@@ -42,17 +52,27 @@ public class BGMManager : MonoBehaviour
             Instance = null;
     }
 
-    // Play or stop menu BGM based on the loaded scene
+    // Play BGM based on the loaded scene
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        bool shouldKeep = IsKeepScene(scene.name);
-
-        if (shouldKeep)
+        if (IsKeepScene(scene.name))
         {
             if (audioSource.clip != menuClip)
                 PlayMenuBGM();
             else if (!audioSource.isPlaying)
                 audioSource.Play();
+        }
+        else if (scene.name == Level1SceneName && level1Clip != null)
+        {
+            audioSource.clip = level1Clip;
+            audioSource.volume = level1Volume;
+            audioSource.Play();
+        }
+        else if (scene.name == Level2SceneName && level2Clip != null)
+        {
+            audioSource.clip = level2Clip;
+            audioSource.volume = level2Volume;
+            audioSource.Play();
         }
         else
         {

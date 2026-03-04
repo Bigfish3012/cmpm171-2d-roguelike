@@ -15,5 +15,6 @@ public class UISFXPlayer : MonoBehaviour
     {
         if (clickClip == null || audioSource == null) return;
         audioSource.PlayOneShot(clickClip, volume);
+        Debug.Log("Played click sound");
     }
 }

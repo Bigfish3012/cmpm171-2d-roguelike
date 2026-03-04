@@ -7,6 +7,8 @@ public class RangedShooter : MonoBehaviour
     [SerializeField] private Transform firePoint;                                       // Point to spawn the projectile
     [SerializeField] private float fireCooldown = 3f;                                   // Cooldown between each shot
     [SerializeField] private GunAim gunAim;                                             // Gun aiming state for target checks
+    [SerializeField] private AudioClip fireSoundClip;                                    // SFX played when firing
+    [Range(0f, 1f)] [SerializeField] private float fireSoundVolume = 1f;
 
     private float nextFireTime;                                                         // Time to spawn the next projectile
 
@@ -32,6 +34,12 @@ public class RangedShooter : MonoBehaviour
 
     void Shoot()
     {
+        if (fireSoundClip != null)
+        {
+            Vector3 pos = firePoint != null ? firePoint.position : transform.position;
+            AudioSource.PlayClipAtPoint(fireSoundClip, pos, fireSoundVolume);
+        }
+
         Vector2 dir = firePoint.right;
 
         // NEW: apply damage multiplier BEFORE crit calculation

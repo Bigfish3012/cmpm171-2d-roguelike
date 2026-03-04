@@ -320,6 +320,8 @@ MonoBehaviour:
   firePoint: {fileID: 7638532191008807856}
   fireCooldown: 0.5
   gunAim: {fileID: 6986651232607815245}
+  fireSoundClip: {fileID: 8300000, guid: bd2a7c5f46d6714488da6e54cdfb51ac, type: 3}
+  fireSoundVolume: 1
 --- !u!114 &7345503658405961177
 MonoBehaviour:
   m_ObjectHideFlags: 0
