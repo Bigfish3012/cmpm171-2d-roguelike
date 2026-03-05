@@ -332,15 +332,15 @@ MonoBehaviour:
   speedPickDamageMultMinus: 0.1
   healthPickSpeedMinus: 0.3
   ranges:
-    healthMin: 2
-    healthMax: 4
-    speedMin: 0.1
-    speedMax: 1
-    critRateMin: 2
-    critRateMax: 8
-    critDamageMin: 5
-    critDamageMax: 10
-    damageMin: 2
+    healthMin: 3
+    healthMax: 3
+    speedMin: 0.5
+    speedMax: 0.5
+    critRateMin: 15
+    critRateMax: 15
+    critDamageMin: 30
+    critDamageMax: 30
+    damageMin: 5
     damageMax: 5
 --- !u!1 &1248663485432239025
 GameObject:

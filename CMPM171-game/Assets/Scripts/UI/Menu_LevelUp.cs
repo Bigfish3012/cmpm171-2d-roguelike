@@ -32,15 +32,15 @@ public class Menu_LevelUp : MonoBehaviour
     [SerializeField]
     private UpgradeRanges ranges = new UpgradeRanges
     {
-        healthMin = 2,
-        healthMax = 4,
-        speedMin = 0.1f,
-        speedMax = 1f,
-        critRateMin = 5,
+        healthMin = 3,
+        healthMax = 3,
+        speedMin = 0.5f,
+        speedMax = 0.5f,
+        critRateMin = 15,
         critRateMax = 15,
-        critDamageMin = 10,
-        critDamageMax = 40,
-        damageMin = 2,
+        critDamageMin = 30,
+        critDamageMax = 30,
+        damageMin = 5,
         damageMax = 5
     };
 

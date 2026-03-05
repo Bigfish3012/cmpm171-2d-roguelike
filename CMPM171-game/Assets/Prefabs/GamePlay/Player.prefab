@@ -335,8 +335,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_settings
   maxHealth: 10
-  xpPerLevel: 20
-  xpIncreasePerLevel: 10
+  xpPerLevel: 10
+  xpIncreasePerLevel: 1.2
   critRate: 15
   critDamage: 100
 --- !u!212 &1087225547976335830

@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private float _critDamage;                                                           // Saved critical damage bonus
     private float _moveSpeed;                                                            // Saved movement speed
     private int _attackDamage;                                                           // Saved attack damage
+    private int _projectileCount;                                                        // Saved projectile count
     private int _savedWave;                                                              // Saved current wave index
 
     /// <summary>
@@ -101,6 +102,7 @@ public class GameManager : MonoBehaviour
         _critDamage = ps.GetCritDamage();
         _moveSpeed = pc != null ? pc.moveSpeed : 6f;
         _attackDamage = rs != null ? rs.GetAttackDamage() : 10;
+        _projectileCount = rs != null ? rs.GetProjectileCount() : 1;
 
         HasSavedData = true;
     }
@@ -118,7 +120,10 @@ public class GameManager : MonoBehaviour
             pc.moveSpeed = _moveSpeed;
 
         if (rs != null)
+        {
             rs.SetAttackDamage(_attackDamage);
+            rs.SetProjectileCount(_projectileCount);
+        }
     }
 
     /// <summary>
