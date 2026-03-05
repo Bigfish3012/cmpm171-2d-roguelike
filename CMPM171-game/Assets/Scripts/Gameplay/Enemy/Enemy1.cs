@@ -11,18 +11,23 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float avoidanceStrength = 2f;                               // Strength of avoidance force
     [SerializeField] private int experience = 1;                                         // Experience points given to player when killed
     [SerializeField] private GameObject damagePopUpPrefab;                               // Prefab for damage pop-up text (optional)
+    [SerializeField] private Animator enemyAnimator;                                     // Animator used to play death animation
+    [SerializeField] private AnimationClip deathAnimationClip;                           // Death animation clip (choose in Inspector)
 
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the enemy
     private float lastDamageTime;                                                        // Time when the enemy last damaged the player
     private float stopUntilTime = 0f;                                                    // Time until enemy can move again after hitting player
+    private bool isDead;                                                                 // Prevent repeated death logic
 
     // Start method to initialize the enemy
     void Start()
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
+        if (enemyAnimator == null) enemyAnimator = GetComponentInChildren<Animator>();
         
         // Get player transform from singleton
         if (Player_settings.Instance != null)
@@ -112,6 +117,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     // Take damage from projectiles
     public void TakeDamage(int damage, bool isCrit = false)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
 
         if (damagePopUpPrefab != null)
@@ -133,11 +140,26 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         if (Player_settings.Instance != null)
         {
             Player_settings.Instance.AddExperience(experience);
         }
-        Destroy(gameObject);
+
+        if (rb != null) rb.simulated = false;
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
+        foreach (Collider2D col in colliders) col.enabled = false;
+
+        float destroyDelay = 0f;
+        if (enemyAnimator != null && deathAnimationClip != null)
+        {
+            enemyAnimator.Play(deathAnimationClip.name, 0, 0f);
+            destroyDelay = deathAnimationClip.length;
+        }
+
+        Destroy(gameObject, Mathf.Max(0f, destroyDelay));
     }
 
     // Get the current health of the enemy

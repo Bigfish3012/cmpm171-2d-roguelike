@@ -440,6 +440,8 @@ MonoBehaviour:
   damageCooldown: 2
   experience: 3
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
+  enemyAnimator: {fileID: 0}
+  deathAnimationClip: {fileID: 7400000, guid: 7c44096df22d1454a825d8b79cc919e7, type: 2}
 --- !u!95 &7427581554061752426
 Animator:
   serializedVersion: 7
