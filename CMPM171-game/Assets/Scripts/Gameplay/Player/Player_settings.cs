@@ -13,8 +13,8 @@ public class Player_settings : MonoBehaviour, IDamageable
     public Transform PlayerTransform => transform;
 
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
-    [SerializeField] private int xpPerLevel = 20;                                      // Current XP required for next level (starts at 20)
-    [SerializeField] private int xpIncreasePerLevel = 10;                              // XP increase required after each level up
+    [SerializeField] private int xpPerLevel = 20;                                        // Current XP required for next level
+    [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
     [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
 
@@ -118,7 +118,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         {
             currentExperience -= xpPerLevel;
             currentLevel++;
-            xpPerLevel += xpIncreasePerLevel;
+            xpPerLevel = ComputeNextXPRequirement(xpPerLevel);
 
             Debug.Log($"Level Up! Now Level {currentLevel}");
             currentHealth = maxHealth;  // Restore full health on level up
@@ -174,15 +174,35 @@ public class Player_settings : MonoBehaviour, IDamageable
         maxHealth = maxHp;
         currentExperience = currentExp;
         xpPerLevel = xpPerLvl;
-        if (xpIncreasePerLevel > 0 && xpPerLevel >= startingXPPerLevel)
-            currentLevel = 1 + ((xpPerLevel - startingXPPerLevel) / xpIncreasePerLevel);
-        else
-            currentLevel = 1;
+        currentLevel = RecalculateLevelFromXPRequirement(xpPerLevel);
         critRate = critR;
         critDamage = critD;
         lastPrintedHealth = currentHealth;
 
         // NOTE: damageTakenMultiplier is not restored (kept simple for now)
+    }
+
+    private int ComputeNextXPRequirement(int currentRequirement)
+    {
+        float multiplier = Mathf.Max(1.01f, xpIncreasePerLevel);
+        int nextRequirement = Mathf.CeilToInt(currentRequirement * multiplier);
+        return Mathf.Max(currentRequirement + 1, nextRequirement);
+    }
+
+    private int RecalculateLevelFromXPRequirement(int currentRequirement)
+    {
+        if (currentRequirement <= startingXPPerLevel) return 1;
+
+        int level = 1;
+        int requirement = startingXPPerLevel;
+
+        while (requirement < currentRequirement && level < 9999)
+        {
+            requirement = ComputeNextXPRequirement(requirement);
+            level++;
+        }
+
+        return level;
     }
 
     // Upgrade methods for Level Up Menu
