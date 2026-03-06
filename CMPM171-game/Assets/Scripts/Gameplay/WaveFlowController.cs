@@ -86,6 +86,14 @@ public class WaveFlowController : MonoBehaviour
         StartCoroutine(BeginNextWaveRoutine());
     }
 
+    /// <summary>
+    /// Debug: Clear all enemies and start the next wave immediately.
+    /// </summary>
+    public void DebugStartNextWave()
+    {
+        StartCoroutine(BeginNextWaveRoutine());
+    }
+
     private IEnumerator BeginNextWaveRoutine()
     {
         if (transitioning)
