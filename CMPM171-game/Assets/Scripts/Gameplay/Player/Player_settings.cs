@@ -100,6 +100,13 @@ public class Player_settings : MonoBehaviour, IDamageable
         isInvincible = invincible;
     }
 
+    /// <summary>Restore player health to maximum. Used by debug mode and similar.</summary>
+    public void RestoreFullHealth()
+    {
+        currentHealth = maxHealth;
+        SaveToGameManager();
+    }
+
     public int GetCurrentHealth()
     {
         return currentHealth;
