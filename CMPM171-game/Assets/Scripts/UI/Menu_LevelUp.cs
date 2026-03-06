@@ -23,6 +23,11 @@ public class Menu_LevelUp : MonoBehaviour
     [SerializeField] private GameObject levelUpMenuUI;
     [SerializeField] private float clickDelaySeconds = 1f;
 
+    [SerializeField] private AudioClip levelUpClip;
+    [Range(0f, 1f)] [SerializeField] private float levelUpVolume = 1f;
+
+    private AudioSource _sfxSource;
+
     [Header("Penalty Rules")]
     [SerializeField] private int penaltyStartLevel = 6;          // Level >= 6 starts having drawbacks
     [SerializeField] private float damagePickDamageTakenPlus = 0.10f; // Picking Damage => +10% damage taken
@@ -57,6 +62,8 @@ public class Menu_LevelUp : MonoBehaviour
 
     void Start()
     {
+        EnsureSFXSource();
+
         if (levelUpMenuUI == null)
         {
             Debug.LogError("Menu_LevelUp: levelUpMenuUI is not assigned!");
@@ -81,8 +88,20 @@ public class Menu_LevelUp : MonoBehaviour
         Player_settings.OnLevelUp -= ShowMenu;
     }
 
+    private void EnsureSFXSource()
+    {
+        if (_sfxSource != null) return;
+        _sfxSource = GetComponent<AudioSource>();
+        if (_sfxSource == null) _sfxSource = gameObject.AddComponent<AudioSource>();
+        _sfxSource.spatialBlend = 0f;
+        _sfxSource.playOnAwake = false;
+    }
+
     private void ShowMenu(int newLevel)
     {
+        if (levelUpClip != null && _sfxSource != null)
+            _sfxSource.PlayOneShot(levelUpClip, levelUpVolume);
+
         penaltyMode = newLevel >= penaltyStartLevel;
 
         GenerateUpgradeOptions();

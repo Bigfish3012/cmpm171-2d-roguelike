@@ -327,6 +327,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Menu_LevelUp
   levelUpMenuUI: {fileID: 2897796592635201930}
   clickDelaySeconds: 1
+  levelUpClip: {fileID: 8300000, guid: d79348eaace1ae445b1f0c71ad360b46, type: 3}
+  levelUpVolume: 1
   penaltyStartLevel: 6
   damagePickDamageTakenPlus: 0.1
   speedPickDamageMultMinus: 0.1
