@@ -88,6 +88,20 @@ public class BGMManager : MonoBehaviour
         return false;
     }
 
+    // Pause BGM (used when game is paused)
+    public void PauseBGM()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Pause();
+    }
+
+    // Resume BGM (used when game is resumed)
+    public void ResumeBGM()
+    {
+        if (audioSource != null && audioSource.clip != null)
+            audioSource.UnPause();
+    }
+
     // Play menu BGM with the configured clip and volume
     private void PlayMenuBGM()
     {

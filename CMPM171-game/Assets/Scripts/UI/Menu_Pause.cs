@@ -43,6 +43,8 @@ public class Menu_Pause : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(defaultSelectedOnOpen);
         Time.timeScale = 0;
         isPaused = true;
+        if (BGMManager.Instance != null)
+            BGMManager.Instance.PauseBGM();
     }
 
     // Resume the game and hide pause menu
@@ -53,6 +55,8 @@ public class Menu_Pause : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+        if (BGMManager.Instance != null)
+            BGMManager.Instance.ResumeBGM();
     }
 
     // Load main menu scene and resume time scale

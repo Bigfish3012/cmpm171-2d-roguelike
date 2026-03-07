@@ -30,9 +30,13 @@ public class EnemySpawner : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool logWaveDebug = true;                                     // Print spawn/death counts in Console
 
-    /// <summary>Raised when all enemies in the current wave have been destroyed.
-    /// Parameter is the wave number that was cleared.</summary>
     public event System.Action<int> OnWaveCleared;
+
+    public event System.Action OnEnemyCountChanged;
+
+    public int RemainingEnemies => aliveEnemies + enemiesLeftToSpawnInWave;
+
+    public int TotalWaveEnemyCount { get; private set; }
 
     private int currentWaveNumber = 0;
     private int aliveEnemies = 0;
@@ -71,6 +75,7 @@ public class EnemySpawner : MonoBehaviour
             aliveEnemies--;
 
         LogWave($"Enemy destroyed. Alive: {aliveEnemies}, Left: {enemiesLeftToSpawnInWave}");
+        OnEnemyCountChanged?.Invoke();
         CheckWaveCleared();
     }
 
@@ -81,6 +86,7 @@ public class EnemySpawner : MonoBehaviour
         spawning = true;
 
         int enemyCount = startingWaveEnemyCount + (waveNumber - 1) * enemyCountIncreasePerWave;
+        TotalWaveEnemyCount = enemyCount;
         float healthMultiplier = 1f + (waveNumber - 1) * (enemyHealthIncreasePercentPerWave / 100f);
         int damageBonus = (waveNumber - 1) * enemyDamageIncreasePerWave;
         float spawnInterval = Mathf.Max(
@@ -88,6 +94,7 @@ public class EnemySpawner : MonoBehaviour
             startingSpawnInterval - (waveNumber - 1) * spawnIntervalDecreasePerWave
         );
         enemiesLeftToSpawnInWave = enemyCount;
+        OnEnemyCountChanged?.Invoke();
 
         LogWave(
             $"Wave {waveNumber} spawning. Count: {enemyCount}, " +
