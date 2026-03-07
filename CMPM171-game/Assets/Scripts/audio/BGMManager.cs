@@ -15,13 +15,17 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private float level1Volume = 0.3f;
 
     [Header("Level 2 BGM")]
-    [SerializeField] private AudioClip level2Clip;                                        // BGM for SC_Prototype (level 2)
+    [SerializeField] private AudioClip level2Clip;                                        // BGM for level 2
     [SerializeField] private float level2Volume = 0.3f;
+
+    [Header("Level 3 BGM")]
+    [SerializeField] private AudioClip level3Clip;                                        // BGM for Level3
+    [SerializeField] private float level3Volume = 0.3f;
 
     private readonly string[] keepMenuBgmScenes = { "MainMenu", "Credits", "Setting" };  // Scenes that keep menu BGM playing
     private const string Level1SceneName = "SC_Prototype";
     private const string Level2SceneName = "Level2";
-
+    private const string Level3SceneName = "Level3";
     // Initialize singleton, set up audio source and subscribe to scene events
     private void Awake()
     {
@@ -72,6 +76,12 @@ public class BGMManager : MonoBehaviour
         {
             audioSource.clip = level2Clip;
             audioSource.volume = level2Volume;
+            audioSource.Play();
+        }
+        else if (scene.name == Level3SceneName && level3Clip != null)
+        {
+            audioSource.clip = level3Clip;
+            audioSource.volume = level3Volume;
             audioSource.Play();
         }
         else

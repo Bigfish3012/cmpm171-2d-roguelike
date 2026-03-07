@@ -340,6 +340,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_settings
   playerGotHitClip: {fileID: 8300000, guid: 54996ca3d86ae464cb0b83191922ab29, type: 3}
   playerGotHitVolume: 1
+  experienceGainClip: {fileID: 8300000, guid: 606a9218bae65844389c84ca33f6336f, type: 3}
+  experienceGainVolume: 1
   maxHealth: 10
   xpPerLevel: 10
   xpIncreasePerLevel: 1.2
