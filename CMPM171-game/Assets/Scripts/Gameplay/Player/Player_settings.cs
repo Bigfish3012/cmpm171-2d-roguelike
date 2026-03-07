@@ -12,6 +12,11 @@ public class Player_settings : MonoBehaviour, IDamageable
     // Public property to get player transform
     public Transform PlayerTransform => transform;
 
+    [SerializeField] private AudioClip playerGotHitClip;
+    [Range(0f, 1f)] [SerializeField] private float playerGotHitVolume = 1f;
+
+    private AudioSource _sfxSource;
+
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
     [SerializeField] private int xpPerLevel = 20;                                        // Current XP required for next level
     [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
@@ -41,6 +46,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         }
 
         startingXPPerLevel = xpPerLevel;
+        EnsureSFXSource();
     }
 
     void Start()
@@ -81,6 +87,9 @@ public class Player_settings : MonoBehaviour, IDamageable
 
         currentHealth -= finalDamage;
         SaveToGameManager();
+
+        if (playerGotHitClip != null && _sfxSource != null)
+            _sfxSource.PlayOneShot(playerGotHitClip, playerGotHitVolume);
 
         if (currentHealth <= 0)
         {
@@ -237,6 +246,15 @@ public class Player_settings : MonoBehaviour, IDamageable
     {
         damageTakenMultiplier = Mathf.Max(0.1f, damageTakenMultiplier + amount);
         // NOTE: not saved/restored yet (we can add persistence later if you want)
+    }
+
+    private void EnsureSFXSource()
+    {
+        if (_sfxSource != null) return;
+        _sfxSource = GetComponent<AudioSource>();
+        if (_sfxSource == null) _sfxSource = gameObject.AddComponent<AudioSource>();
+        _sfxSource.spatialBlend = 0f;
+        _sfxSource.playOnAwake = false;
     }
 
     private void SaveToGameManager()
