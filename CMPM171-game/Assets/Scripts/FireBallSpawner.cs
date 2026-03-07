@@ -1,13 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FireBallSpawner : MonoBehaviour
 {
-    public GameObject fireBallPrefab;
+    public GameObject fireBallPrefab;     // 火球 prefab
+    public BoxCollider2D spawnArea;       // 生成区域
 
-    // Spawn Area
-    public BoxCollider2D spawnArea;
-
-    public float spawnInterval = 30f;
+    public float spawnInterval = 1f;      // 生成间隔
+    public float spawnHeight = 0.2f;      // 生成高度（可在 Inspector 调整）
 
     float timer = 0f;
 
@@ -24,15 +23,23 @@ public class FireBallSpawner : MonoBehaviour
 
     void SpawnFireBall()
     {
-        if (spawnArea == null) return;
+        if (spawnArea == null || fireBallPrefab == null)
+            return;
 
-        Bounds bounds = spawnArea.bounds;
+        // 获取生成区域中心和大小
+        Vector2 size = spawnArea.size;
+        Vector3 center = spawnArea.transform.position;
 
-        float randomX = UnityEngine.Random.Range(bounds.min.x, bounds.max.x);
+        // 随机 X 位置
+        float randomX = UnityEngine.Random.Range(
+            center.x - size.x / 2f,
+            center.x + size.x / 2f
+        );
 
-        float spawnY = bounds.max.y + 2f;
+        // 计算生成高度
+        float spawnY = center.y + size.y / 2f + spawnHeight;
 
-        Vector3 spawnPos = new Vector3(randomX, spawnY, 0);
+        Vector3 spawnPos = new Vector3(randomX, spawnY, 0f);
 
         Instantiate(fireBallPrefab, spawnPos, Quaternion.identity);
     }
