@@ -16,7 +16,7 @@ public class Debug_mode : MonoBehaviour
     [SerializeField] private bool enableDebugKeys = true;
 
     // Gameplay scene order for N/B map switching
-    private static readonly string[] GameplayScenes = { "SC_Prototype", "Level2" };
+    private static readonly string[] GameplayScenes = { "SC_Prototype", "Level2", "Level3" };
 
     private void Update()
     {
