@@ -22,6 +22,7 @@ public class WaveFlowController : MonoBehaviour
 
     private AudioSource _sfxSource;
     private TextMeshProUGUI waveNumberText;
+    private TextMeshProUGUI enemyLeftText;
     private GameObject waveWarningRoot;
     private TextMeshProUGUI waveWarningText;
 
@@ -52,10 +53,12 @@ public class WaveFlowController : MonoBehaviour
         SetWarningVisible(false);
         SetNextMapVisible(false);
         UpdateWaveNumberUI();
+        UpdateEnemyLeftUI();
 
         if (enemySpawner != null)
         {
             enemySpawner.OnWaveCleared += HandleWaveCleared;
+            enemySpawner.OnEnemyCountChanged += UpdateEnemyLeftUI;
             StartCoroutine(BeginNextWaveRoutine());
         }
     }
@@ -63,7 +66,10 @@ public class WaveFlowController : MonoBehaviour
     private void OnDestroy()
     {
         if (enemySpawner != null)
+        {
             enemySpawner.OnWaveCleared -= HandleWaveCleared;
+            enemySpawner.OnEnemyCountChanged -= UpdateEnemyLeftUI;
+        }
     }
 
     private void HandleWaveCleared(int wave)
@@ -133,6 +139,20 @@ public class WaveFlowController : MonoBehaviour
     {
         if (waveNumberText != null)
             waveNumberText.text = $"Wave:{currentWave}";
+        UpdateEnemyLeftUI();
+    }
+
+    private void UpdateEnemyLeftUI()
+    {
+        if (enemyLeftText == null) return;
+        if (enemySpawner == null)
+        {
+            enemyLeftText.text = "Enemy: 0/0";
+            return;
+        }
+        int remaining = enemySpawner.RemainingEnemies;
+        int total = enemySpawner.TotalWaveEnemyCount;
+        enemyLeftText.text = $"Enemy: {remaining}/{total}";
     }
 
     private void SetWarningVisible(bool visible)
@@ -167,6 +187,9 @@ public class WaveFlowController : MonoBehaviour
     {
         if (waveNumberText == null)
             waveNumberText = SceneSearchHelper.FindSceneTMPByName("Wave_Number");
+
+        if (enemyLeftText == null)
+            enemyLeftText = SceneSearchHelper.FindSceneTMPByName("Enemy_left");
 
         if (waveWarningText == null)
             waveWarningText = SceneSearchHelper.FindSceneTMPByName("Wave_Warning");
