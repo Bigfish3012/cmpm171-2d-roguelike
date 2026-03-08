@@ -22,7 +22,7 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private AudioClip level3Clip;                                        // BGM for Level3
     [SerializeField] private float level3Volume = 0.3f;
 
-    private readonly string[] keepMenuBgmScenes = { "MainMenu", "Credits", "Setting" };  // Scenes that keep menu BGM playing
+    private readonly string[] keepMenuBgmScenes = { "MainMenu", "Credits", "Setting", "HowToPlay" };  // Scenes that keep menu BGM playing
     private const string Level1SceneName = "SC_Prototype";
     private const string Level2SceneName = "Level2";
     private const string Level3SceneName = "Level3";
@@ -120,5 +120,32 @@ public class BGMManager : MonoBehaviour
         audioSource.clip = menuClip;
         audioSource.volume = menuVolume;
         audioSource.Play();
+    }
+    public void SetMasterVolume01(float v01)
+    {
+        if (audioSource == null) return;
+
+        v01 = Mathf.Clamp01(v01);
+        audioSource.volume = v01;
+
+        if (audioSource.clip == menuClip)
+            menuVolume = v01;
+    }
+
+    public float GetMasterVolume01()
+    {
+        if (audioSource == null) return menuVolume;
+        return audioSource.volume;
+    }
+
+    public void SetMute(bool mute)
+    {
+        if (audioSource == null) return;
+    audioSource.mute = mute;
+    }
+
+        public bool IsMuted()
+    {
+        return audioSource != null && audioSource.mute;
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3898645899323413039}
   - component: {fileID: 408136287447891593}
   - component: {fileID: 1040664575543012837}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: "\u706B\u7403_0"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,3 +202,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireBall
   lifeTime: 1
+  damage: 1
