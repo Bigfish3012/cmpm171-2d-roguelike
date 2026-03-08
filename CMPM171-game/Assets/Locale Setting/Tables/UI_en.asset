@@ -191,6 +191,43 @@ MonoBehaviour:
       become stronger!
     m_Metadata:
       m_Items: []
+  - m_Id: 10034974478536704
+    m_Localized: MUTE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10035511412363264
+    m_Localized: UNMUTE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10037618509058048
+    m_Localized: AUDIO CONTROLS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10037677862653952
+    m_Localized: MASTER VOLUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10037681075490816
+    m_Localized: LEVEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10037681801105408
+    m_Localized: DECREASE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10038724500885504
+    m_Localized: INCREASE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10044173681922048
+    m_Localized: Adjust the master volume using <color=#B56CFF>+/-</color> buttons
+      or toggle <color=#B56CFF>MUTE</color> to silence all audio instantly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10049723694026752
+    m_Localized: EACH LEVEL OFFERS DIFFERENT RANDOM CHOICES
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
