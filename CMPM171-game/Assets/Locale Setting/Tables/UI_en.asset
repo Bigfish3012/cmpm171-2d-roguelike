@@ -220,8 +220,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 10044173681922048
-    m_Localized: Adjust the master volume using <color=#B56CFF>+/-</color> buttons
-      or toggle <color=#B56CFF>MUTE</color> to silence all audio instantly.
+    m_Localized: Adjust the master volume using <color=#F2C76B>+/-</color> buttons
+      or toggle <color=#F2C76B>MUTE</color> to silence all audio instantly.
     m_Metadata:
       m_Items: []
   - m_Id: 10049723694026752

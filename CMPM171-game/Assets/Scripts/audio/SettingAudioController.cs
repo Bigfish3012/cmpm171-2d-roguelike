@@ -85,7 +85,6 @@ public class SettingAudioController : MonoBehaviour
     {
         if (BGMManager.Instance == null) return;
 
-        // 用户手动调大音量时，自动解除静音
         if (BGMManager.Instance.IsMuted() && v01 > 0.0001f)
             BGMManager.Instance.SetMute(false);
 
@@ -102,7 +101,6 @@ public class SettingAudioController : MonoBehaviour
         bool muted = (pct == 0) || (BGMManager.Instance != null && BGMManager.Instance.IsMuted());
         if (mutedBadge) mutedBadge.SetActive(muted);
 
-        // 关键：用两个本地化Label切换显示（支持三语言）
         if (labelMute) labelMute.SetActive(!muted);
         if (labelUnmute) labelUnmute.SetActive(muted);
 

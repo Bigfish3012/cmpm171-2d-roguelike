@@ -216,8 +216,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 10044173681922048
-    m_Localized: "\u4F7F\u7528 <color=#B56CFF>+/-</color> \u6309\u94AE\u8C03\u8282\u4E3B\u97F3\u91CF\uFF0C\u6216\u5207\u6362
-      <color=#B56CFF>\u9759\u97F3</color> \u7ACB\u5373\u5173\u95ED\u6240\u6709\u58F0\u97F3\u3002"
+    m_Localized: "\u4F7F\u7528 <color=#F2C76B>+/-</color> \u6309\u94AE\u8C03\u8282\u4E3B\u97F3\u91CF\uFF0C\u6216\u5207\u6362
+      <color=#F2C76B>\u9759\u97F3</color> \u7ACB\u5373\u5173\u95ED\u6240\u6709\u58F0\u97F3\u3002"
     m_Metadata:
       m_Items: []
   - m_Id: 10049723694026752
