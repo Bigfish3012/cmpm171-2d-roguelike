@@ -209,7 +209,10 @@ MonoBehaviour:
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
   enemyAnimator: {fileID: 0}
   deathAnimationClip: {fileID: 0}
-  spriteRendererToFlip: {fileID: 1087225547976335830, guid: 5a1b3d3b7a8101e479e7bc9981c3307a, type: 3}
+  visualToRotate: {fileID: 0}
+  aimAngleOffset: -90
+  gotHitClip: {fileID: 8300000, guid: 6c0e0782b85b3e24cb6144e74d0bd167, type: 3}
+  gotHitVolume: 0.3
 --- !u!95 &6135588410051425651
 Animator:
   serializedVersion: 7
