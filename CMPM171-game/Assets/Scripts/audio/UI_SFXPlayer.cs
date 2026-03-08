@@ -4,7 +4,7 @@ public class UISFXPlayer : MonoBehaviour
 {
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip clickClip;
-    [Range(0f, 1f)][SerializeField] private float volume = 1f;
+    [Range(0f, 2f)][SerializeField] private float volume = 2f;
 
     private void Awake()
     {
@@ -15,5 +15,6 @@ public class UISFXPlayer : MonoBehaviour
     {
         if (clickClip == null || audioSource == null) return;
         audioSource.PlayOneShot(clickClip, volume);
+        Debug.Log("Played click sound");
     }
 }

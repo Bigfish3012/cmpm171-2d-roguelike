@@ -3,13 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    private const float MenuTransitionDelay = 0.5f;
+
     // Start a new game by clearing saved data and loading the first gameplay scene
     public void PlayGame()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.ClearSavedData();
         if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadSceneDelayed("SC_Prototype", 0.5f);
+            SceneTransition.Instance.LoadSceneDelayed("SC_Prototype", MenuTransitionDelay);
         else
             SceneManager.LoadScene("SC_Prototype");
     }
@@ -18,7 +20,7 @@ public class MainMenu : MonoBehaviour
     public void OpenCredits()
     {
         if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadScene("Credits");
+            SceneTransition.Instance.LoadSceneDelayed("Credits", MenuTransitionDelay);
         else
             SceneManager.LoadScene("Credits");
     }
@@ -27,7 +29,7 @@ public class MainMenu : MonoBehaviour
     public void OpenHowToPlay()
     {
         if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadScene("HowToPlay");
+            SceneTransition.Instance.LoadSceneDelayed("HowToPlay", MenuTransitionDelay);
         else
             SceneManager.LoadScene("HowToPlay");
     }
@@ -36,7 +38,7 @@ public class MainMenu : MonoBehaviour
     public void OpenSetting()
     {
         if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadScene("Setting");
+            SceneTransition.Instance.LoadSceneDelayed("Setting", MenuTransitionDelay);
         else
             SceneManager.LoadScene("Setting");
     }

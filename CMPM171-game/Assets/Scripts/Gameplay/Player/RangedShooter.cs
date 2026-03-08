@@ -3,10 +3,14 @@ using UnityEngine;
 public class RangedShooter : MonoBehaviour
 {
     [SerializeField] private int attackDamage = 10;                                     // Damage of the projectile
+    [SerializeField] private int projectileCount = 1;                                   // Number of projectiles fired each shot
+    [SerializeField] private float projectileSpreadAngle = 12f;                         // Total spread angle when firing multiple projectiles
     [SerializeField] private Projectile projectilePrefab;                               // Prefab of the projectile
     [SerializeField] private Transform firePoint;                                       // Point to spawn the projectile
     [SerializeField] private float fireCooldown = 3f;                                   // Cooldown between each shot
     [SerializeField] private GunAim gunAim;                                             // Gun aiming state for target checks
+    [SerializeField] private AudioClip fireSoundClip;                                    // SFX played when firing
+    [Range(0f, 1f)] [SerializeField] private float fireSoundVolume = 1f;
 
     private float nextFireTime;                                                         // Time to spawn the next projectile
 
@@ -32,7 +36,13 @@ public class RangedShooter : MonoBehaviour
 
     void Shoot()
     {
-        Vector2 dir = firePoint.right;
+        if (fireSoundClip != null)
+        {
+            Vector3 pos = firePoint != null ? firePoint.position : transform.position;
+            AudioSource.PlayClipAtPoint(fireSoundClip, pos, fireSoundVolume);
+        }
+
+        Vector2 baseDir = firePoint.right;
 
         // NEW: apply damage multiplier BEFORE crit calculation
         int scaledBaseDamage = Mathf.Max(0, Mathf.RoundToInt(attackDamage * damageMultiplier));
@@ -47,8 +57,17 @@ public class RangedShooter : MonoBehaviour
             isCrit = result.isCrit;
         }
 
-        Projectile p = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        p.Init(dir, finalDamage, isCrit);
+        int count = Mathf.Max(1, projectileCount);
+        float step = count > 1 ? projectileSpreadAngle / (count - 1) : 0f;
+        float startAngle = -projectileSpreadAngle * 0.5f;
+
+        for (int i = 0; i < count; i++)
+        {
+            float angleOffset = startAngle + (step * i);
+            Vector2 dir = (Quaternion.Euler(0f, 0f, angleOffset) * baseDir).normalized;
+            Projectile p = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+            p.Init(dir, finalDamage, isCrit);
+        }
     }
 
     // Upgrade method for Level Up Menu
@@ -66,7 +85,16 @@ public class RangedShooter : MonoBehaviour
         // NOTE: not saved/restored yet (kept simple)
     }
 
+    public void AddProjectileCount(int amount)
+    {
+        projectileCount = Mathf.Max(1, projectileCount + amount);
+        if (GameManager.Instance != null && Player_settings.Instance != null)
+            GameManager.Instance.SaveFrom(Player_settings.Instance, GetComponent<PlayerController>(), this);
+    }
+
     // For GameManager persistence
     public int GetAttackDamage() => attackDamage;
     public void SetAttackDamage(int value) => attackDamage = value;
+    public int GetProjectileCount() => projectileCount;
+    public void SetProjectileCount(int value) => projectileCount = Mathf.Max(1, value);
 }

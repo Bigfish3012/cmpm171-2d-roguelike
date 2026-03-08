@@ -17,6 +17,10 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private float returnSpeed = 2.5f;                                  // Move speed when returning to player
     [SerializeField] private int experience = 2;                                        // Experience points given to player when killed
     [SerializeField] private GameObject damagePopUpPrefab;                             // Prefab for damage pop-up text (optional)
+    [SerializeField] private Animator enemyAnimator;                                    // Animator used to play death animation
+    [SerializeField] private AnimationClip deathAnimationClip;                          // Death animation clip (choose in Inspector)
+    [SerializeField] private Transform visualToRotate;                                  // Visual transform to rotate toward player
+    [SerializeField] private float aimAngleOffset = -90f;                               // Angle offset for sprite forward direction
 
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
@@ -25,12 +29,16 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     private float aimStartTime = -1f;                                                    // Time when aiming started (-1 = not aiming)
     private Vector2 wanderDirection;                                                     // Current random wander direction
     private float nextWanderDirectionTime;                                               // Time to pick next wander direction
+    private bool isDead;                                                                 // Prevent repeated death logic
 
     // Start method to initialize the enemy
     void Start()
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
+        if (enemyAnimator == null) enemyAnimator = GetComponentInChildren<Animator>();
+        if (visualToRotate == null) visualToRotate = transform;
 
         // Get player transform from singleton
         if (Player_settings.Instance != null)
@@ -58,6 +66,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     void FixedUpdate()
     {
         if (playerTransform == null) return;
+        RotateTowardPlayer();
 
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
         bool playerInRange = distanceToPlayer <= shootRange;
@@ -111,6 +120,18 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         rb.MovePosition(newPos);
     }
 
+    // Keep bottle mouth facing the player target while alive.
+    private void RotateTowardPlayer()
+    {
+        if (visualToRotate == null) return;
+
+        Vector2 toPlayer = (Vector2)playerTransform.position - (Vector2)visualToRotate.position;
+        if (toPlayer.sqrMagnitude < 0.0001f) return;
+
+        float angle = Mathf.Atan2(toPlayer.y, toPlayer.x) * Mathf.Rad2Deg + aimAngleOffset;
+        visualToRotate.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
     // Shoot method to shoot the enemy bullet
     void Shoot()
     {
@@ -133,6 +154,8 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     // Take damage from projectiles
     public void TakeDamage(int damage, bool isCrit = false)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
 
         if (damagePopUpPrefab != null)
@@ -153,11 +176,26 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     // Die method to destroy the enemy and give experience to player
     private void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         if (Player_settings.Instance != null)
         {
             Player_settings.Instance.AddExperience(experience);
         }
-        Destroy(gameObject);
+
+        if (rb != null) rb.simulated = false;
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
+        foreach (Collider2D col in colliders) col.enabled = false;
+
+        float destroyDelay = 0f;
+        if (enemyAnimator != null && deathAnimationClip != null)
+        {
+            enemyAnimator.Play(deathAnimationClip.name, 0, 0f);
+            destroyDelay = deathAnimationClip.length;
+        }
+
+        Destroy(gameObject, Mathf.Max(0f, destroyDelay));
     }
 
     // IHealth interface implementation

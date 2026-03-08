@@ -3,6 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("Dashing SFX")]
+    [SerializeField] private AudioClip dashingClip;
+    [Range(0f, 1f)] [SerializeField] private float dashingVolume = 1f;
+
     [Header("Movement Bounds")]
     [Tooltip("Optional. If set, player movement will be clamped to this object's bounds (e.g. Cutting_board).")]
     [SerializeField] private Transform movementBounds;
@@ -17,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the player
     private Animator anim;                                                               // Animator component of the player
+    private AudioSource _sfxSource;                                                      // AudioSource for dashing SFX
     private Vector2 move;                                                                // Movement direction vector
     private Player_settings playerSettings;                                              // Reference to Player_settings component
     private bool isRolling = false;                                                      // Whether the player is currently rolling
@@ -35,6 +40,9 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         playerSettings = GetComponent<Player_settings>();
+        _sfxSource = GetComponent<AudioSource>();
+        if (_sfxSource == null) _sfxSource = gameObject.AddComponent<AudioSource>();
+        if (_sfxSource != null) { _sfxSource.spatialBlend = 0f; _sfxSource.playOnAwake = false; }
     }
 
     // Update method to get input and calculate movement direction
@@ -80,6 +88,9 @@ public class PlayerController : MonoBehaviour
             isRolling = true;
             rollEndTime = Time.time + rollDuration;
             lastRollTime = Time.time;
+
+            if (dashingClip != null && _sfxSource != null)
+                _sfxSource.PlayOneShot(dashingClip, dashingVolume);
 
             if (playerSettings != null)
             {

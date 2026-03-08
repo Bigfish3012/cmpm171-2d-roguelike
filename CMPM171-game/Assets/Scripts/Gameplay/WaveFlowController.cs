@@ -12,17 +12,22 @@ public class WaveFlowController : MonoBehaviour
     [SerializeField] private EnemySpawner enemySpawner;
 
     [Header("Wave Timing")]
-    [SerializeField] private float nextWaveDelay = 2f;                                    // Delay before next wave starts
+    [SerializeField] private float nextWaveDelay = 3f;                                    // Delay before next wave starts
 
     [Header("UI")]
     [SerializeField] private string warningMessage = "Warning: Next Wave coming";
 
+    [SerializeField] private AudioClip nextWaveCountDownClip;
+    [Range(0f, 1f)] [SerializeField] private float nextWaveCountDownVolume = 1f;
+
+    private AudioSource _sfxSource;
     private TextMeshProUGUI waveNumberText;
+    private TextMeshProUGUI enemyLeftText;
     private GameObject waveWarningRoot;
     private TextMeshProUGUI waveWarningText;
 
     [Header("Map Transition")]
-    [SerializeField] private int wavesPerMapTransition = 5;                                // Show next-map portal every N cleared waves
+    [SerializeField] private int wavesPerMapTransition = 2;                                // Show next-map portal every N cleared waves
     [SerializeField] private GameObject nextMapObject;                                     // Scene object that handles map transition
     [SerializeField] private string nextMapObjectName = "NextMap";                         // Auto-bind fallback when reference is empty
 
@@ -34,6 +39,7 @@ public class WaveFlowController : MonoBehaviour
 
     private void Start()
     {
+        EnsureSFXSource();
         TryAutoBindSpawner();
         TryAutoBindUI();
         TryAutoBindNextMap();
@@ -47,10 +53,12 @@ public class WaveFlowController : MonoBehaviour
         SetWarningVisible(false);
         SetNextMapVisible(false);
         UpdateWaveNumberUI();
+        UpdateEnemyLeftUI();
 
         if (enemySpawner != null)
         {
             enemySpawner.OnWaveCleared += HandleWaveCleared;
+            enemySpawner.OnEnemyCountChanged += UpdateEnemyLeftUI;
             StartCoroutine(BeginNextWaveRoutine());
         }
     }
@@ -58,7 +66,10 @@ public class WaveFlowController : MonoBehaviour
     private void OnDestroy()
     {
         if (enemySpawner != null)
+        {
             enemySpawner.OnWaveCleared -= HandleWaveCleared;
+            enemySpawner.OnEnemyCountChanged -= UpdateEnemyLeftUI;
+        }
     }
 
     private void HandleWaveCleared(int wave)
@@ -86,6 +97,14 @@ public class WaveFlowController : MonoBehaviour
         StartCoroutine(BeginNextWaveRoutine());
     }
 
+    /// <summary>
+    /// Debug: Clear all enemies and start the next wave immediately.
+    /// </summary>
+    public void DebugStartNextWave()
+    {
+        StartCoroutine(BeginNextWaveRoutine());
+    }
+
     private IEnumerator BeginNextWaveRoutine()
     {
         if (transitioning)
@@ -97,6 +116,8 @@ public class WaveFlowController : MonoBehaviour
         if (currentWave > 0)
         {
             SetWarningVisible(true);
+            if (nextWaveCountDownClip != null && _sfxSource != null)
+                _sfxSource.PlayOneShot(nextWaveCountDownClip, nextWaveCountDownVolume);
             yield return new WaitForSeconds(nextWaveDelay);
             SetWarningVisible(false);
         }
@@ -118,6 +139,20 @@ public class WaveFlowController : MonoBehaviour
     {
         if (waveNumberText != null)
             waveNumberText.text = $"Wave:{currentWave}";
+        UpdateEnemyLeftUI();
+    }
+
+    private void UpdateEnemyLeftUI()
+    {
+        if (enemyLeftText == null) return;
+        if (enemySpawner == null)
+        {
+            enemyLeftText.text = "Enemy: 0/0";
+            return;
+        }
+        int remaining = enemySpawner.RemainingEnemies;
+        int total = enemySpawner.TotalWaveEnemyCount;
+        enemyLeftText.text = $"Enemy: {remaining}/{total}";
     }
 
     private void SetWarningVisible(bool visible)
@@ -153,6 +188,9 @@ public class WaveFlowController : MonoBehaviour
         if (waveNumberText == null)
             waveNumberText = SceneSearchHelper.FindSceneTMPByName("Wave_Number");
 
+        if (enemyLeftText == null)
+            enemyLeftText = SceneSearchHelper.FindSceneTMPByName("Enemy_left");
+
         if (waveWarningText == null)
             waveWarningText = SceneSearchHelper.FindSceneTMPByName("Wave_Warning");
 
@@ -175,5 +213,14 @@ public class WaveFlowController : MonoBehaviour
     {
         if (!logDebug) return;
         Debug.Log($"[WaveFlowController] {message}", this);
+    }
+
+    private void EnsureSFXSource()
+    {
+        if (_sfxSource != null) return;
+        _sfxSource = GetComponent<AudioSource>();
+        if (_sfxSource == null) _sfxSource = gameObject.AddComponent<AudioSource>();
+        _sfxSource.spatialBlend = 0f;
+        _sfxSource.playOnAwake = false;
     }
 }

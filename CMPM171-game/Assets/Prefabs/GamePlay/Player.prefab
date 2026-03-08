@@ -296,6 +296,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da33d01bac824f4b9e317251d811a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  dashingClip: {fileID: 8300000, guid: 6cc8ed03c02d51145a359773643def81, type: 3}
+  dashingVolume: 0.5
   movementBounds: {fileID: 0}
   boundsPadding: 0.5
   moveSpeed: 6
@@ -316,10 +318,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangedShooter
   attackDamage: 10
+  projectileCount: 1
+  projectileSpreadAngle: 12
   projectilePrefab: {fileID: 994582290260179995, guid: 5819957748e25a049a9248b76c38de9c, type: 3}
   firePoint: {fileID: 7638532191008807856}
   fireCooldown: 0.5
   gunAim: {fileID: 6986651232607815245}
+  fireSoundClip: {fileID: 8300000, guid: bd2a7c5f46d6714488da6e54cdfb51ac, type: 3}
+  fireSoundVolume: 1
 --- !u!114 &7345503658405961177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,9 +338,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c940331e98d014b41b00ac627d6d3cfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_settings
+  playerGotHitClip: {fileID: 8300000, guid: 54996ca3d86ae464cb0b83191922ab29, type: 3}
+  playerGotHitVolume: 1
   maxHealth: 10
-  xpPerLevel: 20
-  xpIncreasePerLevel: 10
+  xpPerLevel: 10
+  xpIncreasePerLevel: 1.2
   critRate: 15
   critDamage: 100
 --- !u!212 &1087225547976335830

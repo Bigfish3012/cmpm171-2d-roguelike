@@ -76,8 +76,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveFlowController
   enemySpawner: {fileID: 0}
-  nextWaveDelay: 5
+  nextWaveDelay: 3
   warningMessage: 'Warning: Next Wave coming'
+  nextWaveCountDownClip: {fileID: 8300000, guid: c9ad59c6d4236954482613e0c2113471, type: 3}
+  nextWaveCountDownVolume: 1
   wavesPerMapTransition: 2
   nextMapObject: {fileID: 0}
   nextMapObjectName: NextMap
