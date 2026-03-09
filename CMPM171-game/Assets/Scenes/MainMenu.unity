@@ -1860,6 +1860,8 @@ MonoBehaviour:
   level1Volume: 0.3
   level2Clip: {fileID: 8300000, guid: 11fd57957a86f51429b43c0d31d1c1df, type: 3}
   level2Volume: 0.3
+  level3Clip: {fileID: 8300000, guid: aadeeecc39d6c4b478dc8420111aa258, type: 3}
+  level3Volume: 0.3
 --- !u!82 &753612571
 AudioSource:
   m_ObjectHideFlags: 0

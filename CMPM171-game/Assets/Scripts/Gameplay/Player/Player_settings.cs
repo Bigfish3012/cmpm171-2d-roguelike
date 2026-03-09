@@ -15,6 +15,9 @@ public class Player_settings : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip playerGotHitClip;
     [Range(0f, 1f)] [SerializeField] private float playerGotHitVolume = 1f;
 
+    [SerializeField] private AudioClip experienceGainClip;
+    [Range(0f, 1f)] [SerializeField] private float experienceGainVolume = 1f;
+
     private AudioSource _sfxSource;
 
     [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
@@ -96,7 +99,7 @@ public class Player_settings : MonoBehaviour, IDamageable
             currentHealth = 0;
             Debug.Log("Player Died!");
             if (GameManager.Instance != null)
-                GameManager.Instance.ClearSavedData();
+                GameManager.Instance.PrepareForGameOver();
             if (SceneTransition.Instance != null)
                 SceneTransition.Instance.LoadScene("Gameover");
             else
@@ -109,7 +112,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         isInvincible = invincible;
     }
 
-    /// <summary>Restore player health to maximum. Used by debug mode and similar.</summary>
+    // Restore player health to maximum. Used by debug mode and similar.
     public void RestoreFullHealth()
     {
         currentHealth = maxHealth;
@@ -128,7 +131,12 @@ public class Player_settings : MonoBehaviour, IDamageable
 
     public void AddExperience(int amount)
     {
+        if (amount > 0 && experienceGainClip != null && _sfxSource != null)
+            _sfxSource.PlayOneShot(experienceGainClip, experienceGainVolume);
+
         currentExperience += amount;  
+        if (amount > 0 && GameManager.Instance != null)
+            GameManager.Instance.AddScore(amount);
         //currentExperience += 9999;  //testing new upgrades
         while (currentExperience >= xpPerLevel)
         {

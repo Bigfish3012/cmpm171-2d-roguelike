@@ -1,16 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Debug mode shortcuts for testing. Only active in gameplay scenes.
-/// J = Level up (trigger upgrade menu)
-/// K = Next wave (clear enemies, start next wave)
-/// N = Next map (load next scene, clear enemies)
-/// B = Previous map (load previous scene, clear enemies)
-/// H = Restore full health
-/// X = +10 XP
-/// I = Toggle God Mode (enemies cannot damage player)
-/// </summary>
+// Debug mode shortcuts for testing. Only active in gameplay scenes.
+// J = Level up (trigger upgrade menu)
+// K = Next wave (clear enemies, start next wave)
+// N = Next map (load next scene, clear enemies)
+// B = Previous map (load previous scene, clear enemies)
+// H = Restore full health
+// X = +10 XP
+// I = Toggle God Mode (enemies cannot damage player)
 public class Debug_mode : MonoBehaviour
 {
     [SerializeField] private bool enableDebugKeys = true;

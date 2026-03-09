@@ -203,6 +203,8 @@ MonoBehaviour:
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
   enemyAnimator: {fileID: 0}
   deathAnimationClip: {fileID: 7400000, guid: 7394be931167342aeb163e5c08453941, type: 2}
+  gotHitClip: {fileID: 8300000, guid: 13719e2979605764aa4b8bc8950dfb59, type: 3}
+  gotHitVolume: 1
 --- !u!95 &3950467017296135482
 Animator:
   serializedVersion: 7

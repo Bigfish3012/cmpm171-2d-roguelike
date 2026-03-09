@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,10 @@ public class GameOver : MonoBehaviour
 {
     [SerializeField] private AudioClip gameOverClip;
     [Range(0f, 1f)] [SerializeField] private float volume = 1f;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI timeText;
+    [SerializeField] private TextMeshProUGUI enemiesText;
+    [SerializeField] private TextMeshProUGUI waveText;
 
     [Header("Loop BGM")]
     [SerializeField] private AudioClip bgmLoopClip;
@@ -13,6 +18,8 @@ public class GameOver : MonoBehaviour
 
     private void Start()
     {
+        RefreshStatsPanel();
+
         // One-shot game over sound effect
         if (gameOverClip != null)
         {
@@ -23,6 +30,42 @@ public class GameOver : MonoBehaviour
         // Looping background music starts 0.2s after gameOverClip ends
         if (bgmLoopClip != null)
             StartCoroutine(PlayBgmAfterDelay());
+    }
+
+    private void RefreshStatsPanel()
+    {
+        if (scoreText == null)
+            scoreText = SceneSearchHelper.FindSceneTMPByName("ScoreValue");
+        if (scoreText == null)
+            scoreText = SceneSearchHelper.FindSceneTMPByName("Score");
+        if (timeText == null)
+            timeText = SceneSearchHelper.FindSceneTMPByName("TimeValue");
+        if (enemiesText == null)
+            enemiesText = SceneSearchHelper.FindSceneTMPByName("EnemiesValue");
+        if (waveText == null)
+            waveText = SceneSearchHelper.FindSceneTMPByName("WaveValue");
+
+        int score = GameManager.Instance != null ? GameManager.Instance.GetScore() : 0;
+        int enemiesKilled = GameManager.Instance != null ? GameManager.Instance.GetEnemiesKilled() : 0;
+        int waveReached = GameManager.Instance != null ? GameManager.Instance.GetSavedWaveProgress() : 0;
+        float survivedSeconds = GameManager.Instance != null ? GameManager.Instance.GetRunDurationSeconds() : 0f;
+
+        if (scoreText != null)
+            scoreText.text = score.ToString();
+        if (timeText != null)
+            timeText.text = FormatDuration(survivedSeconds);
+        if (enemiesText != null)
+            enemiesText.text = enemiesKilled.ToString();
+        if (waveText != null)
+            waveText.text = waveReached.ToString();
+    }
+
+    private string FormatDuration(float seconds)
+    {
+        int totalSeconds = Mathf.Max(0, Mathf.FloorToInt(seconds));
+        int minutes = totalSeconds / 60;
+        int remainingSeconds = totalSeconds % 60;
+        return $"{minutes:00}:{remainingSeconds:00}";
     }
 
     private IEnumerator PlayBgmAfterDelay()

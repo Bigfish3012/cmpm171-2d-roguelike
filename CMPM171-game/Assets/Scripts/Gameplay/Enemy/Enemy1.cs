@@ -13,6 +13,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private GameObject damagePopUpPrefab;                               // Prefab for damage pop-up text (optional)
     [SerializeField] private Animator enemyAnimator;                                     // Animator used to play death animation
     [SerializeField] private AnimationClip deathAnimationClip;                           // Death animation clip (choose in Inspector)
+    [SerializeField] private AudioClip gotHitClip;                                      // SFX when enemy takes damage
+    [Range(0f, 1f)] [SerializeField] private float gotHitVolume = 1f;
 
     private int currentHealth;                                                           // Current health of the enemy
     private Transform playerTransform;                                                   // Transform of the player (the player's position)
@@ -20,12 +22,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     private float lastDamageTime;                                                        // Time when the enemy last damaged the player
     private float stopUntilTime = 0f;                                                    // Time until enemy can move again after hitting player
     private bool isDead;                                                                 // Prevent repeated death logic
+    private AudioSource _sfxSource;
 
     // Start method to initialize the enemy
     void Start()
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        EnsureSFXSource();
         if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
         if (enemyAnimator == null) enemyAnimator = GetComponentInChildren<Animator>();
         
@@ -121,6 +125,9 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 
         currentHealth -= damage;
 
+        if (gotHitClip != null && _sfxSource != null)
+            _sfxSource.PlayOneShot(gotHitClip, gotHitVolume);
+
         if (damagePopUpPrefab != null)
         {
             GameObject popup = Instantiate(damagePopUpPrefab, transform.position, Quaternion.identity);
@@ -145,6 +152,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 
         if (Player_settings.Instance != null)
         {
+            if (GameManager.Instance != null)
+                GameManager.Instance.AddEnemyKill();
             Player_settings.Instance.AddExperience(experience);
         }
 
@@ -172,5 +181,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     public int GetMaxHealth()
     {
         return maxHealth;
+    }
+
+    private void EnsureSFXSource()
+    {
+        if (_sfxSource != null) return;
+        _sfxSource = GetComponent<AudioSource>();
+        if (_sfxSource == null) _sfxSource = gameObject.AddComponent<AudioSource>();
+        _sfxSource.spatialBlend = 0f;
+        _sfxSource.playOnAwake = false;
     }
 }
