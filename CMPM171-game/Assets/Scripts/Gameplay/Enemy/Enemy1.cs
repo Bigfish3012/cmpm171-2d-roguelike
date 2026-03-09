@@ -152,6 +152,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
 
         if (Player_settings.Instance != null)
         {
+            if (GameManager.Instance != null)
+                GameManager.Instance.AddEnemyKill();
             Player_settings.Instance.AddExperience(experience);
         }
 

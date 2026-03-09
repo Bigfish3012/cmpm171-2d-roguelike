@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Persistent game manager. Saves and restores player data across scene transitions.
-/// Attach to GameManager GameObject under GameRoot. Use DontDestroyOnLoad on GameRoot.
-/// </summary>
+// Persistent game manager. Saves and restores player data across scene transitions.
+// Attach to GameManager GameObject under GameRoot. Use DontDestroyOnLoad on GameRoot.
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -25,10 +23,14 @@ public class GameManager : MonoBehaviour
     private int _attackDamage;                                                           // Saved attack damage
     private int _projectileCount;                                                        // Saved projectile count
     private int _savedWave;                                                              // Saved current wave index
+    private int _score;                                                                  // Run score shown on Gameover
+    private int _enemiesKilled;                                                          // Total enemies killed this run
+    private float _runStartRealtime;                                                     // Real-time timestamp when the run started
+    private float _finalRunDurationSeconds;                                              // Frozen duration after death
+    private bool _hasRunStarted;                                                         // Whether this run has entered gameplay
+    private bool _runEnded;                                                              // Whether the run has already ended
 
-    /// <summary>
-    /// True if we have valid saved data from a previous gameplay scene.
-    /// </summary>
+    // True if we have valid saved data from a previous gameplay scene.
     public bool HasSavedData { get; private set; }
 
     private void Awake()
@@ -68,28 +70,38 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         RefreshHudVisibility(scene.name);
+
+        if (!IsMenuScene(scene.name) && !_hasRunStarted)
+            StartRun();
     }
 
     private void RefreshHudVisibility(string sceneName)
     {
         if (gameplayUIRoot == null) return;
 
-        bool isMenuScene = false;
+        gameplayUIRoot.SetActive(!IsMenuScene(sceneName));
+    }
+
+    private bool IsMenuScene(string sceneName)
+    {
         for (int i = 0; i < MenuScenes.Length; i++)
         {
             if (MenuScenes[i] == sceneName)
-            {
-                isMenuScene = true;
-                break;
-            }
+                return true;
         }
 
-        gameplayUIRoot.SetActive(!isMenuScene);
+        return false;
     }
 
-    /// <summary>
-    /// Save player data from the given components. Call when HP/XP/upgrades change.
-    /// </summary>
+    private void StartRun()
+    {
+        _runStartRealtime = Time.realtimeSinceStartup;
+        _finalRunDurationSeconds = 0f;
+        _hasRunStarted = true;
+        _runEnded = false;
+    }
+
+    // Save player data from the given components. Call when HP/XP/upgrades change.
     public void SaveFrom(Player_settings ps, PlayerController pc, RangedShooter rs)
     {
         if (ps == null) return;
@@ -107,9 +119,7 @@ public class GameManager : MonoBehaviour
         HasSavedData = true;
     }
 
-    /// <summary>
-    /// Restore saved data into the given components. Call from Player_settings.Start when entering a gameplay scene.
-    /// </summary>
+    // Restore saved data into the given components. Call from Player_settings.Start when entering a gameplay scene.
     public void RestoreTo(Player_settings ps, PlayerController pc, RangedShooter rs)
     {
         if (ps == null || !HasSavedData) return;
@@ -126,28 +136,74 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Save current wave index so the next gameplay scene can continue from the next wave.
-    /// </summary>
+    // Save current wave index so the next gameplay scene can continue from the next wave.
     public void SaveWaveProgress(int wave)
     {
         _savedWave = Mathf.Max(0, wave);
     }
 
-    /// <summary>
-    /// Get saved wave index. Returns 0 if no wave has been saved yet.
-    /// </summary>
+    // Get saved wave index. Returns 0 if no wave has been saved yet.
     public int GetSavedWaveProgress()
     {
         return _savedWave;
     }
 
-    /// <summary>
-    /// Clear saved data. Call when starting a new game from main menu.
-    /// </summary>
-    public void ClearSavedData()
+    // Add score for the current run. Used by XP gain so score matches XP earned.
+    public void AddScore(int amount)
+    {
+        if (amount <= 0) return;
+        _score += amount;
+    }
+
+    // Get current run score for Gameover UI.
+    public int GetScore()
+    {
+        return _score;
+    }
+
+    // Register one enemy death for the current run.
+    public void AddEnemyKill()
+    {
+        _enemiesKilled++;
+    }
+
+    // Get total enemy kills for the current run.
+    public int GetEnemiesKilled()
+    {
+        return _enemiesKilled;
+    }
+
+    // Freeze run timer and invalidate gameplay restore while keeping stats for Gameover.
+    public void PrepareForGameOver()
+    {
+        if (_hasRunStarted && !_runEnded)
+        {
+            _finalRunDurationSeconds = Mathf.Max(0f, Time.realtimeSinceStartup - _runStartRealtime);
+            _runEnded = true;
+        }
+
+        HasSavedData = false;
+    }
+
+    // Get elapsed time for the current run. Returns frozen time after death.
+    public float GetRunDurationSeconds()
+    {
+        if (!_hasRunStarted) return 0f;
+        if (_runEnded) return _finalRunDurationSeconds;
+        return Mathf.Max(0f, Time.realtimeSinceStartup - _runStartRealtime);
+    }
+
+    // Clear saved data. Call when starting a new game from main menu.
+    public void ClearSavedData(bool preserveScore = false)
     {
         HasSavedData = false;
         _savedWave = 0;
+        _enemiesKilled = 0;
+        _runStartRealtime = 0f;
+        _finalRunDurationSeconds = 0f;
+        _hasRunStarted = false;
+        _runEnded = false;
+        if (!preserveScore)
+            _score = 0;
     }
 }
