@@ -2,10 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Centralized scene loading. Attach to SceneTransition GameObject under GameRoot.
-/// Used by MainMenu buttons, LevelExit triggers, etc.
-/// </summary>
+// Centralized scene loading. Attach to SceneTransition GameObject under GameRoot.
+// Used by MainMenu buttons, LevelExit triggers, etc.
 public class SceneTransition : MonoBehaviour
 {
     public static SceneTransition Instance { get; private set; }
@@ -35,9 +33,7 @@ public class SceneTransition : MonoBehaviour
         isLoading = false;
     }
 
-    /// <summary>
-    /// Load a scene immediately.
-    /// </summary>
+    // Load a scene immediately.
     public void LoadScene(string sceneName)
     {
         if (isLoading) return;
@@ -46,9 +42,7 @@ public class SceneTransition : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    /// <summary>
-    /// Load a scene after a delay (e.g. for Play button with brief delay).
-    /// </summary>
+    // Load a scene after a delay (e.g. for Play button with brief delay).
     public void LoadSceneDelayed(string sceneName, float delaySeconds)
     {
         if (isLoading) return;

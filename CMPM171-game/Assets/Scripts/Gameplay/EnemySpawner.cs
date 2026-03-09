@@ -1,10 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Spawns enemies for a given wave. Wave flow and UI are handled by
-/// <see cref="WaveFlowController"/> which calls <see cref="StartWave"/>.
-/// </summary>
+// Spawns enemies for a given wave. Wave flow and UI are handled by
+// WaveFlowController which calls StartWave.
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Prefabs")]
@@ -50,7 +48,7 @@ public class EnemySpawner : MonoBehaviour
         TryAutoBindSpawnBounds();
     }
 
-    /// <summary>Begin spawning enemies for the given wave number.</summary>
+    // Begin spawning enemies for the given wave number.
     public void StartWave(int waveNumber)
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;

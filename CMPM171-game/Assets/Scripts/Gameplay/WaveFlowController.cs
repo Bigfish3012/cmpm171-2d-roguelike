@@ -2,10 +2,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// Controls wave progression, UI updates, and map-transition gates.
-/// Delegates actual enemy spawning to <see cref="EnemySpawner"/>.
-/// </summary>
+// Controls wave progression, UI updates, and map-transition gates.
+// Delegates actual enemy spawning to EnemySpawner.
 public class WaveFlowController : MonoBehaviour
 {
     [Header("Spawner")]
@@ -88,18 +86,14 @@ public class WaveFlowController : MonoBehaviour
         StartCoroutine(BeginNextWaveRoutine());
     }
 
-    /// <summary>
-    /// Call this after the player finishes a map-transition portal to resume wave flow.
-    /// </summary>
+    // Call this after the player finishes a map-transition portal to resume wave flow.
     public void ResumeAfterMapTransition()
     {
         SetNextMapVisible(false);
         StartCoroutine(BeginNextWaveRoutine());
     }
 
-    /// <summary>
-    /// Debug: Clear all enemies and start the next wave immediately.
-    /// </summary>
+    // Debug: Clear all enemies and start the next wave immediately.
     public void DebugStartNextWave()
     {
         StartCoroutine(BeginNextWaveRoutine());

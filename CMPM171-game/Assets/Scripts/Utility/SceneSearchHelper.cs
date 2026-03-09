@@ -1,14 +1,12 @@
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// Shared helpers for finding scene objects by name at runtime.
-/// Used by EnemySpawner, WaveFlowController, and any future scripts
-/// that need to auto-bind references.
-/// </summary>
+// Shared helpers for finding scene objects by name at runtime.
+// Used by EnemySpawner, WaveFlowController, and any future scripts
+// that need to auto-bind references.
 public static class SceneSearchHelper
 {
-    /// <summary>Find an active-scene GameObject by exact name.</summary>
+    // Find an active-scene GameObject by exact name.
     public static GameObject FindSceneObjectByName(string targetName)
     {
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
@@ -22,7 +20,7 @@ public static class SceneSearchHelper
         return null;
     }
 
-    /// <summary>Find an active-scene TextMeshProUGUI component by GameObject name.</summary>
+    // Find an active-scene TextMeshProUGUI component by GameObject name.
     public static TextMeshProUGUI FindSceneTMPByName(string targetName)
     {
         TextMeshProUGUI[] allTexts = Resources.FindObjectsOfTypeAll<TextMeshProUGUI>();
