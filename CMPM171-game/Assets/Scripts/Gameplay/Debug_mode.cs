@@ -16,6 +16,21 @@ public class Debug_mode : MonoBehaviour
     // Gameplay scene order for N/B map switching
     private static readonly string[] GameplayScenes = { "SC_Prototype", "Level2", "Level3" };
 
+    private void Start()
+    {
+        ApplyGodModeToCurrentPlayer();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Update()
     {
         if (!enableDebugKeys) return;
@@ -134,6 +149,20 @@ public class Debug_mode : MonoBehaviour
     }
 
     private static bool godModeEnabled = false;
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplyGodModeToCurrentPlayer();
+    }
+
+    private void ApplyGodModeToCurrentPlayer()
+    {
+        var player = Player_settings.Instance;
+        if (player == null) return;
+
+        // Re-apply the tracked God Mode state to the newly spawned player after scene changes.
+        player.SetInvincible(godModeEnabled);
+    }
 
     private void ClearAllEnemies()
     {

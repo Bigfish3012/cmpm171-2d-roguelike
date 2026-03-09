@@ -423,6 +423,12 @@ MonoBehaviour:
   timeText: {fileID: 1839756053}
   enemiesText: {fileID: 1199942891}
   waveText: {fileID: 1719135953}
+  valueUpClip: {fileID: 8300000, guid: 70a0174a987f45046b225751a2d94a12, type: 3}
+  valueUpVolume: 1
+  statRevealDelay: 0.12
+  statPopScale: 1.12
+  statPopDuration: 0.2
+  statHighlightColor: {r: 1, g: 0.95, b: 0.6, a: 1}
   bgmLoopClip: {fileID: 8300000, guid: cb6db27b23f31a241a43cd31f6b796f9, type: 3}
   bgmVolume: 0.5
 --- !u!4 &71937429
