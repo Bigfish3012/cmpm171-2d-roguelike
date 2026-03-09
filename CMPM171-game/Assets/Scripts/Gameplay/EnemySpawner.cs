@@ -77,6 +77,21 @@ public class EnemySpawner : MonoBehaviour
         CheckWaveCleared();
     }
 
+    // Debug helper: stop the current spawn routine before scene enemies are cleared.
+    public void StopCurrentWaveSpawningForDebug()
+    {
+        if (activeSpawnRoutine != null)
+        {
+            StopCoroutine(activeSpawnRoutine);
+            activeSpawnRoutine = null;
+        }
+
+        spawning = false;
+        enemiesLeftToSpawnInWave = 0;
+        TotalWaveEnemyCount = aliveEnemies;
+        OnEnemyCountChanged?.Invoke();
+    }
+
     // ---- Spawn coroutine ----
 
     private IEnumerator SpawnWaveRoutine(int waveNumber)
