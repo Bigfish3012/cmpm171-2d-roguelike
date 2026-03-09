@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4b7a8aded2fc3bf4ca948f2df5624fb8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - animator: {instanceID: 0}
+  - fireballPrefab: {instanceID: 0}
+  - firePoint: {instanceID: 0}
+  - player: {instanceID: 0}
+  - damagePopUpPrefab: {instanceID: 0}
+  - deathAnimationClip: {fileID: 7400000, guid: 8161314ea9b4fce4cbef6c27b9f14310, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
