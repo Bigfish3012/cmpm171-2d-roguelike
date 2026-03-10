@@ -93,9 +93,10 @@ public class WaveFlowController : MonoBehaviour
         StartCoroutine(BeginNextWaveRoutine());
     }
 
-    // Debug: Clear all enemies and start the next wave immediately.
-    public void DebugStartNextWave()
+    // Debug: treat the current wave as completed and advance to the following wave.
+    public void DebugForceCompleteCurrentWaveAndAdvance()
     {
+        Log($"Debug force-completing wave {currentWave} and advancing.");
         StartCoroutine(BeginNextWaveRoutine());
     }
 
