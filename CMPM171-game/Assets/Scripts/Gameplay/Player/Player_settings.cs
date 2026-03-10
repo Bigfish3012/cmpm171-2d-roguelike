@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,6 +26,7 @@ public class Player_settings : MonoBehaviour, IDamageable
     [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
     [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
+    [SerializeField] private float spawnDelaySeconds = 1f;                             // Delay before showing player on a fresh run
 
     private int currentHealth;                                                         // Current health of the player
     private int currentExperience;                                                     // Current XP progress toward next level
@@ -32,6 +34,11 @@ public class Player_settings : MonoBehaviour, IDamageable
     private int startingXPPerLevel;                                                    // Base XP requirement used to reconstruct level after restore
     private int lastPrintedHealth;                                                     // Last printed health value for debug logging
     private bool isInvincible = false;                                                 // Whether the player is currently invincible
+    private PlayerController playerController;
+    private RangedShooter rangedShooter;
+    private Rigidbody2D rb;
+    private Collider2D[] playerColliders;
+    private Renderer[] playerRenderers;
 
     // NEW: damage taken multiplier (1 = normal, 1.1 = +10% damage taken)
     private float damageTakenMultiplier = 1f;
@@ -50,13 +57,18 @@ public class Player_settings : MonoBehaviour, IDamageable
 
         startingXPPerLevel = xpPerLevel;
         EnsureSFXSource();
+        playerController = GetComponent<PlayerController>();
+        rangedShooter = GetComponent<RangedShooter>();
+        rb = GetComponent<Rigidbody2D>();
+        playerColliders = GetComponentsInChildren<Collider2D>(true);
+        playerRenderers = GetComponentsInChildren<Renderer>(true);
     }
 
     void Start()
     {
         var gm = GameManager.Instance;
-        var pc = GetComponent<PlayerController>();
-        var rs = GetComponent<RangedShooter>();
+        var pc = playerController;
+        var rs = rangedShooter;
 
         if (gm != null && gm.HasSavedData)
         {
@@ -69,7 +81,48 @@ public class Player_settings : MonoBehaviour, IDamageable
             currentHealth = maxHealth;
             lastPrintedHealth = currentHealth;
             Debug.Log($"Player Health: {currentHealth}");
+
+            if (spawnDelaySeconds > 0f)
+                StartCoroutine(ShowPlayerAfterDelay());
         }
+    }
+
+    private IEnumerator ShowPlayerAfterDelay()
+    {
+        SetPlayerVisible(false);
+        SetPlayerInteractable(false);
+        SetInvincible(true);
+
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
+        yield return new WaitForSecondsRealtime(spawnDelaySeconds);
+
+        SetPlayerVisible(true);
+        SetPlayerInteractable(true);
+        SetInvincible(false);
+    }
+
+    private void SetPlayerVisible(bool visible)
+    {
+        if (playerRenderers == null) return;
+
+        for (int i = 0; i < playerRenderers.Length; i++)
+            playerRenderers[i].enabled = visible;
+    }
+
+    private void SetPlayerInteractable(bool enabledState)
+    {
+        if (playerController != null)
+            playerController.enabled = enabledState;
+
+        if (rangedShooter != null)
+            rangedShooter.enabled = enabledState;
+
+        if (playerColliders == null) return;
+
+        for (int i = 0; i < playerColliders.Length; i++)
+            playerColliders[i].enabled = enabledState;
     }
 
     void Update()

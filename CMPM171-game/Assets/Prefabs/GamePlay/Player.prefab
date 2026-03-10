@@ -347,6 +347,7 @@ MonoBehaviour:
   xpIncreasePerLevel: 1.2
   critRate: 15
   critDamage: 100
+  spawnDelaySeconds: 0.3
 --- !u!212 &1087225547976335830
 SpriteRenderer:
   m_ObjectHideFlags: 0
