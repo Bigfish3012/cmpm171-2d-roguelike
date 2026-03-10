@@ -20,7 +20,7 @@ public class Player_settings : MonoBehaviour, IDamageable
 
     private AudioSource _sfxSource;
 
-    [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
+    [SerializeField] private int maxHealth = 40;                                        // Maximum health of the player
     [SerializeField] private int xpPerLevel = 20;                                        // Current XP required for next level
     [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
     [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)

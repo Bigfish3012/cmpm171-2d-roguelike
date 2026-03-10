@@ -249,6 +249,7 @@ MonoBehaviour:
   target: {fileID: 0}
   smoothSpeed: 0
   offset: {x: -0.01, y: 0.3, z: 0}
+  cameraBounds: {fileID: 0}
 --- !u!61 &66846376
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -975,6 +976,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a1b3d3b7a8101e479e7bc9981c3307a, type: 3}
+--- !u!4 &368842090 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7060881325425034521, guid: 5a1b3d3b7a8101e479e7bc9981c3307a, type: 3}
+  m_PrefabInstance: {fileID: 368842089}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &381058003
 GameObject:
   m_ObjectHideFlags: 0
@@ -2637,9 +2643,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6789012345678901234ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 0}
+  target: {fileID: 368842090}
   smoothSpeed: 0
   offset: {x: 0, y: 0, z: 0}
+  cameraBounds: {fileID: 1133890535}
 --- !u!1 &1223290190
 GameObject:
   m_ObjectHideFlags: 0
