@@ -2337,6 +2337,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Restart_button
       objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: e0acd0fa1aaa34d468718d43eb30d7dc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: e0acd0fa1aaa34d468718d43eb30d7dc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 71937428}
+    - target: {fileID: 1460693774719020120, guid: e0acd0fa1aaa34d468718d43eb30d7dc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Restart
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: e0acd0fa1aaa34d468718d43eb30d7dc, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameOver, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3301194515633967211, guid: e0acd0fa1aaa34d468718d43eb30d7dc, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -2800,7 +2816,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1600903911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3021,6 +3037,22 @@ PrefabInstance:
     - target: {fileID: 927072455205639609, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
       propertyPath: m_Name
       value: home_button
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 71937428}
+    - target: {fileID: 1460693774719020120, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Home
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameOver, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3301194515633967211, guid: 4c7fffa991207bd41b7e697a01c86812, type: 3}
       propertyPath: m_AnchorMax.x
