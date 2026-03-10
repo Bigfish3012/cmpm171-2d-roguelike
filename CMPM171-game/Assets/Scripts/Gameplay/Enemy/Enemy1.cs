@@ -122,10 +122,11 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         }
     }
 
-    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus, int experienceBonus)
     {
         maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
         attackDamage = Mathf.Max(1, attackDamage + damageBonus);
+        experience = Mathf.Max(0, experience + experienceBonus);
     }
 
     // Take damage from projectiles

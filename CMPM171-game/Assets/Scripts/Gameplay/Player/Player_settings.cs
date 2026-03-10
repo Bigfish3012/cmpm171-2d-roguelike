@@ -26,6 +26,7 @@ public class Player_settings : MonoBehaviour, IDamageable
     [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
     [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
     [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
+    [SerializeField] private float dodgeRate = 0f;                                     // Dodge chance in percent
     [SerializeField] private float spawnDelaySeconds = 1f;                             // Delay before showing player on a fresh run
 
     private int currentHealth;                                                         // Current health of the player
@@ -42,6 +43,7 @@ public class Player_settings : MonoBehaviour, IDamageable
 
     // NEW: damage taken multiplier (1 = normal, 1.1 = +10% damage taken)
     private float damageTakenMultiplier = 1f;
+    private const float MaxDodgeRate = 70f;
 
     void Awake()
     {
@@ -137,6 +139,11 @@ public class Player_settings : MonoBehaviour, IDamageable
     public void TakeDamage(int damage, bool isCrit = false)
     {
         if (isInvincible) return;
+        if (UnityEngine.Random.Range(0f, 100f) < dodgeRate)
+        {
+            Debug.Log($"Player Dodged! Dodge Rate: {dodgeRate:0}%");
+            return;
+        }
 
         // NEW: apply damage taken multiplier
         int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage * damageTakenMultiplier));
@@ -245,7 +252,12 @@ public class Player_settings : MonoBehaviour, IDamageable
         return critDamage;
     }
 
-    public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD)
+    public float GetDodgeRate()
+    {
+        return dodgeRate;
+    }
+
+    public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD, float dodgeR)
     {
         currentHealth = currentHp;
         maxHealth = maxHp;
@@ -254,6 +266,7 @@ public class Player_settings : MonoBehaviour, IDamageable
         currentLevel = RecalculateLevelFromXPRequirement(xpPerLevel);
         critRate = critR;
         critDamage = critD;
+        dodgeRate = Mathf.Clamp(dodgeR, 0f, MaxDodgeRate);
         lastPrintedHealth = currentHealth;
 
         // NOTE: damageTakenMultiplier is not restored (kept simple for now)
@@ -299,6 +312,12 @@ public class Player_settings : MonoBehaviour, IDamageable
     public void AddCritDamage(float amount)
     {
         critDamage += amount;
+        SaveToGameManager();
+    }
+
+    public void AddDodgeRate(float amount)
+    {
+        dodgeRate = Mathf.Clamp(dodgeRate + amount, 0f, MaxDodgeRate);
         SaveToGameManager();
     }
 

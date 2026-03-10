@@ -24,6 +24,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float minimumSpawnInterval = 0.5f;                            // Minimum spawn interval cap
     [SerializeField] private float enemyHealthIncreasePercentPerWave = 30f;                // Enemy health increase per wave (%)
     [SerializeField] private int enemyDamageIncreasePerWave = 1;                           // Enemy damage increase per wave
+    [SerializeField] private int enemyExperienceIncreasePerWave = 1;                       // Enemy base XP increase per wave
 
     [Header("Debug")]
     [SerializeField] private bool logWaveDebug = true;                                     // Print spawn/death counts in Console
@@ -102,6 +103,7 @@ public class EnemySpawner : MonoBehaviour
         TotalWaveEnemyCount = enemyCount;
         float healthMultiplier = 1f + (waveNumber - 1) * (enemyHealthIncreasePercentPerWave / 100f);
         int damageBonus = (waveNumber - 1) * enemyDamageIncreasePerWave;
+        int experienceBonus = (waveNumber - 1) * enemyExperienceIncreasePerWave;
         float spawnInterval = Mathf.Max(
             minimumSpawnInterval,
             startingSpawnInterval - (waveNumber - 1) * spawnIntervalDecreasePerWave
@@ -111,7 +113,7 @@ public class EnemySpawner : MonoBehaviour
 
         LogWave(
             $"Wave {waveNumber} spawning. Count: {enemyCount}, " +
-            $"Health x{healthMultiplier:0.00}, Damage +{damageBonus}, " +
+            $"Health x{healthMultiplier:0.00}, Damage +{damageBonus}, XP +{experienceBonus}, " +
             $"Interval {spawnInterval:0.00}s"
         );
 
@@ -120,7 +122,7 @@ public class EnemySpawner : MonoBehaviour
             Vector3 spawnPos = GetRandomSpawnPosition();
             GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
             GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
-            ApplyWaveScalingToEnemy(enemy, healthMultiplier, damageBonus);
+            ApplyWaveScalingToEnemy(enemy, healthMultiplier, damageBonus, experienceBonus);
 
             aliveEnemies++;
             enemiesLeftToSpawnInWave--;
@@ -231,18 +233,18 @@ public class EnemySpawner : MonoBehaviour
         Debug.Log($"[EnemySpawner] {message}", this);
     }
 
-    private static void ApplyWaveScalingToEnemy(GameObject enemy, float healthMultiplier, int damageBonus)
+    private static void ApplyWaveScalingToEnemy(GameObject enemy, float healthMultiplier, int damageBonus, int experienceBonus)
     {
         if (enemy == null) return;
 
         Enemy1 enemy1 = enemy.GetComponent<Enemy1>();
-        if (enemy1 != null) { enemy1.ApplyWaveScaling(healthMultiplier, damageBonus); return; }
+        if (enemy1 != null) { enemy1.ApplyWaveScaling(healthMultiplier, damageBonus, experienceBonus); return; }
 
         Enemy_shooter enemyShooter = enemy.GetComponent<Enemy_shooter>();
-        if (enemyShooter != null) { enemyShooter.ApplyWaveScaling(healthMultiplier, damageBonus); return; }
+        if (enemyShooter != null) { enemyShooter.ApplyWaveScaling(healthMultiplier, damageBonus, experienceBonus); return; }
 
         Enemy_Charge enemyCharge = enemy.GetComponent<Enemy_Charge>();
         if (enemyCharge != null)
-            enemyCharge.ApplyWaveScaling(healthMultiplier, damageBonus);
+            enemyCharge.ApplyWaveScaling(healthMultiplier, damageBonus, experienceBonus);
     }
 }

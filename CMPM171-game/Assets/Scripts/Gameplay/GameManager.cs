@@ -19,9 +19,12 @@ public class GameManager : MonoBehaviour
     private int _xpPerLevel;                                                             // Saved XP per level
     private float _critRate;                                                             // Saved critical hit rate
     private float _critDamage;                                                           // Saved critical damage bonus
+    private float _dodgeRate;                                                            // Saved dodge chance
     private float _moveSpeed;                                                            // Saved movement speed
     private int _attackDamage;                                                           // Saved attack damage
     private int _projectileCount;                                                        // Saved projectile count
+    private float _finalDamageMultiplier = 1f;                                           // Saved final damage multiplier
+    private int _chainBounceCount;                                                       // Saved ricochet count
     private int _savedWave;                                                              // Saved current wave index
     private int _score;                                                                  // Run score shown on Gameover
     private int _enemiesKilled;                                                          // Total enemies killed this run
@@ -112,9 +115,12 @@ public class GameManager : MonoBehaviour
         _xpPerLevel = ps.GetXPPerLevel();
         _critRate = ps.GetCritRate();
         _critDamage = ps.GetCritDamage();
+        _dodgeRate = ps.GetDodgeRate();
         _moveSpeed = pc != null ? pc.moveSpeed : 6f;
         _attackDamage = rs != null ? rs.GetAttackDamage() : 10;
         _projectileCount = rs != null ? rs.GetProjectileCount() : 1;
+        _finalDamageMultiplier = rs != null ? rs.GetFinalDamageMultiplier() : 1f;
+        _chainBounceCount = rs != null ? rs.GetChainBounceCount() : 0;
 
         HasSavedData = true;
     }
@@ -124,7 +130,7 @@ public class GameManager : MonoBehaviour
     {
         if (ps == null || !HasSavedData) return;
 
-        ps.RestoreData(_currentHealth, _maxHealth, _currentExperience, _xpPerLevel, _critRate, _critDamage);
+        ps.RestoreData(_currentHealth, _maxHealth, _currentExperience, _xpPerLevel, _critRate, _critDamage, _dodgeRate);
 
         if (pc != null)
             pc.moveSpeed = _moveSpeed;
@@ -133,6 +139,8 @@ public class GameManager : MonoBehaviour
         {
             rs.SetAttackDamage(_attackDamage);
             rs.SetProjectileCount(_projectileCount);
+            rs.SetFinalDamageMultiplier(_finalDamageMultiplier);
+            rs.SetChainBounceCount(_chainBounceCount);
         }
     }
 
