@@ -219,6 +219,30 @@ MonoBehaviour:
     m_Key: HTP_Bullet
     m_Metadata:
       m_Items: []
+  - m_Id: 10712826070634496
+    m_Key: Restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10712903279382528
+    m_Key: 'Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713013199507456
+    m_Key: 'Time Survived:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713176311795712
+    m_Key: 'Enemies Killed:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713257949728768
+    m_Key: 'Wave Reached:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10729824083185664
+    m_Key: 'Warning: Next Wave coming'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

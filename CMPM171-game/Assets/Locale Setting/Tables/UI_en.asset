@@ -228,6 +228,30 @@ MonoBehaviour:
     m_Localized: EACH LEVEL OFFERS DIFFERENT RANDOM CHOICES
     m_Metadata:
       m_Items: []
+  - m_Id: 10712826070634496
+    m_Localized: Restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10712903279382528
+    m_Localized: 'Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713013199507456
+    m_Localized: 'Time Survived:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713176311795712
+    m_Localized: 'Enemies Killed:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10713257949728768
+    m_Localized: 'Wave Reached:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10729824083185664
+    m_Localized: 'Warning: Next Wave coming'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
