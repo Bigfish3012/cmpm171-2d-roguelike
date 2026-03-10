@@ -263,9 +263,13 @@ PrefabInstance:
       value: back_button
       objectReference: {fileID: 0}
     - target: {fileID: 1460693774719020120, guid: 0d6e706a029161442ac46c393081adf3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460693774719020120, guid: 0d6e706a029161442ac46c393081adf3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 71937430}
     - target: {fileID: 1460693774719020120, guid: 0d6e706a029161442ac46c393081adf3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: BackToMainMenu
