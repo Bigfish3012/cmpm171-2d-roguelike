@@ -23,12 +23,14 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     private float stopUntilTime = 0f;                                                    // Time until enemy can move again after hitting player
     private bool isDead;                                                                 // Prevent repeated death logic
     private AudioSource _sfxSource;
+    private SpriteRenderer _spriteRenderer;
 
     // Start method to initialize the enemy
     void Start()
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         EnsureSFXSource();
         if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
         if (enemyAnimator == null) enemyAnimator = GetComponentInChildren<Animator>();
@@ -44,6 +46,8 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
     void FixedUpdate()
     {
         if (playerTransform == null) return;
+
+        UpdateFacing();
         
         // Stop moving if still in cooldown after hitting player
         if (Time.time < stopUntilTime) return;
@@ -62,6 +66,12 @@ public class Enemy1 : MonoBehaviour, IHealth, IDamageable
         Vector2 nextPos = currentPos + finalDirection * moveSpeed * Time.fixedDeltaTime;
 
         rb.MovePosition(nextPos);
+    }
+
+    private void UpdateFacing()
+    {
+        if (_spriteRenderer == null) return;
+        _spriteRenderer.flipX = transform.position.x < playerTransform.position.x;
     }
     
     // Calculate avoidance vector to avoid other enemies

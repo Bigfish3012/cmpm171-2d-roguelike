@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     private bool isCrit;                                                                 // Whether this hit is a critical hit
 
     private Rigidbody2D rb;                                                              // Rigidbody2D component of the projectile
+    private bool _hasCustomRotation;
 
     // Awake method to initialize the Rigidbody2D component
     void Awake()
@@ -20,8 +21,22 @@ public class Projectile : MonoBehaviour
     {
         damage = projectileDamage;
         isCrit = projectileIsCrit;
-        rb.linearVelocity = dir.normalized * speed;
+        Vector2 normalizedDirection = dir.normalized;
+        rb.linearVelocity = normalizedDirection * speed;
+
+        if (!_hasCustomRotation && normalizedDirection.sqrMagnitude > 0.0001f)
+        {
+            float angle = Mathf.Atan2(normalizedDirection.y, normalizedDirection.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
         Destroy(gameObject, lifeTime);
+    }
+
+    public void SetVisualRotation(Quaternion rotation)
+    {
+        transform.rotation = rotation;
+        _hasCustomRotation = true;
     }
 
     // OnTriggerEnter2D method to damage objects that implement IDamageable

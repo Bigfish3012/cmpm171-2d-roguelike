@@ -21,6 +21,9 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private int experience = 3;                                         // Experience points given to player when killed
     [SerializeField] private GameObject damagePopUpPrefab;                               // Prefab for damage pop-up text (optional)
     [SerializeField] private Animator enemyAnimator;                                      // Animator used to play death animation
+    [SerializeField] private AnimationClip idleAnimationClip;
+    [SerializeField] private AnimationClip chargingAnimationClip;
+    [SerializeField] private AnimationClip dashingAnimationClip;
     [SerializeField] private AnimationClip deathAnimationClip;                            // Death animation clip (choose in Inspector)
     [SerializeField] private AudioClip gotHitClip;                                        // SFX when enemy takes damage
     [Range(0f, 1f)] [SerializeField] private float gotHitVolume = 1f;
@@ -35,6 +38,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
     private Vector2 dashDirection;                                                       // Direction to dash towards player
     private bool isDead;                                                                 // Prevent repeated death logic
     private AudioSource _sfxSource;
+    private string _currentAnimationState;
 
     // Start method to initialize the enemy
     void Start()
@@ -44,6 +48,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
         EnsureSFXSource();
         if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
         if (enemyAnimator == null) enemyAnimator = GetComponentInChildren<Animator>();
+        UpdateAnimationForState(currentState);
 
         // Get player transform from singleton
         if (Player_settings.Instance != null)
@@ -67,7 +72,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
                 if (distanceToPlayer <= detectionRange)
                 {
                     // Start charging
-                    currentState = ChargeState.Charging;
+                    SetState(ChargeState.Charging);
                     chargeStartTime = Time.time;
                     dashDirection = ((Vector2)playerTransform.position - rb.position).normalized;
                 }
@@ -80,7 +85,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
                 // Check if charge time is complete
                 if (Time.time >= chargeStartTime + chargeTime)
                 {
-                    currentState = ChargeState.Dashing;
+                    SetState(ChargeState.Dashing);
                     dashStartTime = Time.time;
                 }
                 // Stay still during charging
@@ -90,7 +95,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
                 // Check if dash duration has expired
                 if (Time.time >= dashStartTime + dashDuration)
                 {
-                    currentState = ChargeState.Idle;
+                    SetState(ChargeState.Idle);
                     break;
                 }
 
@@ -102,7 +107,7 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
                 // If player moved out of range or too far, reset to idle
                 if (distanceToPlayer > detectionRange * 1.5f)
                 {
-                    currentState = ChargeState.Idle;
+                    SetState(ChargeState.Idle);
                 }
                 break;
         }
@@ -123,10 +128,38 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
                     lastDamageTime = Time.time;
                     
                     // Reset to idle state after hitting player
-                    currentState = ChargeState.Idle;
+                    SetState(ChargeState.Idle);
                 }
             }
         }
+    }
+
+    private void SetState(ChargeState newState)
+    {
+        if (currentState == newState) return;
+        currentState = newState;
+        UpdateAnimationForState(newState);
+    }
+
+    private void UpdateAnimationForState(ChargeState state)
+    {
+        if (enemyAnimator == null) return;
+
+        AnimationClip targetClip = state switch
+        {
+            ChargeState.Idle => idleAnimationClip,
+            ChargeState.Charging => chargingAnimationClip,
+            ChargeState.Dashing => dashingAnimationClip,
+            _ => null
+        };
+
+        if (targetClip == null || _currentAnimationState == targetClip.name) return;
+
+        int stateHash = Animator.StringToHash(targetClip.name);
+        if (!enemyAnimator.HasState(0, stateHash)) return;
+
+        enemyAnimator.Play(stateHash, 0, 0f);
+        _currentAnimationState = targetClip.name;
     }
 
     // Take damage from projectiles
