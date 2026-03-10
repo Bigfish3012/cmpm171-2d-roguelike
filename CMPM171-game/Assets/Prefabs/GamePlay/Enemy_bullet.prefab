@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 974636971671121218}
   - component: {fileID: 4792626354611794202}
   - component: {fileID: 6244557654308570867}
+  - component: {fileID: 6074541200998249699}
   m_Layer: 12
   m_Name: Enemy_bullet
   m_TagString: Bullet
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_SortingLayerID: 1000898173
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: -5092728346187406784, guid: f7988535ec6b641928a092ca046536ad, type: 3}
   m_Color: {r: 1, g: 0, b: 0.03474331, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -170,3 +171,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 10
   lifeTime: 2
+--- !u!95 &6074541200998249699
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5706154945772098217}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 10da914d9377f45ceaa64f9d80409ee3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
