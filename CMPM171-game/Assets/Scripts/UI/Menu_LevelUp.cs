@@ -8,7 +8,7 @@ using TMPro;
 // Attach to Canvas or another always-active parent; assign levelUpMenuUI in Inspector.
 public class Menu_LevelUp : MonoBehaviour
 {
-    public enum UpgradeType { Health, Speed, CritRate, CritDamage, Damage }
+    public enum UpgradeType { Health, Speed, CritRate, CritDamage, Damage, ProjectilePath, Ricochet, Flame }
 
     [System.Serializable]
     public struct UpgradeRanges
@@ -25,6 +25,8 @@ public class Menu_LevelUp : MonoBehaviour
 
     [SerializeField] private AudioClip levelUpClip;
     [Range(0f, 1f)] [SerializeField] private float levelUpVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float doubleValueChance = 0.15f;
+    [Range(0f, 1f)] [SerializeField] private float specialUpgradeChance = 0.15f;
 
     private AudioSource _sfxSource;
 
@@ -49,15 +51,25 @@ public class Menu_LevelUp : MonoBehaviour
         damageMax = 5
     };
 
+    [Header("Special Upgrades")]
+    [SerializeField] private int projectilePathAmount = 1;
+    [SerializeField] private int ricochetAmount = 1;
+    [SerializeField] private float flameFinalDamageBonus = 0.25f;
+    [SerializeField] private float speedPickDodgeRatePlus = 10f;
+
     private Button[] optionButtons;
     private UpgradeOption[] currentOptions;
 
     private bool penaltyMode = false;
+    private float projectilePathChance;
+    private float ricochetChance;
+    private float flameChance;
 
     private struct UpgradeOption
     {
         public UpgradeType type;
         public float value;
+        public bool isDoubled;
     }
 
     void Start()
@@ -73,6 +85,7 @@ public class Menu_LevelUp : MonoBehaviour
         optionButtons = levelUpMenuUI.GetComponentsInChildren<Button>(true);
         currentOptions = new UpgradeOption[optionButtons.Length];
         levelUpMenuUI.SetActive(false);
+        ResetSpecialUpgradeChances();
 
         for (int i = 0; i < optionButtons.Length; i++)
         {
@@ -130,6 +143,10 @@ public class Menu_LevelUp : MonoBehaviour
             UpgradeType.Damage
         };
 
+        TryAddSpecialUpgrade(types, UpgradeType.ProjectilePath, projectilePathChance);
+        TryAddSpecialUpgrade(types, UpgradeType.Ricochet, ricochetChance);
+        TryAddSpecialUpgrade(types, UpgradeType.Flame, flameChance);
+
         for (int i = 0; i < types.Count; i++)
         {
             int swapIndex = Random.Range(i, types.Count);
@@ -139,22 +156,78 @@ public class Menu_LevelUp : MonoBehaviour
         for (int i = 0; i < optionButtons.Length; i++)
         {
             UpgradeType type = i < types.Count ? types[i] : (UpgradeType)Random.Range(0, types.Count);
-            float value = GetRandomValueForType(type);
-            currentOptions[i] = new UpgradeOption { type = type, value = value };
+            float value = GetFixedValueForType(type);
+            bool isDoubled = !IsSpecialUpgrade(type) && Random.value < doubleValueChance;
+            if (isDoubled)
+                value *= 2f;
+
+            currentOptions[i] = new UpgradeOption { type = type, value = value, isDoubled = isDoubled };
         }
+
+        UpdateSpecialUpgradeChancesFromFinalOptions();
     }
 
-    private float GetRandomValueForType(UpgradeType type)
+    private void TryAddSpecialUpgrade(List<UpgradeType> types, UpgradeType specialType, float currentChance)
+    {
+        if (Random.value < Mathf.Clamp01(currentChance))
+            types.Add(specialType);
+    }
+
+    private void UpdateSpecialUpgradeChancesFromFinalOptions()
+    {
+        UpdateSpecialUpgradeChance(ref projectilePathChance, UpgradeType.ProjectilePath);
+        UpdateSpecialUpgradeChance(ref ricochetChance, UpgradeType.Ricochet);
+        UpdateSpecialUpgradeChance(ref flameChance, UpgradeType.Flame);
+    }
+
+    private void UpdateSpecialUpgradeChance(ref float currentChance, UpgradeType specialType)
+    {
+        if (ContainsFinalOption(specialType))
+        {
+            currentChance = specialUpgradeChance;
+            return;
+        }
+
+        currentChance = Mathf.Min(1f, currentChance + specialUpgradeChance);
+    }
+
+    private bool ContainsFinalOption(UpgradeType type)
+    {
+        for (int i = 0; i < currentOptions.Length; i++)
+        {
+            if (currentOptions[i].type == type)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void ResetSpecialUpgradeChances()
+    {
+        projectilePathChance = specialUpgradeChance;
+        ricochetChance = specialUpgradeChance;
+        flameChance = specialUpgradeChance;
+    }
+
+    private float GetFixedValueForType(UpgradeType type)
     {
         switch (type)
         {
-            case UpgradeType.Health: return Random.Range(ranges.healthMin, ranges.healthMax + 1);
-            case UpgradeType.Speed: return Mathf.Round(Random.Range(ranges.speedMin, ranges.speedMax) * 10f) / 10f;
-            case UpgradeType.CritRate: return Random.Range(ranges.critRateMin, ranges.critRateMax + 1);
-            case UpgradeType.CritDamage: return Random.Range(ranges.critDamageMin, ranges.critDamageMax + 1);
-            case UpgradeType.Damage: return Random.Range(ranges.damageMin, ranges.damageMax + 1);
+            case UpgradeType.Health: return ranges.healthMin;
+            case UpgradeType.Speed: return Mathf.Round(ranges.speedMin * 10f) / 10f;
+            case UpgradeType.CritRate: return ranges.critRateMin;
+            case UpgradeType.CritDamage: return ranges.critDamageMin;
+            case UpgradeType.Damage: return ranges.damageMin;
+            case UpgradeType.ProjectilePath: return projectilePathAmount;
+            case UpgradeType.Ricochet: return ricochetAmount;
+            case UpgradeType.Flame: return flameFinalDamageBonus;
             default: return 0;
         }
+    }
+
+    private bool IsSpecialUpgrade(UpgradeType type)
+    {
+        return type == UpgradeType.ProjectilePath || type == UpgradeType.Ricochet || type == UpgradeType.Flame;
     }
 
     private void RefreshButtonTexts()
@@ -169,15 +242,24 @@ public class Menu_LevelUp : MonoBehaviour
 
     private string GetDisplayText(UpgradeOption opt)
     {
-        string valueText = opt.type == UpgradeType.Speed ? opt.value.ToString("0.0") : Mathf.RoundToInt(opt.value).ToString();
+        string rawValueText = opt.type switch
+        {
+            UpgradeType.Speed => opt.value.ToString("0.0"),
+            UpgradeType.Flame => $"{Mathf.RoundToInt(opt.value * 100f)}%",
+            _ => Mathf.RoundToInt(opt.value).ToString()
+        };
+        string valueText = (opt.isDoubled || IsSpecialUpgrade(opt.type)) ? $"<color=#FFD54A>{rawValueText}</color>" : rawValueText;
 
         string baseText = opt.type switch
         {
             UpgradeType.Health => $"Health +{valueText}",
-            UpgradeType.Speed => $"Speed +{valueText}",
+            UpgradeType.Speed => $"Speed +{valueText} / Dodge +{Mathf.RoundToInt(speedPickDodgeRatePlus)}%",
             UpgradeType.CritRate => $"Crit Rate +{valueText}",
             UpgradeType.CritDamage => $"Crit Damage +{valueText}",
             UpgradeType.Damage => $"Damage +{valueText}",
+            UpgradeType.ProjectilePath => $"弹道 +{valueText}",
+            UpgradeType.Ricochet => $"弹射 +{valueText}",
+            UpgradeType.Flame => $"火焰 +{valueText}",
             _ => ""
         };
 
@@ -232,6 +314,7 @@ public class Menu_LevelUp : MonoBehaviour
 
             case UpgradeType.Speed:
                 if (playerController != null) playerController.AddMoveSpeed(opt.value);
+                if (playerSettings != null) playerSettings.AddDodgeRate(speedPickDodgeRatePlus);
 
                 // Penalty: speed pick => lower damage dealt
                 if (penaltyMode && rangedShooter != null) rangedShooter.AddDamageMultiplier(-speedPickDamageMultMinus);
@@ -250,6 +333,18 @@ public class Menu_LevelUp : MonoBehaviour
 
                 // Penalty: damage pick => take more damage
                 if (penaltyMode && playerSettings != null) playerSettings.AddDamageTakenMultiplier(damagePickDamageTakenPlus);
+                break;
+
+            case UpgradeType.ProjectilePath:
+                if (rangedShooter != null) rangedShooter.AddProjectileCount(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.Ricochet:
+                if (rangedShooter != null) rangedShooter.AddChainBounceCount(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.Flame:
+                if (rangedShooter != null) rangedShooter.AddFinalDamageMultiplier(opt.value);
                 break;
         }
     }

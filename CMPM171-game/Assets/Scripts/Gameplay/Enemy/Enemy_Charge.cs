@@ -221,10 +221,11 @@ public class Enemy_Charge : MonoBehaviour, IHealth, IDamageable
         return currentHealth;
     }
 
-    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus, int experienceBonus)
     {
         maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
         attackDamage = Mathf.Max(1, attackDamage + damageBonus);
+        experience = Mathf.Max(0, experience + experienceBonus);
     }
 
     // Get the maximum health of the enemy

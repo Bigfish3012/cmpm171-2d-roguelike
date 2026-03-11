@@ -21,6 +21,8 @@ public class Upgrade : MonoBehaviour
         {
             Debug.LogWarning("Upgrade: No Animator found on this object or its children.", this);
         }
+
+        
     }
 
     void Update()
