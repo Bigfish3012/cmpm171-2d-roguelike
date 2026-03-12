@@ -38,6 +38,16 @@ public class Menu_LevelUp : MonoBehaviour
     [Range(0f, 1f)][SerializeField] private float doubleValueChance = 0.15f;
     [Range(0f, 1f)][SerializeField] private float specialUpgradeChance = 0.15f;
 
+    [Header("Upgrade Icons")]
+    [SerializeField] private Sprite damageIcon;
+    [SerializeField] private Sprite critIcon;
+    [SerializeField] private Sprite speedIcon;
+    [SerializeField] private Sprite healthIcon;
+    [SerializeField] private Sprite armorIcon;
+    [SerializeField] private Sprite damageReductionIcon;
+    [SerializeField] private Sprite dodgeIcon;
+    [SerializeField] private Sprite regenerationIcon;
+
     private AudioSource _sfxSource;
 
     [Header("Penalty Rules")]
@@ -266,6 +276,56 @@ public class Menu_LevelUp : MonoBehaviour
             var text = optionButtons[i].GetComponentInChildren<TextMeshProUGUI>(true);
             if (text != null)
                 text.text = GetDisplayText(currentOptions[i]);
+
+            Transform iconTransform = optionButtons[i].transform.Find("Image_Icon");
+            if (iconTransform != null)
+            {
+                Image iconImage = iconTransform.GetComponent<Image>();
+                if (iconImage != null)
+                {
+                    iconImage.sprite = GetIconForUpgradeType(currentOptions[i].type);
+                    iconImage.enabled = iconImage.sprite != null;
+                }
+            }
+        }
+    }
+
+    private Sprite GetIconForUpgradeType(UpgradeType type)
+    {
+        switch (type)
+        {
+            case UpgradeType.Damage:
+                return damageIcon;
+
+            case UpgradeType.CritRate:
+            case UpgradeType.CritDamage:
+                return critIcon;
+
+            case UpgradeType.Speed:
+                return speedIcon;
+
+            case UpgradeType.Health:
+                return healthIcon;
+
+            case UpgradeType.Armor:
+                return armorIcon;
+
+            case UpgradeType.DamageReduction:
+                return damageReductionIcon;
+
+            case UpgradeType.Dodge:
+                return dodgeIcon;
+
+            case UpgradeType.Regeneration:
+                return regenerationIcon;
+
+            case UpgradeType.ProjectilePath:
+            case UpgradeType.Ricochet:
+            case UpgradeType.Flame:
+                return damageIcon;
+
+            default:
+                return null;
         }
     }
 
@@ -295,9 +355,9 @@ public class Menu_LevelUp : MonoBehaviour
             UpgradeType.Dodge => $"Dodge +{valueText}",
             UpgradeType.Regeneration => $"Regeneration +{valueText}",
 
-            UpgradeType.ProjectilePath => $"弹道 +{valueText}",
-            UpgradeType.Ricochet => $"弹射 +{valueText}",
-            UpgradeType.Flame => $"火焰 +{valueText}",
+            UpgradeType.ProjectilePath => $"Projectile +{valueText}",
+            UpgradeType.Ricochet => $"Ricochet +{valueText}",
+            UpgradeType.Flame => $"FinalDamage +{valueText}",
             _ => ""
         };
 
