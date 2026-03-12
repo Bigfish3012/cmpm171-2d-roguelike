@@ -57,11 +57,12 @@ MonoBehaviour:
   maxSpawnRetries: 30
   startingWaveEnemyCount: 30
   enemyCountIncreasePerWave: 10
-  startingSpawnInterval: 2
-  spawnIntervalDecreasePerWave: 0.2
-  minimumSpawnInterval: 0.5
+  startingSpawnInterval: 1.4
+  spawnIntervalDecreasePerWave: 0.4
+  minimumSpawnInterval: 0.1
   enemyHealthIncreasePercentPerWave: 30
   enemyDamageIncreasePerWave: 1
+  enemyExperienceIncreasePerWave: 1
   logWaveDebug: 1
 --- !u!114 &8733497482812590437
 MonoBehaviour:
