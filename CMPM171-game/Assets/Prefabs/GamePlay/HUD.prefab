@@ -329,6 +329,8 @@ MonoBehaviour:
   clickDelaySeconds: 1
   levelUpClip: {fileID: 8300000, guid: d79348eaace1ae445b1f0c71ad360b46, type: 3}
   levelUpVolume: 1
+  doubleValueChance: 0.15
+  specialUpgradeChance: 0.15
   penaltyStartLevel: 6
   damagePickDamageTakenPlus: 0.1
   speedPickDamageMultMinus: 0.1
@@ -344,6 +346,18 @@ MonoBehaviour:
     critDamageMax: 30
     damageMin: 5
     damageMax: 5
+    armorMin: 1
+    armorMax: 2
+    damageReductionMin: 0.05
+    damageReductionMax: 0.15
+    dodgeMin: 0.05
+    dodgeMax: 0.15
+    regenerationMin: 1
+    regenerationMax: 1
+  projectilePathAmount: 1
+  ricochetAmount: 1
+  flameFinalDamageBonus: 0.25
+  speedPickDodgeRatePlus: 10
 --- !u!1 &1248663485432239025
 GameObject:
   m_ObjectHideFlags: 0
