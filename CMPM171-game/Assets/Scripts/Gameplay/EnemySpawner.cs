@@ -26,9 +26,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private int enemyDamageIncreasePerWave = 1;                           // Enemy damage increase per wave
     [SerializeField] private int enemyExperienceIncreasePerWave = 1;                       // Enemy base XP increase per wave
 
-    [Header("Debug")]
-    [SerializeField] private bool logWaveDebug = true;                                     // Print spawn/death counts in Console
-
     public event System.Action<int> OnWaveCleared;
 
     public event System.Action OnEnemyCountChanged;
@@ -56,7 +53,6 @@ public class EnemySpawner : MonoBehaviour
 
         if (spawning)
         {
-            LogWave($"StartWave({waveNumber}) called while wave {currentWaveNumber} is still spawning. Stopping previous routine.");
             if (activeSpawnRoutine != null)
                 StopCoroutine(activeSpawnRoutine);
             spawning = false;
@@ -73,7 +69,6 @@ public class EnemySpawner : MonoBehaviour
         if (aliveEnemies > 0)
             aliveEnemies--;
 
-        LogWave($"Enemy destroyed. Alive: {aliveEnemies}, Left: {enemiesLeftToSpawnInWave}");
         OnEnemyCountChanged?.Invoke();
         CheckWaveCleared();
     }
@@ -111,12 +106,6 @@ public class EnemySpawner : MonoBehaviour
         enemiesLeftToSpawnInWave = enemyCount;
         OnEnemyCountChanged?.Invoke();
 
-        LogWave(
-            $"Wave {waveNumber} spawning. Count: {enemyCount}, " +
-            $"Health x{healthMultiplier:0.00}, Damage +{damageBonus}, XP +{experienceBonus}, " +
-            $"Interval {spawnInterval:0.00}s"
-        );
-
         for (int i = 0; i < enemyCount; i++)
         {
             Vector3 spawnPos = GetRandomSpawnPosition();
@@ -132,8 +121,6 @@ public class EnemySpawner : MonoBehaviour
                 waveMember = enemy.AddComponent<EnemyWaveMember>();
             waveMember.Init(this);
 
-            LogWave($"Spawned {i + 1}/{enemyCount}. Alive: {aliveEnemies}, Left: {enemiesLeftToSpawnInWave}");
-
             if (spawnInterval > 0f)
                 yield return new WaitForSeconds(spawnInterval);
         }
@@ -148,7 +135,6 @@ public class EnemySpawner : MonoBehaviour
         if (spawning) return;
         if (enemiesLeftToSpawnInWave > 0 || aliveEnemies > 0) return;
 
-        LogWave($"Wave {currentWaveNumber} cleared.");
         OnWaveCleared?.Invoke(currentWaveNumber);
     }
 
@@ -226,12 +212,6 @@ public class EnemySpawner : MonoBehaviour
     }
 
     // ---- Utility ----
-
-    private void LogWave(string message)
-    {
-        if (!logWaveDebug) return;
-        Debug.Log($"[EnemySpawner] {message}", this);
-    }
 
     private static void ApplyWaveScalingToEnemy(GameObject enemy, float healthMultiplier, int damageBonus, int experienceBonus)
     {

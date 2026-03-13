@@ -152,9 +152,6 @@ public class Menu_LevelUp : MonoBehaviour
         levelUpMenuUI.SetActive(true);
         Time.timeScale = 0f;
 
-        Debug.Log($"[Level Up] Level {newLevel} (PenaltyMode={penaltyMode}) - Options: " +
-            string.Join(", ", System.Array.ConvertAll(currentOptions, o => GetDisplayText(o))));
-
         foreach (var btn in optionButtons)
             btn.interactable = false;
 
@@ -387,7 +384,6 @@ public class Menu_LevelUp : MonoBehaviour
         if (buttonIndex < 0 || buttonIndex >= currentOptions.Length) return;
 
         var chosen = currentOptions[buttonIndex];
-        Debug.Log($"[Level Up] Selected: {GetDisplayText(chosen)}");
         ApplyUpgrade(chosen);
 
         Time.timeScale = 1f;

@@ -39,7 +39,6 @@ public class Player_settings : MonoBehaviour, IDamageable
     private int currentExperience;                                                      // Current XP progress toward next level
     private int currentLevel = 1;                                                       // Player level (starts at 1)
     private int startingXPPerLevel;                                                     // Base XP requirement used to reconstruct level after restore
-    private int lastPrintedHealth;                                                      // Last printed health value for debug logging
     private bool isInvincible = false;                                                  // Whether the player is currently invincible
     private PlayerController playerController;
     private RangedShooter rangedShooter;
@@ -83,14 +82,10 @@ public class Player_settings : MonoBehaviour, IDamageable
         if (gm != null && gm.HasSavedData)
         {
             gm.RestoreTo(this, pc, rs);
-            lastPrintedHealth = currentHealth;
-            Debug.Log($"Player Health restored: {currentHealth}/{maxHealth}");
         }
         else
         {
             currentHealth = maxHealth;
-            lastPrintedHealth = currentHealth;
-            Debug.Log($"Player Health: {currentHealth}");
 
             if (spawnDelaySeconds > 0f)
                 StartCoroutine(ShowPlayerAfterDelay());
@@ -137,12 +132,6 @@ public class Player_settings : MonoBehaviour, IDamageable
 
     void Update()
     {
-        if (currentHealth != lastPrintedHealth)
-        {
-            Debug.Log($"Player Health: {currentHealth}");
-            lastPrintedHealth = currentHealth;
-        }
-
         // Regeneration
         if (regeneration > 0 && currentHealth > 0 && currentHealth < maxHealth)
         {
@@ -162,7 +151,6 @@ public class Player_settings : MonoBehaviour, IDamageable
 
         if (UnityEngine.Random.Range(0f, 100f) < dodgeRate)
         {
-            Debug.Log($"Player Dodged! Dodge Rate: {dodgeRate:0}%");
             return;
         }
 
@@ -187,7 +175,6 @@ public class Player_settings : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            Debug.Log("Player Died!");
             if (GameManager.Instance != null)
                 GameManager.Instance.PrepareForGameOver();
             if (SceneTransition.Instance != null)
@@ -236,13 +223,11 @@ public class Player_settings : MonoBehaviour, IDamageable
             currentLevel++;
             xpPerLevel = ComputeNextXPRequirement(xpPerLevel);
 
-            Debug.Log($"Level Up! Now Level {currentLevel}");
             currentHealth = maxHealth;  // Restore full health on level up
             OnLevelUp?.Invoke(currentLevel);
         }
 
         SaveToGameManager();
-        Debug.Log($"Player Experience: {currentExperience}/{xpPerLevel} (Level {currentLevel})");
     }
 
     public int GetCurrentExperience()
@@ -300,7 +285,6 @@ public class Player_settings : MonoBehaviour, IDamageable
         critRate = critR;
         critDamage = critD;
         dodgeRate = Mathf.Clamp(dodgeR, 0f, MaxDodgeRate);
-        lastPrintedHealth = currentHealth;
 
         // damageTakenMultiplier / armor / damageReduction / regeneration
         // are not restored yet to keep this patch minimal
