@@ -206,6 +206,21 @@ public class Player_settings : MonoBehaviour, IDamageable
         return maxHealth;
     }
 
+    public int GetArmor()
+    {
+        return armor;
+    }
+
+    public float GetDamageReduction()
+    {
+        return damageReduction;
+    }
+
+    public int GetRegeneration()
+    {
+        return regeneration;
+    }
+
     public void AddExperience(int amount)
     {
         if (amount > 0 && experienceGainClip != null && _sfxSource != null)
@@ -223,7 +238,7 @@ public class Player_settings : MonoBehaviour, IDamageable
             currentLevel++;
             xpPerLevel = ComputeNextXPRequirement(xpPerLevel);
 
-            currentHealth = maxHealth;  // Restore full health on level up
+            currentHealth = Mathf.Min(maxHealth, currentHealth + Mathf.RoundToInt(maxHealth * 0.3f));  //level up restore 30% hp
             OnLevelUp?.Invoke(currentLevel);
         }
 
