@@ -252,6 +252,10 @@ MonoBehaviour:
     m_Localized: 'Warning: Next Wave coming'
     m_Metadata:
       m_Items: []
+  - m_Id: 11811589354119168
+    m_Localized: Unstuck
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

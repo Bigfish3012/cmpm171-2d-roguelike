@@ -243,6 +243,10 @@ MonoBehaviour:
     m_Key: 'Warning: Next Wave coming'
     m_Metadata:
       m_Items: []
+  - m_Id: 11811589354119168
+    m_Key: Unstuck
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
