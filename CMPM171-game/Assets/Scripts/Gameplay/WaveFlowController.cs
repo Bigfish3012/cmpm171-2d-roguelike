@@ -126,7 +126,7 @@ public class WaveFlowController : MonoBehaviour
     private void UpdateWaveNumberUI()
     {
         if (waveNumberText != null)
-            waveNumberText.text = $"Wave:{currentWave}";
+            waveNumberText.text = $"{currentWave}";
         UpdateEnemyLeftUI();
     }
 
@@ -135,12 +135,12 @@ public class WaveFlowController : MonoBehaviour
         if (enemyLeftText == null) return;
         if (enemySpawner == null)
         {
-            enemyLeftText.text = "Enemy: 0/0";
+            enemyLeftText.text = "0/0";
             return;
         }
         int remaining = enemySpawner.RemainingEnemies;
         int total = enemySpawner.TotalWaveEnemyCount;
-        enemyLeftText.text = $"Enemy: {remaining}/{total}";
+        enemyLeftText.text = $"{remaining}/{total}";
     }
 
     private void SetWarningVisible(bool visible)
@@ -174,10 +174,10 @@ public class WaveFlowController : MonoBehaviour
     private void TryAutoBindUI()
     {
         if (waveNumberText == null)
-            waveNumberText = SceneSearchHelper.FindSceneTMPByName("Wave_Number");
+            waveNumberText = SceneSearchHelper.FindSceneTMPByName("Wave_num");
 
         if (enemyLeftText == null)
-            enemyLeftText = SceneSearchHelper.FindSceneTMPByName("Enemy_left");
+            enemyLeftText = SceneSearchHelper.FindSceneTMPByName("Enemy_num");
 
         if (waveWarningText == null)
             waveWarningText = SceneSearchHelper.FindSceneTMPByName("Wave_Warning");

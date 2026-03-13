@@ -28,6 +28,7 @@ public class Menu_Pause : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (Menu_LevelUp.IsMenuOpen) return;
             if (isPaused) ResumeGame();
             else PauseGame();
         }
@@ -36,7 +37,7 @@ public class Menu_Pause : MonoBehaviour
     // Pause the game and show pause menu
     public void PauseGame()
     {
-        if (pauseMenuUI == null) return;
+        if (pauseMenuUI == null || Menu_LevelUp.IsMenuOpen) return;
         pauseMenuUI.SetActive(true);
         ClearUiSelection();
         if (defaultSelectedOnOpen != null && EventSystem.current != null)
@@ -57,6 +58,24 @@ public class Menu_Pause : MonoBehaviour
         isPaused = false;
         if (BGMManager.Instance != null)
             BGMManager.Instance.ResumeBGM();
+    }
+    public void UnstuckPlayer()
+    {
+        if (Player_settings.Instance != null)
+        {
+            Rigidbody2D playerRb = Player_settings.Instance.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                playerRb.position = Vector2.zero;
+                playerRb.linearVelocity = Vector2.zero;
+            }
+            else
+            {
+                Player_settings.Instance.PlayerTransform.position = Vector3.zero;
+            }
+        }
+
+        ResumeGame();
     }
 
     // Load main menu scene and resume time scale

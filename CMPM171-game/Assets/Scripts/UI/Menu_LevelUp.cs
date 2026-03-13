@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 // Shows Level Up Menu when player levels up. Each button shows a random upgrade option.
 // Attach to Canvas or another always-active parent; assign levelUpMenuUI in Inspector.
 public class Menu_LevelUp : MonoBehaviour
 {
+    public static bool IsMenuOpen { get; private set; }
+
     public enum UpgradeType
     {
         Health, Speed, CritRate, CritDamage, Damage,
@@ -114,6 +117,7 @@ public class Menu_LevelUp : MonoBehaviour
         optionButtons = levelUpMenuUI.GetComponentsInChildren<Button>(true);
         currentOptions = new UpgradeOption[optionButtons.Length];
         levelUpMenuUI.SetActive(false);
+        ClearUiSelection();
         ResetSpecialUpgradeChances();
 
         for (int i = 0; i < optionButtons.Length; i++)
@@ -127,6 +131,8 @@ public class Menu_LevelUp : MonoBehaviour
 
     void OnDestroy()
     {
+        IsMenuOpen = false;
+        ClearUiSelection();
         Player_settings.OnLevelUp -= ShowMenu;
     }
 
@@ -149,11 +155,17 @@ public class Menu_LevelUp : MonoBehaviour
         GenerateUpgradeOptions();
         RefreshButtonTexts();
 
+        ClearUiSelection();
+        ResetOptionVisualStates();
+        IsMenuOpen = true;
         levelUpMenuUI.SetActive(true);
         Time.timeScale = 0f;
 
         foreach (var btn in optionButtons)
+        {
             btn.interactable = false;
+            SetButtonRaycastEnabled(btn, false);
+        }
 
         StartCoroutine(EnableButtonsAfterDelay());
     }
@@ -395,7 +407,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = playerSettings.GetMaxHealth();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Max HP: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"Max HP: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -404,7 +416,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     float current = playerController.GetMoveSpeed();
                     float next = current + opt.value;
-                    return $"Speed: {current:0.0} ¡ú <color=#FF5555>{next:0.0}</color>";
+                    return $"Speed: {current:0.0} increase to <color=#FF5555>{next:0.0}</color>";
                 }
                 break;
 
@@ -413,7 +425,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = Mathf.RoundToInt(playerSettings.GetCritRate());
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Crit Rate: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                    return $"Crit Rate: {current}% increase to <color=#FF5555>{next}%</color>";
                 }
                 break;
 
@@ -422,7 +434,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = Mathf.RoundToInt(playerSettings.GetCritDamage());
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Crit Dmg: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                    return $"Crit Dmg: {current}% increase to <color=#FF5555>{next}%</color>";
                 }
                 break;
 
@@ -431,7 +443,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = rangedShooter.GetAttackDamage();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"ATK: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"ATK: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -440,7 +452,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = playerSettings.GetArmor();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Armor: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"Armor: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -449,7 +461,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = Mathf.RoundToInt(playerSettings.GetDamageReduction() * 100f);
                     int next = Mathf.RoundToInt((playerSettings.GetDamageReduction() + opt.value) * 100f);
-                    return $"Reduction: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                    return $"Reduction: {current}% increase to <color=#FF5555>{next}%</color>";
                 }
                 break;
 
@@ -458,7 +470,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = Mathf.RoundToInt(playerSettings.GetDodgeRate());
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Dodge: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                    return $"Dodge: {current}% increase to <color=#FF5555>{next}%</color>";
                 }
                 break;
 
@@ -467,7 +479,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = playerSettings.GetRegeneration();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Regen: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"Regen: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -476,7 +488,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = rangedShooter.GetProjectileCount();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Projectiles: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"Projectiles: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -485,7 +497,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = rangedShooter.GetChainBounceCount();
                     int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Ricochet: {current} ¡ú <color=#FF5555>{next}</color>";
+                    return $"Ricochet: {current} increase to <color=#FF5555>{next}</color>";
                 }
                 break;
 
@@ -494,7 +506,7 @@ public class Menu_LevelUp : MonoBehaviour
                 {
                     int current = Mathf.RoundToInt(rangedShooter.GetFinalDamageMultiplier() * 100f);
                     int next = Mathf.RoundToInt((rangedShooter.GetFinalDamageMultiplier() + opt.value) * 100f);
-                    return $"TotalDmg: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                    return $"TotalDmg: {current}% increase to <color=#FF5555>{next}%</color>";
                 }
                 break;
         }
@@ -507,7 +519,10 @@ public class Menu_LevelUp : MonoBehaviour
         yield return new WaitForSecondsRealtime(clickDelaySeconds);
 
         foreach (var btn in optionButtons)
+        {
             btn.interactable = true;
+            SetButtonRaycastEnabled(btn, true);
+        }
     }
 
     private void OnOptionClicked(int buttonIndex)
@@ -517,8 +532,36 @@ public class Menu_LevelUp : MonoBehaviour
         var chosen = currentOptions[buttonIndex];
         ApplyUpgrade(chosen);
 
+        ClearUiSelection();
+        ResetOptionVisualStates();
+        IsMenuOpen = false;
         Time.timeScale = 1f;
         levelUpMenuUI.SetActive(false);
+    }
+
+    private void ClearUiSelection()
+    {
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private void SetButtonRaycastEnabled(Button button, bool enabled)
+    {
+        if (button == null) return;
+
+        Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+            graphics[i].raycastTarget = enabled;
+    }
+
+    private void ResetOptionVisualStates()
+    {
+        for (int i = 0; i < optionButtons.Length; i++)
+        {
+            UIHoverScaleGlow hoverGlow = optionButtons[i].GetComponent<UIHoverScaleGlow>();
+            if (hoverGlow != null)
+                hoverGlow.ResetVisualStateImmediate();
+        }
     }
 
     private void ApplyUpgrade(UpgradeOption opt)

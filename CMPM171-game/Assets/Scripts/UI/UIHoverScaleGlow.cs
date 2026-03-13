@@ -20,12 +20,22 @@ public class UIHoverScaleGlow : MonoBehaviour, IPointerEnterHandler, IPointerExi
     void Awake()
     {
         if (target == null) target = transform as RectTransform;
-        if (glow != null) glow.alpha = normalGlow;
-        target.localScale = Vector3.one * normalScale;
+        ResetVisualStateImmediate();
     }
 
     public void OnPointerEnter(PointerEventData eventData) => Play(true);
     public void OnPointerExit(PointerEventData eventData) => Play(false);
+
+    void OnDisable()
+    {
+        if (co != null)
+        {
+            StopCoroutine(co);
+            co = null;
+        }
+
+        ResetVisualStateImmediate();
+    }
 
     void Play(bool hover)
     {
@@ -58,5 +68,14 @@ public class UIHoverScaleGlow : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
         target.localScale = Vector3.one * toS;
         if (glow) glow.alpha = toA;
+    }
+
+    public void ResetVisualStateImmediate()
+    {
+        if (target != null)
+            target.localScale = Vector3.one * normalScale;
+
+        if (glow != null)
+            glow.alpha = normalGlow;
     }
 }
