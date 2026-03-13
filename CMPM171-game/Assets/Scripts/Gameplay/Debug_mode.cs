@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 // Debug mode shortcuts for testing. Only active in gameplay scenes.
 // J = Level up (trigger upgrade menu)
-// K = Next wave (clear enemies, start next wave)
+// K = Force-complete current wave and advance
 // N = Next map (load next scene, clear enemies)
 // B = Previous map (load previous scene, clear enemies)
 // H = Restore full health
@@ -12,9 +12,25 @@ using UnityEngine.SceneManagement;
 public class Debug_mode : MonoBehaviour
 {
     [SerializeField] private bool enableDebugKeys = true;
+    private bool debugWaveAdvanceInProgress = false;
 
     // Gameplay scene order for N/B map switching
     private static readonly string[] GameplayScenes = { "SC_Prototype", "Level2", "Level3" };
+
+    private void Start()
+    {
+        ApplyGodModeToCurrentPlayer();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
     private void Update()
     {
@@ -56,18 +72,35 @@ public class Debug_mode : MonoBehaviour
 
     private void DebugNextWave()
     {
-        ClearAllEnemies();
+        if (!debugWaveAdvanceInProgress)
+            StartCoroutine(DebugNextWaveRoutine());
+    }
+
+    private System.Collections.IEnumerator DebugNextWaveRoutine()
+    {
+        debugWaveAdvanceInProgress = true;
 
         var waveController = FindFirstObjectByType<WaveFlowController>();
         if (waveController != null)
         {
-            waveController.DebugStartNextWave();
-            Debug.Log("[Debug] K: Next wave started.");
+            var spawner = FindFirstObjectByType<EnemySpawner>();
+            if (spawner != null)
+                spawner.StopCurrentWaveSpawningForDebug();
+
+            ClearAllEnemies();
+
+            // Wait one frame so Destroy() and EnemyWaveMember.OnDestroy() finish updating counts.
+            yield return null;
+
+            waveController.DebugForceCompleteCurrentWaveAndAdvance();
+            Debug.Log("[Debug] K: Current wave force-completed, advancing.");
         }
         else
         {
             Debug.LogWarning("[Debug] K: WaveFlowController not found.");
         }
+
+        debugWaveAdvanceInProgress = false;
     }
 
     private void DebugNextMap()
@@ -134,6 +167,20 @@ public class Debug_mode : MonoBehaviour
     }
 
     private static bool godModeEnabled = false;
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplyGodModeToCurrentPlayer();
+    }
+
+    private void ApplyGodModeToCurrentPlayer()
+    {
+        var player = Player_settings.Instance;
+        if (player == null) return;
+
+        // Re-apply the tracked God Mode state to the newly spawned player after scene changes.
+        player.SetInvincible(godModeEnabled);
+    }
 
     private void ClearAllEnemies()
     {

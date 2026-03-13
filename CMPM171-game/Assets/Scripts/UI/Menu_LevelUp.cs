@@ -8,28 +8,50 @@ using TMPro;
 // Attach to Canvas or another always-active parent; assign levelUpMenuUI in Inspector.
 public class Menu_LevelUp : MonoBehaviour
 {
-    public enum UpgradeType { Health, Speed, CritRate, CritDamage, Damage }
+    public enum UpgradeType
+    {
+        Health, Speed, CritRate, CritDamage, Damage,
+        ProjectilePath, Ricochet, Flame,
+        Armor, DamageReduction, Dodge, Regeneration
+    }
 
     [System.Serializable]
     public struct UpgradeRanges
     {
         public int healthMin, healthMax;          // e.g. 2, 4
-        public float speedMin, speedMax;         // e.g. 0.1, 1
-        public int critRateMin, critRateMax;     // e.g. 5, 15
-        public int critDamageMin, critDamageMax; // e.g. 10, 40
-        public int damageMin, damageMax;         // e.g. 2, 5
+        public float speedMin, speedMax;          // e.g. 0.1, 1
+        public int critRateMin, critRateMax;      // e.g. 5, 15
+        public int critDamageMin, critDamageMax;  // e.g. 10, 40
+        public int damageMin, damageMax;          // e.g. 2, 5
+
+        public int armorMin, armorMax;            // e.g. 1, 2
+        public float damageReductionMin, damageReductionMax; // e.g. 0.05, 0.10
+        public float dodgeMin, dodgeMax;          // e.g. 5, 10 (percent)
+        public int regenerationMin, regenerationMax; // e.g. 1, 1
     }
 
     [SerializeField] private GameObject levelUpMenuUI;
     [SerializeField] private float clickDelaySeconds = 1f;
 
     [SerializeField] private AudioClip levelUpClip;
-    [Range(0f, 1f)] [SerializeField] private float levelUpVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float levelUpVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float doubleValueChance = 0.15f;
+    [Range(0f, 1f)][SerializeField] private float specialUpgradeChance = 0.15f;
+
+    [Header("Upgrade Icons")]
+    [SerializeField] private Sprite damageIcon;
+    [SerializeField] private Sprite critIcon;
+    [SerializeField] private Sprite speedIcon;
+    [SerializeField] private Sprite healthIcon;
+    [SerializeField] private Sprite armorIcon;
+    [SerializeField] private Sprite damageReductionIcon;
+    [SerializeField] private Sprite dodgeIcon;
+    [SerializeField] private Sprite regenerationIcon;
 
     private AudioSource _sfxSource;
 
     [Header("Penalty Rules")]
-    [SerializeField] private int penaltyStartLevel = 6;          // Level >= 6 starts having drawbacks
+    [SerializeField] private int penaltyStartLevel = 6;               // Level >= 6 starts having drawbacks
     [SerializeField] private float damagePickDamageTakenPlus = 0.10f; // Picking Damage => +10% damage taken
     [SerializeField] private float speedPickDamageMultMinus = 0.10f;  // Picking Speed  => -10% damage dealt
     [SerializeField] private float healthPickSpeedMinus = 0.30f;      // Picking Health => -0.3 move speed
@@ -46,18 +68,37 @@ public class Menu_LevelUp : MonoBehaviour
         critDamageMin = 30,
         critDamageMax = 30,
         damageMin = 5,
-        damageMax = 5
+        damageMax = 5,
+
+        armorMin = 1,
+        armorMax = 1,
+        damageReductionMin = 0.05f,
+        damageReductionMax = 0.05f,
+        dodgeMin = 10f,
+        dodgeMax = 10f,
+        regenerationMin = 1,
+        regenerationMax = 1
     };
+
+    [Header("Special Upgrades")]
+    [SerializeField] private int projectilePathAmount = 1;
+    [SerializeField] private int ricochetAmount = 1;
+    [SerializeField] private float flameFinalDamageBonus = 0.25f;
+    [SerializeField] private float speedPickDodgeRatePlus = 10f;
 
     private Button[] optionButtons;
     private UpgradeOption[] currentOptions;
 
     private bool penaltyMode = false;
+    private float projectilePathChance;
+    private float ricochetChance;
+    private float flameChance;
 
     private struct UpgradeOption
     {
         public UpgradeType type;
         public float value;
+        public bool isDoubled;
     }
 
     void Start()
@@ -73,6 +114,7 @@ public class Menu_LevelUp : MonoBehaviour
         optionButtons = levelUpMenuUI.GetComponentsInChildren<Button>(true);
         currentOptions = new UpgradeOption[optionButtons.Length];
         levelUpMenuUI.SetActive(false);
+        ResetSpecialUpgradeChances();
 
         for (int i = 0; i < optionButtons.Length; i++)
         {
@@ -110,9 +152,6 @@ public class Menu_LevelUp : MonoBehaviour
         levelUpMenuUI.SetActive(true);
         Time.timeScale = 0f;
 
-        Debug.Log($"[Level Up] Level {newLevel} (PenaltyMode={penaltyMode}) - Options: " +
-            string.Join(", ", System.Array.ConvertAll(currentOptions, o => GetDisplayText(o))));
-
         foreach (var btn in optionButtons)
             btn.interactable = false;
 
@@ -127,8 +166,16 @@ public class Menu_LevelUp : MonoBehaviour
             UpgradeType.Speed,
             UpgradeType.CritRate,
             UpgradeType.CritDamage,
-            UpgradeType.Damage
+            UpgradeType.Damage,
+            UpgradeType.Armor,
+            UpgradeType.DamageReduction,
+            UpgradeType.Dodge,
+            UpgradeType.Regeneration
         };
+
+        TryAddSpecialUpgrade(types, UpgradeType.ProjectilePath, projectilePathChance);
+        TryAddSpecialUpgrade(types, UpgradeType.Ricochet, ricochetChance);
+        TryAddSpecialUpgrade(types, UpgradeType.Flame, flameChance);
 
         for (int i = 0; i < types.Count; i++)
         {
@@ -139,22 +186,84 @@ public class Menu_LevelUp : MonoBehaviour
         for (int i = 0; i < optionButtons.Length; i++)
         {
             UpgradeType type = i < types.Count ? types[i] : (UpgradeType)Random.Range(0, types.Count);
-            float value = GetRandomValueForType(type);
-            currentOptions[i] = new UpgradeOption { type = type, value = value };
+            float value = GetFixedValueForType(type);
+            bool isDoubled = !IsSpecialUpgrade(type) && Random.value < doubleValueChance;
+            if (isDoubled)
+                value *= 2f;
+
+            currentOptions[i] = new UpgradeOption { type = type, value = value, isDoubled = isDoubled };
         }
+
+        UpdateSpecialUpgradeChancesFromFinalOptions();
     }
 
-    private float GetRandomValueForType(UpgradeType type)
+    private void TryAddSpecialUpgrade(List<UpgradeType> types, UpgradeType specialType, float currentChance)
+    {
+        if (Random.value < Mathf.Clamp01(currentChance))
+            types.Add(specialType);
+    }
+
+    private void UpdateSpecialUpgradeChancesFromFinalOptions()
+    {
+        UpdateSpecialUpgradeChance(ref projectilePathChance, UpgradeType.ProjectilePath);
+        UpdateSpecialUpgradeChance(ref ricochetChance, UpgradeType.Ricochet);
+        UpdateSpecialUpgradeChance(ref flameChance, UpgradeType.Flame);
+    }
+
+    private void UpdateSpecialUpgradeChance(ref float currentChance, UpgradeType specialType)
+    {
+        if (ContainsFinalOption(specialType))
+        {
+            currentChance = specialUpgradeChance;
+            return;
+        }
+
+        currentChance = Mathf.Min(1f, currentChance + specialUpgradeChance);
+    }
+
+    private bool ContainsFinalOption(UpgradeType type)
+    {
+        for (int i = 0; i < currentOptions.Length; i++)
+        {
+            if (currentOptions[i].type == type)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void ResetSpecialUpgradeChances()
+    {
+        projectilePathChance = specialUpgradeChance;
+        ricochetChance = specialUpgradeChance;
+        flameChance = specialUpgradeChance;
+    }
+
+    private float GetFixedValueForType(UpgradeType type)
     {
         switch (type)
         {
-            case UpgradeType.Health: return Random.Range(ranges.healthMin, ranges.healthMax + 1);
-            case UpgradeType.Speed: return Mathf.Round(Random.Range(ranges.speedMin, ranges.speedMax) * 10f) / 10f;
-            case UpgradeType.CritRate: return Random.Range(ranges.critRateMin, ranges.critRateMax + 1);
-            case UpgradeType.CritDamage: return Random.Range(ranges.critDamageMin, ranges.critDamageMax + 1);
-            case UpgradeType.Damage: return Random.Range(ranges.damageMin, ranges.damageMax + 1);
+            case UpgradeType.Health: return ranges.healthMin;
+            case UpgradeType.Speed: return Mathf.Round(ranges.speedMin * 10f) / 10f;
+            case UpgradeType.CritRate: return ranges.critRateMin;
+            case UpgradeType.CritDamage: return ranges.critDamageMin;
+            case UpgradeType.Damage: return ranges.damageMin;
+
+            case UpgradeType.Armor: return ranges.armorMin;
+            case UpgradeType.DamageReduction: return ranges.damageReductionMin;
+            case UpgradeType.Dodge: return ranges.dodgeMin;
+            case UpgradeType.Regeneration: return ranges.regenerationMin;
+
+            case UpgradeType.ProjectilePath: return projectilePathAmount;
+            case UpgradeType.Ricochet: return ricochetAmount;
+            case UpgradeType.Flame: return flameFinalDamageBonus;
             default: return 0;
         }
+    }
+
+    private bool IsSpecialUpgrade(UpgradeType type)
+    {
+        return type == UpgradeType.ProjectilePath || type == UpgradeType.Ricochet || type == UpgradeType.Flame;
     }
 
     private void RefreshButtonTexts()
@@ -164,26 +273,93 @@ public class Menu_LevelUp : MonoBehaviour
             var text = optionButtons[i].GetComponentInChildren<TextMeshProUGUI>(true);
             if (text != null)
                 text.text = GetDisplayText(currentOptions[i]);
+
+            Transform iconTransform = optionButtons[i].transform.Find("Image_Icon");
+            if (iconTransform != null)
+            {
+                Image iconImage = iconTransform.GetComponent<Image>();
+                if (iconImage != null)
+                {
+                    iconImage.sprite = GetIconForUpgradeType(currentOptions[i].type);
+                    iconImage.enabled = iconImage.sprite != null;
+                }
+            }
+        }
+    }
+
+    private Sprite GetIconForUpgradeType(UpgradeType type)
+    {
+        switch (type)
+        {
+            case UpgradeType.Damage:
+                return damageIcon;
+
+            case UpgradeType.CritRate:
+            case UpgradeType.CritDamage:
+                return critIcon;
+
+            case UpgradeType.Speed:
+                return speedIcon;
+
+            case UpgradeType.Health:
+                return healthIcon;
+
+            case UpgradeType.Armor:
+                return armorIcon;
+
+            case UpgradeType.DamageReduction:
+                return damageReductionIcon;
+
+            case UpgradeType.Dodge:
+                return dodgeIcon;
+
+            case UpgradeType.Regeneration:
+                return regenerationIcon;
+
+            case UpgradeType.ProjectilePath:
+            case UpgradeType.Ricochet:
+            case UpgradeType.Flame:
+                return damageIcon;
+
+            default:
+                return null;
         }
     }
 
     private string GetDisplayText(UpgradeOption opt)
     {
-        string valueText = opt.type == UpgradeType.Speed ? opt.value.ToString("0.0") : Mathf.RoundToInt(opt.value).ToString();
+        string rawValueText = opt.type switch
+        {
+            UpgradeType.Speed => opt.value.ToString("0.0"),
+            UpgradeType.Flame => $"{Mathf.RoundToInt(opt.value * 100f)}%",
+            UpgradeType.DamageReduction => $"{Mathf.RoundToInt(opt.value * 100f)}%",
+            UpgradeType.Dodge => $"{Mathf.RoundToInt(opt.value)}%",
+            _ => Mathf.RoundToInt(opt.value).ToString()
+        };
+
+        string valueText = (opt.isDoubled || IsSpecialUpgrade(opt.type)) ? $"<color=#FFD54A>{rawValueText}</color>" : rawValueText;
 
         string baseText = opt.type switch
         {
             UpgradeType.Health => $"Health +{valueText}",
-            UpgradeType.Speed => $"Speed +{valueText}",
+            UpgradeType.Speed => $"Speed +{valueText} / Dodge +{Mathf.RoundToInt(speedPickDodgeRatePlus)}%",
             UpgradeType.CritRate => $"Crit Rate +{valueText}",
             UpgradeType.CritDamage => $"Crit Damage +{valueText}",
             UpgradeType.Damage => $"Damage +{valueText}",
+
+            UpgradeType.Armor => $"Armor +{valueText}",
+            UpgradeType.DamageReduction => $"Damage Reduction +{valueText}",
+            UpgradeType.Dodge => $"Dodge +{valueText}",
+            UpgradeType.Regeneration => $"Regeneration +{valueText}",
+
+            UpgradeType.ProjectilePath => $"Projectile +{valueText}",
+            UpgradeType.Ricochet => $"Ricochet +{valueText}",
+            UpgradeType.Flame => $"FinalDamage +{valueText}",
             _ => ""
         };
 
         if (!penaltyMode) return baseText;
 
-        // Optional: show short drawback hint after level 6+
         string drawback = opt.type switch
         {
             UpgradeType.Damage => $"  <color=#FF5555>(Take +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% dmg)</color>",
@@ -208,7 +384,6 @@ public class Menu_LevelUp : MonoBehaviour
         if (buttonIndex < 0 || buttonIndex >= currentOptions.Length) return;
 
         var chosen = currentOptions[buttonIndex];
-        Debug.Log($"[Level Up] Selected: {GetDisplayText(chosen)}");
         ApplyUpgrade(chosen);
 
         Time.timeScale = 1f;
@@ -226,14 +401,13 @@ public class Menu_LevelUp : MonoBehaviour
             case UpgradeType.Health:
                 if (playerSettings != null) playerSettings.AddMaxHealth(Mathf.RoundToInt(opt.value));
 
-                // Penalty: health pick => slower move
                 if (penaltyMode && playerController != null) playerController.AddMoveSpeed(-healthPickSpeedMinus);
                 break;
 
             case UpgradeType.Speed:
                 if (playerController != null) playerController.AddMoveSpeed(opt.value);
+                if (playerSettings != null) playerSettings.AddDodgeRate(speedPickDodgeRatePlus);
 
-                // Penalty: speed pick => lower damage dealt
                 if (penaltyMode && rangedShooter != null) rangedShooter.AddDamageMultiplier(-speedPickDamageMultMinus);
                 break;
 
@@ -248,8 +422,35 @@ public class Menu_LevelUp : MonoBehaviour
             case UpgradeType.Damage:
                 if (rangedShooter != null) rangedShooter.AddAttackDamage(Mathf.RoundToInt(opt.value));
 
-                // Penalty: damage pick => take more damage
                 if (penaltyMode && playerSettings != null) playerSettings.AddDamageTakenMultiplier(damagePickDamageTakenPlus);
+                break;
+
+            case UpgradeType.Armor:
+                if (playerSettings != null) playerSettings.AddArmor(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.DamageReduction:
+                if (playerSettings != null) playerSettings.AddDamageReduction(opt.value);
+                break;
+
+            case UpgradeType.Dodge:
+                if (playerSettings != null) playerSettings.AddDodgeRate(opt.value);
+                break;
+
+            case UpgradeType.Regeneration:
+                if (playerSettings != null) playerSettings.AddRegeneration(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.ProjectilePath:
+                if (rangedShooter != null) rangedShooter.AddProjectileCount(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.Ricochet:
+                if (rangedShooter != null) rangedShooter.AddChainBounceCount(Mathf.RoundToInt(opt.value));
+                break;
+
+            case UpgradeType.Flame:
+                if (rangedShooter != null) rangedShooter.AddFinalDamageMultiplier(opt.value);
                 break;
         }
     }

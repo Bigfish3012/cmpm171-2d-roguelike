@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,12 +14,25 @@ public class GameOver : MonoBehaviour
     [SerializeField] private TextMeshProUGUI enemiesText;
     [SerializeField] private TextMeshProUGUI waveText;
 
+    [Header("Stats Animation")]
+    [SerializeField] private AudioClip valueUpClip;
+    [Range(0f, 1f)] [SerializeField] private float valueUpVolume = 1f;
+    [SerializeField] private float statRevealDelay = 0.12f;
+    [SerializeField] private float statPopScale = 1.12f;
+    [SerializeField] private float statPopDuration = 0.2f;
+    [SerializeField] private Color statHighlightColor = new Color(1f, 0.95f, 0.6f, 1f);
+
     [Header("Loop BGM")]
     [SerializeField] private AudioClip bgmLoopClip;
     [Range(0f, 1f)] [SerializeField] private float bgmVolume = 1f;
 
+    private Coroutine statsAnimationCoroutine;
+    private AudioSource statsSfxSource;
+    private readonly Dictionary<TextMeshProUGUI, Vector3> baseStatScales = new Dictionary<TextMeshProUGUI, Vector3>();
+
     private void Start()
     {
+        EnsureStatsSfxSource();
         RefreshStatsPanel();
 
         // One-shot game over sound effect
@@ -50,14 +65,11 @@ public class GameOver : MonoBehaviour
         int waveReached = GameManager.Instance != null ? GameManager.Instance.GetSavedWaveProgress() : 0;
         float survivedSeconds = GameManager.Instance != null ? GameManager.Instance.GetRunDurationSeconds() : 0f;
 
-        if (scoreText != null)
-            scoreText.text = score.ToString();
-        if (timeText != null)
-            timeText.text = FormatDuration(survivedSeconds);
-        if (enemiesText != null)
-            enemiesText.text = enemiesKilled.ToString();
-        if (waveText != null)
-            waveText.text = waveReached.ToString();
+        if (statsAnimationCoroutine != null)
+            StopCoroutine(statsAnimationCoroutine);
+
+        PrepareStatsPanelForAnimation();
+        statsAnimationCoroutine = StartCoroutine(AnimateStatsPanel(score, enemiesKilled, waveReached, survivedSeconds));
     }
 
     private string FormatDuration(float seconds)
@@ -66,6 +78,169 @@ public class GameOver : MonoBehaviour
         int minutes = totalSeconds / 60;
         int remainingSeconds = totalSeconds % 60;
         return $"{minutes:00}:{remainingSeconds:00}";
+    }
+
+    private IEnumerator AnimateStatsPanel(int targetScore, int targetEnemiesKilled, int targetWaveReached, float targetSurvivedSeconds)
+    {
+        yield return AnimateIntegerStat(scoreText, targetScore);
+        yield return new WaitForSecondsRealtime(statRevealDelay);
+
+        yield return AnimateTimeStat(timeText, targetSurvivedSeconds);
+        yield return new WaitForSecondsRealtime(statRevealDelay);
+
+        yield return AnimateIntegerStat(enemiesText, targetEnemiesKilled);
+        yield return new WaitForSecondsRealtime(statRevealDelay);
+
+        yield return AnimateIntegerStat(waveText, targetWaveReached);
+
+        statsAnimationCoroutine = null;
+    }
+
+    private void PrepareStatsPanelForAnimation()
+    {
+        CacheStatScale(scoreText);
+        ResetStatVisual(scoreText, true);
+        if (scoreText != null)
+            scoreText.text = "0";
+
+        CacheStatScale(timeText);
+        ResetStatVisual(timeText, false);
+        if (timeText != null)
+            timeText.text = string.Empty;
+
+        CacheStatScale(enemiesText);
+        ResetStatVisual(enemiesText, false);
+        if (enemiesText != null)
+            enemiesText.text = string.Empty;
+
+        CacheStatScale(waveText);
+        ResetStatVisual(waveText, false);
+        if (waveText != null)
+            waveText.text = string.Empty;
+    }
+
+    private IEnumerator AnimateIntegerStat(TextMeshProUGUI targetText, int targetValue)
+    {
+        if (targetText == null)
+            yield break;
+
+        yield return AnimateStat(targetText, value => targetText.text = Mathf.RoundToInt(value).ToString(), targetValue);
+        targetText.text = targetValue.ToString();
+        yield return EmphasizeStat(targetText);
+    }
+
+    private IEnumerator AnimateTimeStat(TextMeshProUGUI targetText, float targetValue)
+    {
+        if (targetText == null)
+            yield break;
+
+        yield return AnimateStat(targetText, value => targetText.text = FormatDuration(value), targetValue);
+        targetText.text = FormatDuration(targetValue);
+        yield return EmphasizeStat(targetText);
+    }
+
+    private IEnumerator AnimateStat(TextMeshProUGUI targetText, Action<float> updateValue, float targetValue)
+    {
+        float duration = GetStatAnimationDuration();
+        float elapsed = 0f;
+
+        ResetStatVisual(targetText, true);
+        PlayValueUpSfx();
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float easedT = Mathf.SmoothStep(0f, 1f, t);
+            updateValue(Mathf.Lerp(0f, targetValue, easedT));
+            yield return null;
+        }
+
+        updateValue(targetValue);
+    }
+
+    private IEnumerator EmphasizeStat(TextMeshProUGUI targetText)
+    {
+        if (targetText == null)
+            yield break;
+
+        float duration = Mathf.Max(0.01f, statPopDuration);
+        float elapsed = 0f;
+        Vector3 baseScale = GetBaseScale(targetText);
+        Color baseColor = targetText.color;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float pulse = Mathf.Sin(t * Mathf.PI);
+            targetText.rectTransform.localScale = baseScale * Mathf.Lerp(1f, statPopScale, pulse);
+            targetText.color = Color.Lerp(baseColor, statHighlightColor, pulse);
+            yield return null;
+        }
+
+        targetText.rectTransform.localScale = baseScale;
+        targetText.color = baseColor;
+    }
+
+    private void ResetStatVisual(TextMeshProUGUI targetText, bool visible)
+    {
+        if (targetText == null)
+            return;
+
+        targetText.rectTransform.localScale = GetBaseScale(targetText);
+
+        Color color = targetText.color;
+        color.a = visible ? 1f : 0f;
+        targetText.color = color;
+    }
+
+    private void CacheStatScale(TextMeshProUGUI targetText)
+    {
+        if (targetText == null || baseStatScales.ContainsKey(targetText))
+            return;
+
+        baseStatScales[targetText] = targetText.rectTransform.localScale;
+    }
+
+    private Vector3 GetBaseScale(TextMeshProUGUI targetText)
+    {
+        if (targetText == null)
+            return Vector3.one;
+
+        CacheStatScale(targetText);
+        return baseStatScales[targetText];
+    }
+
+    private float GetStatAnimationDuration()
+    {
+        if (valueUpClip != null && valueUpClip.length > 0.01f)
+            return valueUpClip.length;
+
+        return 0.8f;
+    }
+
+    private void EnsureStatsSfxSource()
+    {
+        if (statsSfxSource != null)
+            return;
+
+        statsSfxSource = gameObject.AddComponent<AudioSource>();
+        statsSfxSource.loop = false;
+        statsSfxSource.playOnAwake = false;
+        statsSfxSource.spatialBlend = 0f;
+    }
+
+    private void PlayValueUpSfx()
+    {
+        if (valueUpClip == null)
+            return;
+
+        EnsureStatsSfxSource();
+        statsSfxSource.Stop();
+        statsSfxSource.clip = valueUpClip;
+        statsSfxSource.volume = valueUpVolume;
+        statsSfxSource.Play();
     }
 
     private IEnumerator PlayBgmAfterDelay()

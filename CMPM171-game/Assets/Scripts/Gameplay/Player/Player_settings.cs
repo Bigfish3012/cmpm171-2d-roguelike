@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,28 +14,43 @@ public class Player_settings : MonoBehaviour, IDamageable
     public Transform PlayerTransform => transform;
 
     [SerializeField] private AudioClip playerGotHitClip;
-    [Range(0f, 1f)] [SerializeField] private float playerGotHitVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float playerGotHitVolume = 1f;
 
     [SerializeField] private AudioClip experienceGainClip;
-    [Range(0f, 1f)] [SerializeField] private float experienceGainVolume = 1f;
+    [Range(0f, 1f)][SerializeField] private float experienceGainVolume = 1f;
 
     private AudioSource _sfxSource;
 
-    [SerializeField] private int maxHealth = 10;                                        // Maximum health of the player
-    [SerializeField] private int xpPerLevel = 20;                                        // Current XP required for next level
-    [SerializeField] private float xpIncreasePerLevel = 1.2f;                            // XP multiplier required after each level up
-    [SerializeField] private float critRate = 15f;                                     // Critical hit chance (default 20%)
-    [SerializeField] private float critDamage = 100f;                                  // Critical damage bonus (default 100% = 2x damage)
+    [SerializeField] private int maxHealth = 40;                                        // Maximum health of the player
+    [SerializeField] private int xpPerLevel = 20;                                       // Current XP required for next level
+    [SerializeField] private float xpIncreasePerLevel = 1.2f;                           // XP multiplier required after each level up
+    [SerializeField] private float critRate = 15f;                                      // Critical hit chance
+    [SerializeField] private float critDamage = 100f;                                   // Critical damage bonus
+    [SerializeField] private float dodgeRate = 0f;                                      // Dodge chance in percent
+    [SerializeField] private float spawnDelaySeconds = 1f;                              // Delay before showing player on a fresh run
 
-    private int currentHealth;                                                         // Current health of the player
-    private int currentExperience;                                                     // Current XP progress toward next level
-    private int currentLevel = 1;                                                      // Player level (starts at 1)
-    private int startingXPPerLevel;                                                    // Base XP requirement used to reconstruct level after restore
-    private int lastPrintedHealth;                                                     // Last printed health value for debug logging
-    private bool isInvincible = false;                                                 // Whether the player is currently invincible
+    // New defensive stats
+    [SerializeField] private int armor = 0;                                             // Flat damage reduction
+    [SerializeField] private float damageReduction = 0f;                                // Percentage reduction, 0~1
+    [SerializeField] private int regeneration = 0;                                      // HP restored every tick
+    [SerializeField] private float regenerationInterval = 5f;                           // Seconds between regen ticks
 
-    // NEW: damage taken multiplier (1 = normal, 1.1 = +10% damage taken)
+    private int currentHealth;                                                          // Current health of the player
+    private int currentExperience;                                                      // Current XP progress toward next level
+    private int currentLevel = 1;                                                       // Player level (starts at 1)
+    private int startingXPPerLevel;                                                     // Base XP requirement used to reconstruct level after restore
+    private bool isInvincible = false;                                                  // Whether the player is currently invincible
+    private PlayerController playerController;
+    private RangedShooter rangedShooter;
+    private Rigidbody2D rb;
+    private Collider2D[] playerColliders;
+    private Renderer[] playerRenderers;
+
+    // Existing penalty-system support
     private float damageTakenMultiplier = 1f;
+    private const float MaxDodgeRate = 70f;
+    private const float MaxDamageReduction = 0.8f;
+    private float regenerationTimer = 0f;
 
     void Awake()
     {
@@ -50,34 +66,82 @@ public class Player_settings : MonoBehaviour, IDamageable
 
         startingXPPerLevel = xpPerLevel;
         EnsureSFXSource();
+        playerController = GetComponent<PlayerController>();
+        rangedShooter = GetComponent<RangedShooter>();
+        rb = GetComponent<Rigidbody2D>();
+        playerColliders = GetComponentsInChildren<Collider2D>(true);
+        playerRenderers = GetComponentsInChildren<Renderer>(true);
     }
 
     void Start()
     {
         var gm = GameManager.Instance;
-        var pc = GetComponent<PlayerController>();
-        var rs = GetComponent<RangedShooter>();
+        var pc = playerController;
+        var rs = rangedShooter;
 
         if (gm != null && gm.HasSavedData)
         {
             gm.RestoreTo(this, pc, rs);
-            lastPrintedHealth = currentHealth;
-            Debug.Log($"Player Health restored: {currentHealth}/{maxHealth}");
         }
         else
         {
             currentHealth = maxHealth;
-            lastPrintedHealth = currentHealth;
-            Debug.Log($"Player Health: {currentHealth}");
+
+            if (spawnDelaySeconds > 0f)
+                StartCoroutine(ShowPlayerAfterDelay());
         }
+    }
+
+    private IEnumerator ShowPlayerAfterDelay()
+    {
+        SetPlayerVisible(false);
+        SetPlayerInteractable(false);
+        SetInvincible(true);
+
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
+        yield return new WaitForSecondsRealtime(spawnDelaySeconds);
+
+        SetPlayerVisible(true);
+        SetPlayerInteractable(true);
+        SetInvincible(false);
+    }
+
+    private void SetPlayerVisible(bool visible)
+    {
+        if (playerRenderers == null) return;
+
+        for (int i = 0; i < playerRenderers.Length; i++)
+            playerRenderers[i].enabled = visible;
+    }
+
+    private void SetPlayerInteractable(bool enabledState)
+    {
+        if (playerController != null)
+            playerController.enabled = enabledState;
+
+        if (rangedShooter != null)
+            rangedShooter.enabled = enabledState;
+
+        if (playerColliders == null) return;
+
+        for (int i = 0; i < playerColliders.Length; i++)
+            playerColliders[i].enabled = enabledState;
     }
 
     void Update()
     {
-        if (currentHealth != lastPrintedHealth)
+        // Regeneration
+        if (regeneration > 0 && currentHealth > 0 && currentHealth < maxHealth)
         {
-            Debug.Log($"Player Health: {currentHealth}");
-            lastPrintedHealth = currentHealth;
+            regenerationTimer += Time.deltaTime;
+            if (regenerationTimer >= regenerationInterval)
+            {
+                regenerationTimer = 0f;
+                currentHealth = Mathf.Min(maxHealth, currentHealth + regeneration);
+                SaveToGameManager();
+            }
         }
     }
 
@@ -85,8 +149,22 @@ public class Player_settings : MonoBehaviour, IDamageable
     {
         if (isInvincible) return;
 
-        // NEW: apply damage taken multiplier
-        int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage * damageTakenMultiplier));
+        if (UnityEngine.Random.Range(0f, 100f) < dodgeRate)
+        {
+            return;
+        }
+
+        int finalDamage = damage;
+
+        // Armor: flat reduction
+        finalDamage = Mathf.Max(1, finalDamage - armor);
+
+        // Damage reduction: percentage reduction
+        finalDamage = Mathf.RoundToInt(finalDamage * (1f - damageReduction));
+        finalDamage = Mathf.Max(1, finalDamage);
+
+        // Existing penalty multiplier
+        finalDamage = Mathf.Max(0, Mathf.RoundToInt(finalDamage * damageTakenMultiplier));
 
         currentHealth -= finalDamage;
         SaveToGameManager();
@@ -97,7 +175,6 @@ public class Player_settings : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            Debug.Log("Player Died!");
             if (GameManager.Instance != null)
                 GameManager.Instance.PrepareForGameOver();
             if (SceneTransition.Instance != null)
@@ -134,22 +211,23 @@ public class Player_settings : MonoBehaviour, IDamageable
         if (amount > 0 && experienceGainClip != null && _sfxSource != null)
             _sfxSource.PlayOneShot(experienceGainClip, experienceGainVolume);
 
-        currentExperience += amount;  
+        currentExperience += amount;
         if (amount > 0 && GameManager.Instance != null)
             GameManager.Instance.AddScore(amount);
+
         //currentExperience += 9999;  //testing new upgrades
+
         while (currentExperience >= xpPerLevel)
         {
             currentExperience -= xpPerLevel;
             currentLevel++;
             xpPerLevel = ComputeNextXPRequirement(xpPerLevel);
 
-            Debug.Log($"Level Up! Now Level {currentLevel}");
             currentHealth = maxHealth;  // Restore full health on level up
             OnLevelUp?.Invoke(currentLevel);
         }
+
         SaveToGameManager();
-        Debug.Log($"Player Experience: {currentExperience}/{xpPerLevel} (Level {currentLevel})");
     }
 
     public int GetCurrentExperience()
@@ -192,7 +270,12 @@ public class Player_settings : MonoBehaviour, IDamageable
         return critDamage;
     }
 
-    public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD)
+    public float GetDodgeRate()
+    {
+        return dodgeRate;
+    }
+
+    public void RestoreData(int currentHp, int maxHp, int currentExp, int xpPerLvl, float critR, float critD, float dodgeR)
     {
         currentHealth = currentHp;
         maxHealth = maxHp;
@@ -201,9 +284,10 @@ public class Player_settings : MonoBehaviour, IDamageable
         currentLevel = RecalculateLevelFromXPRequirement(xpPerLevel);
         critRate = critR;
         critDamage = critD;
-        lastPrintedHealth = currentHealth;
+        dodgeRate = Mathf.Clamp(dodgeR, 0f, MaxDodgeRate);
 
-        // NOTE: damageTakenMultiplier is not restored (kept simple for now)
+        // damageTakenMultiplier / armor / damageReduction / regeneration
+        // are not restored yet to keep this patch minimal
     }
 
     private int ComputeNextXPRequirement(int currentRequirement)
@@ -249,11 +333,35 @@ public class Player_settings : MonoBehaviour, IDamageable
         SaveToGameManager();
     }
 
-    // NEW: called by penalty system (e.g. +0.10f => +10% more damage taken)
+    public void AddDodgeRate(float amount)
+    {
+        dodgeRate = Mathf.Clamp(dodgeRate + amount, 0f, MaxDodgeRate);
+        SaveToGameManager();
+    }
+
+    public void AddArmor(int amount)
+    {
+        armor += amount;
+        SaveToGameManager();
+    }
+
+    public void AddDamageReduction(float amount)
+    {
+        damageReduction = Mathf.Clamp(damageReduction + amount, 0f, MaxDamageReduction);
+        SaveToGameManager();
+    }
+
+    public void AddRegeneration(int amount)
+    {
+        regeneration += amount;
+        SaveToGameManager();
+    }
+
+    // Existing penalty-system method
     public void AddDamageTakenMultiplier(float amount)
     {
         damageTakenMultiplier = Mathf.Max(0.1f, damageTakenMultiplier + amount);
-        // NOTE: not saved/restored yet (we can add persistence later if you want)
+        // not saved/restored yet
     }
 
     private void EnsureSFXSource()

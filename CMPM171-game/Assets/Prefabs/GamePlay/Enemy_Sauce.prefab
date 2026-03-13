@@ -208,7 +208,7 @@ MonoBehaviour:
   experience: 2
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
   enemyAnimator: {fileID: 0}
-  deathAnimationClip: {fileID: 0}
+  deathAnimationClip: {fileID: 7400000, guid: 78f3e479a9d484c1ea6e42bd9492da8d, type: 2}
   visualToRotate: {fileID: 0}
   aimAngleOffset: -90
   gotHitClip: {fileID: 8300000, guid: 6c0e0782b85b3e24cb6144e74d0bd167, type: 3}

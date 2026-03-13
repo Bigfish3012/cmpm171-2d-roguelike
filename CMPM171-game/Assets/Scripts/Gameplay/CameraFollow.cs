@@ -5,12 +5,18 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private Transform target;                                            // The target to follow (usually the player)
     [SerializeField] private float smoothSpeed = 0;                                      // How smoothly the camera follows (lower = smoother)
     [SerializeField] private Vector3 offset = Vector3.zero;                             // Offset from the target position
+    [Header("Camera Bounds")]
+    [Tooltip("Optional. If set, camera movement will be clamped to this object's bounds.")]
+    [SerializeField] private Transform cameraBounds;
     
     private Vector3 velocity = Vector3.zero;                                             // Velocity reference for SmoothDamp
+    private Camera cam;
 
     // Awake method to find the player if no target is assigned
     void Awake()
     {
+        cam = GetComponent<Camera>();
+
         // If no target is assigned, get player transform from singleton
         if (target == null && Player_settings.Instance != null)
         {
@@ -32,7 +38,48 @@ public class CameraFollow : MonoBehaviour
         Vector3 desiredPosition = target.position + offset;
         desiredPosition.z = transform.position.z; // Keep camera's z position unchanged
 
+        ClampToBounds(ref desiredPosition);
+
         // Smoothly move camera towards target
         transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothSpeed);
+    }
+
+    private void ClampToBounds(ref Vector3 desiredPosition)
+    {
+        if (cameraBounds == null || cam == null || !cam.orthographic) return;
+        if (!TryGetBounds(cameraBounds, out Bounds bounds)) return;
+
+        float halfHeight = cam.orthographicSize;
+        float halfWidth = halfHeight * cam.aspect;
+
+        float minX = bounds.min.x + halfWidth;
+        float maxX = bounds.max.x - halfWidth;
+        float minY = bounds.min.y + halfHeight;
+        float maxY = bounds.max.y - halfHeight;
+
+        desiredPosition.x = minX > maxX ? bounds.center.x : Mathf.Clamp(desiredPosition.x, minX, maxX);
+        desiredPosition.y = minY > maxY ? bounds.center.y : Mathf.Clamp(desiredPosition.y, minY, maxY);
+    }
+
+    private static bool TryGetBounds(Transform targetBounds, out Bounds bounds)
+    {
+        bounds = default;
+        if (targetBounds == null) return false;
+
+        SpriteRenderer sr = targetBounds.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            bounds = sr.bounds;
+            return true;
+        }
+
+        Collider2D col = targetBounds.GetComponent<Collider2D>();
+        if (col != null)
+        {
+            bounds = col.bounds;
+            return true;
+        }
+
+        return false;
     }
 }

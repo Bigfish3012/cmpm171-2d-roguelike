@@ -84,7 +84,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &2550643772761958590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,6 +441,9 @@ MonoBehaviour:
   experience: 3
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
   enemyAnimator: {fileID: 0}
+  idleAnimationClip: {fileID: 7400000, guid: 16b146090676b43199cb4a275388b1be, type: 2}
+  chargingAnimationClip: {fileID: 7400000, guid: 4ea5f42f9d56c46a1a3f2cf35784a9a1, type: 2}
+  dashingAnimationClip: {fileID: 7400000, guid: 68b4784e5510f4e90a5efd115bbe262c, type: 2}
   deathAnimationClip: {fileID: 7400000, guid: 7c44096df22d1454a825d8b79cc919e7, type: 2}
   gotHitClip: {fileID: 8300000, guid: efd84deb8d4ba714487f1bd06658e493, type: 3}
   gotHitVolume: 0.3

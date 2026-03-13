@@ -16,6 +16,8 @@ public class RangedShooter : MonoBehaviour
 
     // NEW: damage multiplier (1 = normal, 0.9 = -10% damage)
     private float damageMultiplier = 1f;
+    private float finalDamageMultiplier = 1f;
+    private int chainBounceCount = 0;
 
     void Awake()
     {
@@ -57,6 +59,8 @@ public class RangedShooter : MonoBehaviour
             isCrit = result.isCrit;
         }
 
+        finalDamage = Mathf.Max(0, Mathf.RoundToInt(finalDamage * finalDamageMultiplier));
+
         int count = Mathf.Max(1, projectileCount);
         float step = count > 1 ? projectileSpreadAngle / (count - 1) : 0f;
         float startAngle = -projectileSpreadAngle * 0.5f;
@@ -66,7 +70,7 @@ public class RangedShooter : MonoBehaviour
             float angleOffset = startAngle + (step * i);
             Vector2 dir = (Quaternion.Euler(0f, 0f, angleOffset) * baseDir).normalized;
             Projectile p = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-            p.Init(dir, finalDamage, isCrit);
+            p.Init(dir, finalDamage, isCrit, chainBounceCount);
         }
     }
 
@@ -85,6 +89,20 @@ public class RangedShooter : MonoBehaviour
         // NOTE: not saved/restored yet (kept simple)
     }
 
+    public void AddFinalDamageMultiplier(float amount)
+    {
+        finalDamageMultiplier = Mathf.Max(0.1f, finalDamageMultiplier + amount);
+        if (GameManager.Instance != null && Player_settings.Instance != null)
+            GameManager.Instance.SaveFrom(Player_settings.Instance, GetComponent<PlayerController>(), this);
+    }
+
+    public void AddChainBounceCount(int amount)
+    {
+        chainBounceCount = Mathf.Max(0, chainBounceCount + amount);
+        if (GameManager.Instance != null && Player_settings.Instance != null)
+            GameManager.Instance.SaveFrom(Player_settings.Instance, GetComponent<PlayerController>(), this);
+    }
+
     public void AddProjectileCount(int amount)
     {
         projectileCount = Mathf.Max(1, projectileCount + amount);
@@ -97,4 +115,8 @@ public class RangedShooter : MonoBehaviour
     public void SetAttackDamage(int value) => attackDamage = value;
     public int GetProjectileCount() => projectileCount;
     public void SetProjectileCount(int value) => projectileCount = Mathf.Max(1, value);
+    public float GetFinalDamageMultiplier() => finalDamageMultiplier;
+    public void SetFinalDamageMultiplier(float value) => finalDamageMultiplier = Mathf.Max(0.1f, value);
+    public int GetChainBounceCount() => chainBounceCount;
+    public void SetChainBounceCount(int value) => chainBounceCount = Mathf.Max(0, value);
 }

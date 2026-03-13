@@ -29,9 +29,6 @@ public class WaveFlowController : MonoBehaviour
     [SerializeField] private GameObject nextMapObject;                                     // Scene object that handles map transition
     [SerializeField] private string nextMapObjectName = "NextMap";                         // Auto-bind fallback when reference is empty
 
-    [Header("Debug")]
-    [SerializeField] private bool logDebug = true;
-
     private int currentWave = 0;
     private bool transitioning = false;
 
@@ -78,11 +75,9 @@ public class WaveFlowController : MonoBehaviour
         if (ShouldWaitForMapTransition())
         {
             SetNextMapVisible(true);
-            Log($"Wave {currentWave} cleared. Waiting for map transition.");
             return;
         }
 
-        Log($"Wave {currentWave} cleared. Next wave in {nextWaveDelay:F1}s.");
         StartCoroutine(BeginNextWaveRoutine());
     }
 
@@ -93,8 +88,8 @@ public class WaveFlowController : MonoBehaviour
         StartCoroutine(BeginNextWaveRoutine());
     }
 
-    // Debug: Clear all enemies and start the next wave immediately.
-    public void DebugStartNextWave()
+    // Debug: treat the current wave as completed and advance to the following wave.
+    public void DebugForceCompleteCurrentWaveAndAdvance()
     {
         StartCoroutine(BeginNextWaveRoutine());
     }
@@ -121,7 +116,6 @@ public class WaveFlowController : MonoBehaviour
             GameManager.Instance.SaveWaveProgress(currentWave);
         UpdateWaveNumberUI();
 
-        Log($"Starting wave {currentWave}.");
         transitioning = false;
 
         enemySpawner.StartWave(currentWave);
@@ -201,12 +195,6 @@ public class WaveFlowController : MonoBehaviour
     {
         if (nextMapObject == null && !string.IsNullOrEmpty(nextMapObjectName))
             nextMapObject = SceneSearchHelper.FindSceneObjectByName(nextMapObjectName);
-    }
-
-    private void Log(string message)
-    {
-        if (!logDebug) return;
-        Debug.Log($"[WaveFlowController] {message}", this);
     }
 
     private void EnsureSFXSource()

@@ -21,6 +21,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     [SerializeField] private AnimationClip deathAnimationClip;                          // Death animation clip (choose in Inspector)
     [SerializeField] private Transform visualToRotate;                                  // Visual transform to rotate toward player
     [SerializeField] private float aimAngleOffset = -90f;                               // Angle offset for sprite forward direction
+    [SerializeField] private float deathRotationOffset = -135f;                         // Additional rightward rotation applied before death animation
     [SerializeField] private AudioClip gotHitClip;                                      // SFX when enemy takes damage
     [Range(0f, 1f)] [SerializeField] private float gotHitVolume = 1f;
 
@@ -70,6 +71,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
     void FixedUpdate()
     {
         if (playerTransform == null) return;
+        if (isDead) return;
         RotateTowardPlayer();
 
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
@@ -144,6 +146,10 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
 
         // Instantiate bullet and initialize with direction and damage
         Projectile bullet = Instantiate(enemyBulletPrefab, firePoint.position, Quaternion.identity);
+        if (visualToRotate != null)
+        {
+            bullet.SetVisualRotation(visualToRotate.rotation);
+        }
         bullet.Init(direction, attackDamage);
     }
 
@@ -196,6 +202,7 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         if (rb != null) rb.simulated = false;
         Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
         foreach (Collider2D col in colliders) col.enabled = false;
+        ApplyDeathRotation();
 
         float destroyDelay = 0f;
         if (enemyAnimator != null && deathAnimationClip != null)
@@ -207,16 +214,23 @@ public class Enemy_shooter : MonoBehaviour, IHealth, IDamageable
         Destroy(gameObject, Mathf.Max(0f, destroyDelay));
     }
 
+    private void ApplyDeathRotation()
+    {
+        if (visualToRotate == null) return;
+        visualToRotate.rotation *= Quaternion.Euler(0f, 0f, deathRotationOffset);
+    }
+
     // IHealth interface implementation
     public int GetCurrentHealth()
     {
         return currentHealth;
     }
 
-    public void ApplyWaveScaling(float healthMultiplier, int damageBonus)
+    public void ApplyWaveScaling(float healthMultiplier, int damageBonus, int experienceBonus)
     {
         maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * Mathf.Max(0.1f, healthMultiplier)));
         attackDamage = Mathf.Max(1, attackDamage + damageBonus);
+        experience = Mathf.Max(0, experience + experienceBonus);
     }
 
     // Get the maximum health of the enemy
