@@ -22,7 +22,7 @@ public class BossAI : MonoBehaviour, IHealth, IDamageable
     public Transform player;              // 玩家，用于决定朝向
 
     [Header("Health")]
-    [SerializeField] private int maxHealth = 300;
+    [SerializeField] private int maxHealth = 3000;
     [SerializeField] private GameObject damagePopUpPrefab;
     [SerializeField] private AnimationClip deathAnimationClip;
 

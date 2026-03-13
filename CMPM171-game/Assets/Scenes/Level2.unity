@@ -231,6 +231,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2002097895922824405, guid: fa45114673e5b4d4790affd680852746, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3829652100432080574, guid: fa45114673e5b4d4790affd680852746, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -533,7 +537,7 @@ MonoBehaviour:
   rotationSpeed: 180
   moveSpeed: 8
   moveDistanceX: 16
-  moveDistanceY: 6
+  moveDistanceY: 18
   damage: 1
   damageCooldown: 0.35
 --- !u!212 &124097789
