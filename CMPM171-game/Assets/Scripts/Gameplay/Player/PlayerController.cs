@@ -156,4 +156,11 @@ public class PlayerController : MonoBehaviour
         pos.y = Mathf.Clamp(pos.y, minY, maxY);
         rb.position = pos;
     }
+
+    public float GetMoveSpeed()
+    {
+        return moveSpeed;
+    }
 }
+
+

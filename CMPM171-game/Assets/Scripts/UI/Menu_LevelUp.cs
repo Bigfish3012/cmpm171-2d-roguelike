@@ -337,7 +337,9 @@ public class Menu_LevelUp : MonoBehaviour
             _ => Mathf.RoundToInt(opt.value).ToString()
         };
 
-        string valueText = (opt.isDoubled || IsSpecialUpgrade(opt.type)) ? $"<color=#FFD54A>{rawValueText}</color>" : rawValueText;
+        string valueText = (opt.isDoubled || IsSpecialUpgrade(opt.type))
+            ? $"<color=#FFD54A>{rawValueText}</color>"
+            : rawValueText;
 
         string baseText = opt.type switch
         {
@@ -354,21 +356,150 @@ public class Menu_LevelUp : MonoBehaviour
 
             UpgradeType.ProjectilePath => $"Projectile +{valueText}",
             UpgradeType.Ricochet => $"Ricochet +{valueText}",
-            UpgradeType.Flame => $"FinalDamage +{valueText}",
+            UpgradeType.Flame => $"TotalDamage +{valueText}",
             _ => ""
         };
 
-        if (!penaltyMode) return baseText;
-
-        string drawback = opt.type switch
+        if (penaltyMode)
         {
-            UpgradeType.Damage => $"  <color=#FF5555>(Take +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% dmg)</color>",
-            UpgradeType.Speed => $"  <color=#FF5555>(Dmg -{Mathf.RoundToInt(speedPickDamageMultMinus * 100f)}%)</color>",
-            UpgradeType.Health => $"  <color=#FF5555>(Speed -{healthPickSpeedMinus:0.0})</color>",
-            _ => ""
-        };
+            string drawback = opt.type switch
+            {
+                UpgradeType.Damage => $"  <color=#FF5555>(Take +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% dmg)</color>",
+                UpgradeType.Speed => $"  <color=#FF5555>(Dmg -{Mathf.RoundToInt(speedPickDamageMultMinus * 100f)}%)</color>",
+                UpgradeType.Health => $"  <color=#FF5555>(Speed -{healthPickSpeedMinus:0.0})</color>",
+                _ => ""
+            };
 
-        return baseText + drawback;
+            baseText += drawback;
+        }
+
+        string currentStatText = GetCurrentStatText(opt);
+        if (!string.IsNullOrEmpty(currentStatText))
+        {
+            baseText += $"\n<size=90%><color=#444444>{currentStatText}</color></size>";
+        }
+
+        return baseText;
+    }
+
+    private string GetCurrentStatText(UpgradeOption opt)
+    {
+        var playerSettings = Player_settings.Instance;
+        var playerController = playerSettings != null ? playerSettings.GetComponent<PlayerController>() : null;
+        var rangedShooter = playerSettings != null ? playerSettings.GetComponent<RangedShooter>() : null;
+
+        switch (opt.type)
+        {
+            case UpgradeType.Health:
+                if (playerSettings != null)
+                {
+                    int current = playerSettings.GetMaxHealth();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Max HP: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.Speed:
+                if (playerController != null)
+                {
+                    float current = playerController.GetMoveSpeed();
+                    float next = current + opt.value;
+                    return $"Speed: {current:0.0} ¡ú <color=#FF5555>{next:0.0}</color>";
+                }
+                break;
+
+            case UpgradeType.CritRate:
+                if (playerSettings != null)
+                {
+                    int current = Mathf.RoundToInt(playerSettings.GetCritRate());
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Crit Rate: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                }
+                break;
+
+            case UpgradeType.CritDamage:
+                if (playerSettings != null)
+                {
+                    int current = Mathf.RoundToInt(playerSettings.GetCritDamage());
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Crit Dmg: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                }
+                break;
+
+            case UpgradeType.Damage:
+                if (rangedShooter != null)
+                {
+                    int current = rangedShooter.GetAttackDamage();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"ATK: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.Armor:
+                if (playerSettings != null)
+                {
+                    int current = playerSettings.GetArmor();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Armor: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.DamageReduction:
+                if (playerSettings != null)
+                {
+                    int current = Mathf.RoundToInt(playerSettings.GetDamageReduction() * 100f);
+                    int next = Mathf.RoundToInt((playerSettings.GetDamageReduction() + opt.value) * 100f);
+                    return $"Reduction: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                }
+                break;
+
+            case UpgradeType.Dodge:
+                if (playerSettings != null)
+                {
+                    int current = Mathf.RoundToInt(playerSettings.GetDodgeRate());
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Dodge: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                }
+                break;
+
+            case UpgradeType.Regeneration:
+                if (playerSettings != null)
+                {
+                    int current = playerSettings.GetRegeneration();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Regen: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.ProjectilePath:
+                if (rangedShooter != null)
+                {
+                    int current = rangedShooter.GetProjectileCount();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Projectiles: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.Ricochet:
+                if (rangedShooter != null)
+                {
+                    int current = rangedShooter.GetChainBounceCount();
+                    int next = current + Mathf.RoundToInt(opt.value);
+                    return $"Ricochet: {current} ¡ú <color=#FF5555>{next}</color>";
+                }
+                break;
+
+            case UpgradeType.Flame:
+                if (rangedShooter != null)
+                {
+                    int current = Mathf.RoundToInt(rangedShooter.GetFinalDamageMultiplier() * 100f);
+                    int next = Mathf.RoundToInt((rangedShooter.GetFinalDamageMultiplier() + opt.value) * 100f);
+                    return $"TotalDmg: {current}% ¡ú <color=#FF5555>{next}%</color>";
+                }
+                break;
+        }
+
+        return "";
     }
 
     private IEnumerator EnableButtonsAfterDelay()

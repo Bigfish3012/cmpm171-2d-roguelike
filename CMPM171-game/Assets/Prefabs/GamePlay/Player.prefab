@@ -342,12 +342,17 @@ MonoBehaviour:
   playerGotHitVolume: 1
   experienceGainClip: {fileID: 8300000, guid: 606a9218bae65844389c84ca33f6336f, type: 3}
   experienceGainVolume: 1
-  maxHealth: 40
+  maxHealth: 25
   xpPerLevel: 10
   xpIncreasePerLevel: 1.2
   critRate: 15
   critDamage: 100
+  dodgeRate: 0
   spawnDelaySeconds: 0.3
+  armor: 0
+  damageReduction: 0
+  regeneration: 0
+  regenerationInterval: 5
 --- !u!212 &1087225547976335830
 SpriteRenderer:
   m_ObjectHideFlags: 0
