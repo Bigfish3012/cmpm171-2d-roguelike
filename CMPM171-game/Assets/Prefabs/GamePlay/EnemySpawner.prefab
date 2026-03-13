@@ -58,12 +58,11 @@ MonoBehaviour:
   startingWaveEnemyCount: 30
   enemyCountIncreasePerWave: 10
   startingSpawnInterval: 1.4
-  spawnIntervalDecreasePerWave: 0.4
+  spawnIntervalDecreasePerWave: 0.2
   minimumSpawnInterval: 0.1
   enemyHealthIncreasePercentPerWave: 30
   enemyDamageIncreasePerWave: 1
   enemyExperienceIncreasePerWave: 1
-  logWaveDebug: 1
 --- !u!114 &8733497482812590437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +80,6 @@ MonoBehaviour:
   warningMessage: 'Warning: Next Wave coming'
   nextWaveCountDownClip: {fileID: 8300000, guid: c9ad59c6d4236954482613e0c2113471, type: 3}
   nextWaveCountDownVolume: 1
-  wavesPerMapTransition: 2
+  wavesPerMapTransition: 3
   nextMapObject: {fileID: 0}
   nextMapObjectName: NextMap
-  logDebug: 1
