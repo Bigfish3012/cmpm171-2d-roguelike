@@ -247,6 +247,22 @@ MonoBehaviour:
     m_Key: Unstuck
     m_Metadata:
       m_Items: []
+  - m_Id: 12241912257515520
+    m_Key: Wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12242579583864832
+    m_Key: Enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12242807682699264
+    m_Key: Warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12243522828308480
+    m_Key: click to select
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

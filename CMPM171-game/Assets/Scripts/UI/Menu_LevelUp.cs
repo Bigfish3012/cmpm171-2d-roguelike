@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 
 // Shows Level Up Menu when player levels up. Each button shows a random upgrade option.
 // Attach to Canvas or another always-active parent; assign levelUpMenuUI in Inspector.
@@ -19,19 +20,19 @@ public class Menu_LevelUp : MonoBehaviour
     }
 
     [System.Serializable]
-    public struct UpgradeRanges
-    {
-        public int healthMin, healthMax;          // e.g. 2, 4
-        public float speedMin, speedMax;          // e.g. 0.1, 1
-        public int critRateMin, critRateMax;      // e.g. 5, 15
-        public int critDamageMin, critDamageMax;  // e.g. 10, 40
-        public int damageMin, damageMax;          // e.g. 2, 5
+public struct UpgradeRanges
+{
+    public int healthMin, healthMax;          // e.g. 2, 4
+    public float speedMin, speedMax;          // e.g. 0.1, 1
+    public int critRateMin, critRateMax;      // e.g. 5, 15
+    public int critDamageMin, critDamageMax;  // e.g. 10, 40
+    public int damageMin, damageMax;          // e.g. 2, 5
 
-        public int armorMin, armorMax;            // e.g. 1, 2
-        public float damageReductionMin, damageReductionMax; // e.g. 0.05, 0.10
-        public float dodgeMin, dodgeMax;          // e.g. 5, 10 (percent)
-        public int regenerationMin, regenerationMax; // e.g. 1, 1
-    }
+    public int armorMin, armorMax;            // e.g. 1, 2
+    public float damageReductionMin, damageReductionMax; // e.g. 0.05, 0.10
+    public float dodgeMin, dodgeMax;          // e.g. 5, 10 (percent)
+    public int regenerationMin, regenerationMax; // e.g. 1, 1
+}
 
     [SerializeField] private GameObject levelUpMenuUI;
     [SerializeField] private float clickDelaySeconds = 1f;
@@ -102,6 +103,11 @@ public class Menu_LevelUp : MonoBehaviour
         public UpgradeType type;
         public float value;
         public bool isDoubled;
+    }
+
+    private string L(string key)
+    {
+        return LocalizationSettings.StringDatabase.GetLocalizedString("UpgradeTable", key);
     }
 
     void Start()
@@ -355,20 +361,20 @@ public class Menu_LevelUp : MonoBehaviour
 
         string baseText = opt.type switch
         {
-            UpgradeType.Health => $"Health +{valueText}",
-            UpgradeType.Speed => $"Speed +{valueText} / Dodge +{Mathf.RoundToInt(speedPickDodgeRatePlus)}%",
-            UpgradeType.CritRate => $"Crit Rate +{valueText}",
-            UpgradeType.CritDamage => $"Crit Damage +{valueText}",
-            UpgradeType.Damage => $"Damage +{valueText}",
+            UpgradeType.Health => $"{L("upgrade_health")} +{valueText}",
+            UpgradeType.Speed => $"{L("upgrade_speed")} +{valueText} / {L("upgrade_dodge")} +{Mathf.RoundToInt(speedPickDodgeRatePlus)}%",
+            UpgradeType.CritRate => $"{L("upgrade_crit_rate")} +{valueText}",
+            UpgradeType.CritDamage => $"{L("upgrade_crit_damage")} +{valueText}",
+            UpgradeType.Damage => $"{L("upgrade_damage")} +{valueText}",
 
-            UpgradeType.Armor => $"Armor +{valueText}",
-            UpgradeType.DamageReduction => $"Damage Reduction +{valueText}",
-            UpgradeType.Dodge => $"Dodge +{valueText}",
-            UpgradeType.Regeneration => $"Regeneration +{valueText}",
+            UpgradeType.Armor => $"{L("upgrade_armor")} +{valueText}",
+            UpgradeType.DamageReduction => $"{L("upgrade_damage_reduction")} +{valueText}",
+            UpgradeType.Dodge => $"{L("upgrade_dodge")} +{valueText}",
+            UpgradeType.Regeneration => $"{L("upgrade_regeneration")} +{valueText}",
 
-            UpgradeType.ProjectilePath => $"Projectile +{valueText}",
-            UpgradeType.Ricochet => $"Ricochet +{valueText}",
-            UpgradeType.Flame => $"TotalDamage +{valueText}",
+            UpgradeType.ProjectilePath => $"{L("upgrade_projectile")} +{valueText}",
+            UpgradeType.Ricochet => $"{L("upgrade_ricochet")} +{valueText}",
+            UpgradeType.Flame => $"{L("upgrade_total_damage")} +{valueText}",
             _ => ""
         };
 
@@ -376,9 +382,9 @@ public class Menu_LevelUp : MonoBehaviour
         {
             string drawback = opt.type switch
             {
-                UpgradeType.Damage => $"  <color=#FF5555>(Take +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% dmg)</color>",
-                UpgradeType.Speed => $"  <color=#FF5555>(Dmg -{Mathf.RoundToInt(speedPickDamageMultMinus * 100f)}%)</color>",
-                UpgradeType.Health => $"  <color=#FF5555>(Speed -{healthPickSpeedMinus:0.0})</color>",
+                UpgradeType.Damage => $"  <color=#FF5555>({L("penalty_take")} +{Mathf.RoundToInt(damagePickDamageTakenPlus * 100f)}% {L("penalty_dmg")})</color>",
+                UpgradeType.Speed => $"  <color=#FF5555>({L("upgrade_damage")} -{Mathf.RoundToInt(speedPickDamageMultMinus * 100f)}%)</color>",
+                UpgradeType.Health => $"  <color=#FF5555>({L("upgrade_speed")} -{healthPickSpeedMinus:0.0})</color>",
                 _ => ""
             };
 
@@ -394,125 +400,126 @@ public class Menu_LevelUp : MonoBehaviour
         return baseText;
     }
 
-    private string GetCurrentStatText(UpgradeOption opt)
-    {
-        var playerSettings = Player_settings.Instance;
-        var playerController = playerSettings != null ? playerSettings.GetComponent<PlayerController>() : null;
-        var rangedShooter = playerSettings != null ? playerSettings.GetComponent<RangedShooter>() : null;
-
-        switch (opt.type)
+        private string GetCurrentStatText(UpgradeOption opt)
         {
-            case UpgradeType.Health:
-                if (playerSettings != null)
-                {
-                    int current = playerSettings.GetMaxHealth();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Max HP: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+            var playerSettings = Player_settings.Instance;
+            var playerController = playerSettings != null ? playerSettings.GetComponent<PlayerController>() : null;
+            var rangedShooter = playerSettings != null ? playerSettings.GetComponent<RangedShooter>() : null;
 
-            case UpgradeType.Speed:
-                if (playerController != null)
-                {
-                    float current = playerController.GetMoveSpeed();
-                    float next = current + opt.value;
-                    return $"Speed: {current:0.0} increase to <color=#FF5555>{next:0.0}</color>";
-                }
-                break;
+            switch (opt.type)
+            {
+                case UpgradeType.Health:
+                    if (playerSettings != null)
+                    {
+                        int current = playerSettings.GetMaxHealth();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_max_hp")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
 
-            case UpgradeType.CritRate:
-                if (playerSettings != null)
-                {
-                    int current = Mathf.RoundToInt(playerSettings.GetCritRate());
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Crit Rate: {current}% increase to <color=#FF5555>{next}%</color>";
-                }
-                break;
+                case UpgradeType.Speed:
+                    if (playerController != null)
+                    {
+                        float current = playerController.GetMoveSpeed();
+                        float next = current + opt.value;
+                        return $"{L("stat_speed")}: {current:0.0} {L("stat_increase_to")} <color=#FF5555>{next:0.0}</color>";
+                    }
+                    break;
 
-            case UpgradeType.CritDamage:
-                if (playerSettings != null)
-                {
-                    int current = Mathf.RoundToInt(playerSettings.GetCritDamage());
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Crit Dmg: {current}% increase to <color=#FF5555>{next}%</color>";
-                }
-                break;
+                case UpgradeType.CritRate:
+                    if (playerSettings != null)
+                    {
+                        int current = Mathf.RoundToInt(playerSettings.GetCritRate());
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_crit_rate")}: {current}% {L("stat_increase_to")} <color=#FF5555>{next}%</color>";
+                    }
+                    break;
 
-            case UpgradeType.Damage:
-                if (rangedShooter != null)
-                {
-                    int current = rangedShooter.GetAttackDamage();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"ATK: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+                case UpgradeType.CritDamage:
+                    if (playerSettings != null)
+                    {
+                        int current = Mathf.RoundToInt(playerSettings.GetCritDamage());
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_crit_damage")}: {current}% {L("stat_increase_to")} <color=#FF5555>{next}%</color>";
+                    }
+                    break;
 
-            case UpgradeType.Armor:
-                if (playerSettings != null)
-                {
-                    int current = playerSettings.GetArmor();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Armor: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+                case UpgradeType.Damage:
+                    if (rangedShooter != null)
+                    {
+                        int current = rangedShooter.GetAttackDamage();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_atk")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
 
-            case UpgradeType.DamageReduction:
-                if (playerSettings != null)
-                {
-                    int current = Mathf.RoundToInt(playerSettings.GetDamageReduction() * 100f);
-                    int next = Mathf.RoundToInt((playerSettings.GetDamageReduction() + opt.value) * 100f);
-                    return $"Reduction: {current}% increase to <color=#FF5555>{next}%</color>";
-                }
-                break;
+                case UpgradeType.Armor:
+                    if (playerSettings != null)
+                    {
+                        int current = playerSettings.GetArmor();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_armor")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
 
-            case UpgradeType.Dodge:
-                if (playerSettings != null)
-                {
-                    int current = Mathf.RoundToInt(playerSettings.GetDodgeRate());
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Dodge: {current}% increase to <color=#FF5555>{next}%</color>";
-                }
-                break;
+                case UpgradeType.DamageReduction:
+                    if (playerSettings != null)
+                    {
+                        int current = Mathf.RoundToInt(playerSettings.GetDamageReduction() * 100f);
+                        int next = Mathf.RoundToInt((playerSettings.GetDamageReduction() + opt.value) * 100f);
+                        return $"{L("stat_damage_reduction")}: {current}% {L("stat_increase_to")} <color=#FF5555>{next}%</color>";
+                    }
+                    break;
 
-            case UpgradeType.Regeneration:
-                if (playerSettings != null)
-                {
-                    int current = playerSettings.GetRegeneration();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Regen: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+                case UpgradeType.Dodge:
+                    if (playerSettings != null)
+                    {
+                        int current = Mathf.RoundToInt(playerSettings.GetDodgeRate());
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_dodge")}: {current}% {L("stat_increase_to")} <color=#FF5555>{next}%</color>";
+                    }
+                    break;
 
-            case UpgradeType.ProjectilePath:
-                if (rangedShooter != null)
-                {
-                    int current = rangedShooter.GetProjectileCount();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Projectiles: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+                case UpgradeType.Regeneration:
+                    if (playerSettings != null)
+                    {
+                        int current = playerSettings.GetRegeneration();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_regeneration")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
 
-            case UpgradeType.Ricochet:
-                if (rangedShooter != null)
-                {
-                    int current = rangedShooter.GetChainBounceCount();
-                    int next = current + Mathf.RoundToInt(opt.value);
-                    return $"Ricochet: {current} increase to <color=#FF5555>{next}</color>";
-                }
-                break;
+                case UpgradeType.ProjectilePath:
+                    if (rangedShooter != null)
+                    {
+                        int current = rangedShooter.GetProjectileCount();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("stat_projectiles")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
 
-            case UpgradeType.Flame:
-                if (rangedShooter != null)
-                {
-                    int current = Mathf.RoundToInt(rangedShooter.GetFinalDamageMultiplier() * 100f);
-                    int next = Mathf.RoundToInt((rangedShooter.GetFinalDamageMultiplier() + opt.value) * 100f);
-                    return $"TotalDmg: {current}% increase to <color=#FF5555>{next}%</color>";
-                }
-                break;
+                case UpgradeType.Ricochet:
+                    if (rangedShooter != null)
+                    {
+                        int current = rangedShooter.GetChainBounceCount();
+                        int next = current + Mathf.RoundToInt(opt.value);
+                        return $"{L("upgrade_ricochet")}: {current} {L("stat_increase_to")} <color=#FF5555>{next}</color>";
+                    }
+                    break;
+
+                case UpgradeType.Flame:
+                    if (rangedShooter != null)
+                    {
+                        int current = Mathf.RoundToInt(rangedShooter.GetFinalDamageMultiplier() * 100f);
+                        int next = Mathf.RoundToInt((rangedShooter.GetFinalDamageMultiplier() + opt.value) * 100f);
+                        return $"{L("stat_total_damage")}: {current}% {L("stat_increase_to")} <color=#FF5555>{next}%</color>";
+                    }
+                    break;
+            }
+
+            return "";
         }
 
-        return "";
-    }
 
     private IEnumerator EnableButtonsAfterDelay()
     {

@@ -22,6 +22,13 @@ MonoBehaviour:
     - Locale-zh-Hans
     - Preload
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b609e36e41cafad4381dd5356d6429fb
+    m_Address: UpgradeTable_zh-Hans
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-Hans
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 7f56ebd8bc28427448c58b1c121c0fca, type: 2}
   m_SchemaSet:
