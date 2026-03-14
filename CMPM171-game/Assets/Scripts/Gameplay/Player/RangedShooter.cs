@@ -11,8 +11,11 @@ public class RangedShooter : MonoBehaviour
     [SerializeField] private GunAim gunAim;                                             // Gun aiming state for target checks
     [SerializeField] private AudioClip fireSoundClip;                                    // SFX played when firing
     [Range(0f, 1f)] [SerializeField] private float fireSoundVolume = 1f;
+    [SerializeField] private float attackStateDuration = 0.1f;                          // How long isAttacking stays true after a shot
 
     private float nextFireTime;                                                         // Time to spawn the next projectile
+    private float attackStateEndTime;
+    private Animator anim;
 
     // NEW: damage multiplier (1 = normal, 0.9 = -10% damage)
     private float damageMultiplier = 1f;
@@ -21,12 +24,17 @@ public class RangedShooter : MonoBehaviour
 
     void Awake()
     {
+        anim = GetComponent<Animator>();
+
         if (gunAim == null)
             gunAim = GetComponentInChildren<GunAim>();
     }
 
     void Update()
     {
+        if (anim != null)
+            anim.SetBool("isAttacking", Time.time < attackStateEndTime);
+
         if (gunAim == null || !gunAim.HasTarget) return;
 
         if (Time.time >= nextFireTime)
@@ -38,6 +46,8 @@ public class RangedShooter : MonoBehaviour
 
     void Shoot()
     {
+        attackStateEndTime = Time.time + attackStateDuration;
+
         if (fireSoundClip != null)
         {
             Vector3 pos = firePoint != null ? firePoint.position : transform.position;
