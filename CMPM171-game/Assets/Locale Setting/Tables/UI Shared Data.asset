@@ -263,6 +263,10 @@ MonoBehaviour:
     m_Key: click to select
     m_Metadata:
       m_Items: []
+  - m_Id: 12253152949526528
+    m_Key: 'Press [F]'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

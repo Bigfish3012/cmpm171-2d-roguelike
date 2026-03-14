@@ -272,6 +272,10 @@ MonoBehaviour:
     m_Localized: Click to Select
     m_Metadata:
       m_Items: []
+  - m_Id: 12253152949526528
+    m_Localized: 'Press [F]'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
