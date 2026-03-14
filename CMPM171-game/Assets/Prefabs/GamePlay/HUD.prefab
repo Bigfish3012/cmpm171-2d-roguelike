@@ -5053,6 +5053,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3541152292426170210}
     m_Modifications:
+    - target: {fileID: 1383914141660514405, guid: 1b0b28850e8f622468333e6c78c89407, type: 3}
+      propertyPath: m_StringReference.m_WaitForCompletion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1383914141660514405, guid: 1b0b28850e8f622468333e6c78c89407, type: 3}
+      propertyPath: m_StringReference.m_TableEntryReference.m_KeyId
+      value: 12045930109820928
+      objectReference: {fileID: 0}
     - target: {fileID: 2001025331392232538, guid: 1b0b28850e8f622468333e6c78c89407, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

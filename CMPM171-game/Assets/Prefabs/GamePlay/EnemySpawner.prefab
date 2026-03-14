@@ -61,7 +61,7 @@ MonoBehaviour:
   spawnIntervalDecreasePerWave: 0.2
   minimumSpawnInterval: 0.1
   enemyHealthIncreasePercentPerWave: 30
-  enemyDamageIncreasePerWave: 1
+  enemyDamageIncreasePerWave: 0
   enemyExperienceIncreasePerWave: 1
 --- !u!114 &8733497482812590437
 MonoBehaviour:

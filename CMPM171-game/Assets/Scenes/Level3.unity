@@ -1032,7 +1032,7 @@ MonoBehaviour:
   spreadAngle: 60
   fireballSpeed: 6
   player: {fileID: 855115925}
-  maxHealth: 1500
+  maxHealth: 30000
   damagePopUpPrefab: {fileID: 2725599704625741649, guid: a62520b394bcb03489c222f23fa1849e, type: 3}
   deathAnimationClip: {fileID: 7400000, guid: 8161314ea9b4fce4cbef6c27b9f14310, type: 2}
 --- !u!60 &680931524
