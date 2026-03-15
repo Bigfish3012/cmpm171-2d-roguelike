@@ -9,7 +9,7 @@
 - Li, Chengkun
 - Wang, Shaoan
 - Yao, Peichen
-- Guo, mingze
+- Guo, Mingze
 
 
 ## Project Overview
