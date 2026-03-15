@@ -82,7 +82,7 @@ Combat Shuang is a wave-based action game where players survive enemy encounters
   - gameplay design
   - iteration
 
-### Ze, Guoming
+### Guo, Mingze
 - Worked on:
   - localization
   - UI design
