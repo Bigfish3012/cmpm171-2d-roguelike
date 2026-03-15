@@ -19,82 +19,85 @@ Combat Shuang is a wave-based action game where players survive enemy encounters
 
 ### Fang, Darren
 - Worked on:
-  - player sprites
-  - enemy sprites
-  - upgrade option icons
+    - Player sprites
+    - Enemy sprites
+    - Upgrade option icons
 - Implemented:
-  - player sprite animations
-  - enemy sprite animations
+    - Player sprite animations
+    - Enemy sprite animations
 - Helped with:
-  - upgrade system icons
+    - Upgrade system icons
 
 ### Fong, Anson
 - Worked on:
-  - the upgrade system
+    - The upgrade system
 - Implemented:
-  - parts of the upgrade system
+    - Parts of the upgrade system
 - Helped with:
-  - parts of the upgrade system
+    - Parts of the upgrade system
 
 ### Li, Chengkun
 - Worked on:
-  - the player controller
-  - enemy design
-  - the upgrade system
-  - scene setup
-  - enemy spawner
-  - map boundary definition
+    - The player controller
+    - Enemy design
+    - The upgrade system
+    - Scene setup
+    - Enemy spawner
+    - Map boundary definition
 - Implemented:
-  - player movement
-  - enemy pathfinding and attack behavior
-  - wave spawning
-  - level transitions
-  - debug mode
-  - pause menu
-  - in-game HUD
+    - Player movement
+    - Enemy pathfinding and attack behavior
+    - Wave spawning
+    - Level transitions
+    - Debug mode
+    - Pause menu
+    - In-game HUD
 - Helped with:
-  - the upgrade system
-  - map boundaries
-  - game difficulty parameter tuning
+    - The upgrade system
+    - Map boundaries
+    - Game difficulty parameter tuning
 
 ### Wang, Shaoan
 - Worked on:
-  - player animations
-  - enemy animations
-  - the upgrade system
+    - Player animations
+    - Enemy animations
+    - The upgrade system
 - Implemented:
-  - player animations
-  - enemy animations
+    - Player animations
+    - Enemy animations
 - Helped with:
-  - the upgrade system
+    - The upgrade system
 
 ### Yao, Peichen
 - Worked on:
-  - map design
-  - map mechanics
-  - boss design
+    - Map design
+    - Map mechanics
+    - Boss design
 - Implemented:
-  - map layouts
-  - the spinning knife mechanic
-  - the fireball mechanic
-  - boss attack patterns
+    - Map layouts
+    - The spinning knife mechanic
+    - The fireball mechanic
+    - Boss attack patterns
+    - Boss animations
+    - Player-boss interactions
+    - Portal animations
 - Helped with:
-  - gameplay design
-  - iteration
+    - Gameplay design
+    - Iteration
 
 ### Guo, Mingze
 - Worked on:
-  - localization
-  - UI design
+    - Localization
+    - UI design
 - Implemented:
-  - translation support for Chinese, English, and Japanese
-  - the main menu
-  - the settings scene
-  - the credits scene
-  - the game over screen
+    - Translation support for Chinese, English, and Japanese
+    - The main menu
+    - The settings scene
+    - The credits scene
+    - The game over screen
 - Helped with:
-  - pause menu design
-  - pause menu implementation
+    - Pause menu design
+    - Pause menu implementation
 
 # Credit
 
@@ -119,3 +122,13 @@ Combat Shuang is a wave-based action game where players survive enemy encounters
 - `SFX_EnemyChliGotHit.mp3` - u_xjrmmgxfru, Pixabay: https://pixabay.com/sound-effects/film-special-effects-hit-flesh-03-266308/
 
 ## AI tools
+- ChatGPT
+    - Find bugs
+    - Generate image materials
+    - Code Recommendation
+- Cursor
+    - Find and fix bugs
+    - Code Recommendation
+    - improve code structure
+- pixellab
+    - Generate image materials
