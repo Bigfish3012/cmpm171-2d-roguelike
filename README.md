@@ -130,5 +130,5 @@ Combat Shuang is a wave-based action game where players survive enemy encounters
     - Find and fix bugs
     - Code Recommendation
     - improve code structure
-- pixellab
+- Pixellab
     - Generate image materials
