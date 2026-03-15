@@ -9,7 +9,7 @@
 - Li, Chengkun
 - Wang, Shaoan
 - Yao, Peichen
-- Ze, Guoming
+- Guo, mingze
 
 
 ## Project Overview
